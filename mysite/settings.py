@@ -39,7 +39,7 @@ DEBUG = os.environ.get("ENVIRONMENT") == "development"
 IS_HEROKU_APP = "DYNO" in os.environ and "CI" not in os.environ
 
 if IS_HEROKU_APP:
-    ALLOWED_HOSTS = ["class-notes-sharing-app.herokuapp.com"]
+    ALLOWED_HOSTS = ["class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
 
 else:
