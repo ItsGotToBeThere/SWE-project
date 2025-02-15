@@ -19,5 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('class-sharing-notes-app.urls'))
+    path('', include('notes_app.urls')),
+    path('accounts/', include('allauth.urls'))
 ]

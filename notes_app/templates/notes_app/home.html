@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Notes App Login</title>
+  </head>
+  <body>
+    {% load socialaccount %}
+    <a href="{% provider_login_url 'google'%}?next=/">Google Login</a>
+  </body>
+</html>
