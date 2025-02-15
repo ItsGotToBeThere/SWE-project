@@ -37,7 +37,7 @@ IS_HEROKU_APP = "DYNO" in os.environ and "CI" not in os.environ
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if IS_HEROKU_APP:
-    # DEBUG = False
+    # DEBUG = False -> TODO: make this false after everything is finished
     ALLOWED_HOSTS = ["class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
     SITE_ID = 3
@@ -71,7 +71,11 @@ SOCIALACCOUNT_PROVIDERS = {
             "profile",
             "email"
         ],
-        "AUTH_PARAMS": {"access_type":"online"}
+        "AUTH_PARAMS": {"access_type":"online"},
+        'APP': {
+            'client_id': '853630016343-4gq432pasgft87a73qot8tnoa0d8k93m.apps.googleusercontent.com',
+            'secret': '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',
+        }
     }
 }
 
