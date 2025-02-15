@@ -37,14 +37,16 @@ IS_HEROKU_APP = "DYNO" in os.environ and "CI" not in os.environ
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if IS_HEROKU_APP:
-    DEBUG = False
+    # DEBUG = False
     ALLOWED_HOSTS = ["class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
     SITE_ID = 3
 else:
-    DEBUG = True 
+    # DEBUG = True 
     ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
     SITE_ID = 2
+
+DEBUG = True 
 
 INSTALLED_APPS = [
     'django.contrib.admin',
