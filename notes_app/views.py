@@ -7,4 +7,4 @@ def index(request):
 
 def logout_view(request):
     logout(request)
-    return redirect("") #go back to home page
+    return redirect("/") #go back to home page

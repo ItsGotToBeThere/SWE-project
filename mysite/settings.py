@@ -65,6 +65,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 ]
 
+SOCIALACCOUNT_LOGIN_ON_GET = True #immediately redirects user to google login page
+
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE":[
