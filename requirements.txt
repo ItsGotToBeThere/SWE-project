@@ -2,5 +2,9 @@ Django
 gunicorn
 django-heroku
 dj-database-url
+
+#google login dependencies
 django-allauth 
 PyJWT
+requests
+cryptography
