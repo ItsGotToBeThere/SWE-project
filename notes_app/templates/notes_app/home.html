@@ -1,16 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
-    <title>Notes App Login</title>
-  </head>
-  <body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+</head>
+<body>
     {% load socialaccount %}
-    <a href="{% provider_login_url 'google'%}?next=/">Google Login</a>
-    
+
     {% if user.is_authenticated %}
-    <p>You are signed in as {{user.email}}</p>
-    <a href="logout">Logout</a>
+        <p>Welcome, {{ user.email }}!</p>
+
+        {% if user.groups.all|length > 0 %}
+            {% for group in user.groups.all %}
+                {% if group.name == "Librarians" %}
+                    <a href="{% url 'notes_app:librarian_dashboard' %}">Librarian Dashboard</a><br>
+                {% elif group.name == "Patrons" %}
+                    <a href="{% url 'notes_app:patron_dashboard' %}">Patron Dashboard</a><br>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p>You do not belong to a group yet.</p>
+        {% endif %}
+
+        <h3>Menu:</h3>
+        <ul>
+            <li><a href="{% url 'account_email' %}">Change Email</a></li>
+            <li><a href="{% url 'account_change_password' %}">Change Password</a></li>
+            <li><a href="{% url 'socialaccount_connections' %}">Account Connections</a></li>
+            <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+        </ul>
+
+    {% else %}
+        <p>You are not signed in.</p>
+        <a href="{% provider_login_url 'google' %}?next=/">Google Login</a>
     {% endif %}
-  </body>
+</body>
 </html>

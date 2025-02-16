@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Librarian Dashboard</h1>
+    <p>You have access to librarian features here.</p>
+
+    <ul>
+        <li><a href="#">Add New Books</a></li>
+        <li><a href="#">Manage Borrowed Books</a></li>
+        <li><a href="#">View Patron Requests</a></li>
+        <li><a href="{% url 'notes_app:index' %}">Return to Home</a></li>
+    </ul>
+
+    <br>
+    <a href="{% url 'account_logout' %}">Logout</a>
+</body>
+</html>

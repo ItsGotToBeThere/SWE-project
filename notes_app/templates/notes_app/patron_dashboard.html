@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patron Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Patron Dashboard</h1>
+    <p>Here you can manage your borrowed books and requests.</p>
+
+    <ul>
+        <li><a href="#">View Available Books</a></li>
+        <li><a href="#">Request a Book</a></li>
+        <li><a href="#">View Borrowed Books</a></li>
+        <li><a href="{% url 'notes_app:index' %}">Return to Home</a></li>
+    </ul>
+
+    <br>
+    <a href="{% url 'account_logout' %}">Logout</a>
+</body>
+</html>
