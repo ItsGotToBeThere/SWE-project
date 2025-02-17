@@ -2,6 +2,7 @@ Django
 gunicorn
 django-heroku
 dj-database-url
+django-bootstrap-v5
 
 #google login dependencies
 django-allauth 
