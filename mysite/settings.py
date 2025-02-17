@@ -46,7 +46,8 @@ else:
     ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
     SITE_ID = 2
 
-DEBUG = True 
+DEBUG = False
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -169,7 +170,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / 'static'
 # TODO: need to fix so static files load with heroku deployment (needed for admin console)
 
 # Default primary key field type
