@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}Notes App {% endblock %}</title>
+    {% load static %}
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <link rel = "stylesheet" href = "{% static 'notes_app/css/style.css' %}">
+</head>
+<body>
+
+{% include 'navbar.html' %}
+
+{% block content %}
+
+{% endblock %}
+
+{% include 'footer.html' %}
+</body>
+</html>

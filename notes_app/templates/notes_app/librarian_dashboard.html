@@ -1,30 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-{% load static %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Librarian Dashboard</title>
-    {% load bootstrap5 %}
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
-    <link rel = "stylesheet" href = "{% static 'notes_app/css/style.css' %}">
-</head>
-<body>
-    {% include 'navbar.html' %}
-    <div class = "container">
-    <h2>Welcome to the Librarian Dashboard</h2>
-    <p><small>You have access to librarian features here.</small></p>
+{% extends 'base.html'%}
+{% block title %} Librarian Dashboard {% endblock %}
 
-    <ul class = "list-group">
-        <li class = "list-group-item"><a href="#">Add New Books</a></li>
-        <li class = "list-group-item"><a href="#">Manage Borrowed Books</a></li>
-        <li class = "list-group-item"><a href="#">View Patron Requests</a></li>
-        <li class = "list-group-item"><a href="{% url 'notes_app:index' %}">Return to Home</a></li>
-    </ul>
+{% block content %}
+<div class = "container">
+<h2>Welcome to the Librarian Dashboard</h2>
+<p><small>You have access to librarian features here.</small></p>
 
-    <br>
-    <a href="{% url 'account_logout' %}">Logout</a>
-    </div>
-</body>
-</html>
+<ul class = "list-group">
+    <li class = "list-group-item"><a href="#">Add New Books</a></li>
+    <li class = "list-group-item"><a href="#">Manage Borrowed Books</a></li>
+    <li class = "list-group-item"><a href="#">View Patron Requests</a></li>
+    <li class = "list-group-item"><a href="{% url 'notes_app:index' %}">Return to Home</a></li>
+</ul>
+
+<br>
+<a class = "g_id_signout" href="{% url 'account_logout' %}">Logout</a>
+</div>
+{% endblock %}

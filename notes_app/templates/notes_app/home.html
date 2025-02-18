@@ -1,47 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-{% load static %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notes App</title>
-    {% load bootstrap5 %}
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
-    <link rel = "stylesheet" href = "{% static 'notes_app/css/style.css' %}">
-</head>
-<body>
-    {% include 'navbar.html' %}
-    <div class = 'container'>
-    {% load socialaccount %}
+{% extends 'base.html'%}
+{% block title %} Home {% endblock %}
 
-    {% if user.is_authenticated %}
-        <h2>Welcome, {{ user.email }}!</h2>
+{% block content %}
+<div class = 'container'>
+{% load socialaccount %}
 
-        {% if user.groups.all|length > 0 %}
-            {% for group in user.groups.all %}
-                {% if group.name == "Librarians" %}
-                    <a href="{% url 'notes_app:librarian_dashboard' %}">Librarian Dashboard</a><br>
-                {% elif group.name == "Patrons" %}
-                    <a href="{% url 'notes_app:patron_dashboard' %}">Patron Dashboard</a><br>
-                {% endif %}
-            {% endfor %}
-        {% else %}
-            <p>You do not belong to a group yet.</p>
-        {% endif %}
+{% if user.is_authenticated %}
+    <h2>Welcome, {{ user.email }}!</h2>
 
-        <h3>Menu:</h3>
-        <ul class = "list-group">
-            <li class = "list-group-item"><a href="{% url 'account_email' %}">Change Email</a></li>
-            <li class = "list-group-item"><a href="{% url 'account_change_password' %}">Change Password</a></li>
-            <li class = "list-group-item"><a href="{% url 'socialaccount_connections' %}">Account Connections</a></li>
-            <li class = "list-group-item"><a href="{% url 'account_logout' %}">Sign Out</a></li>
-        </ul>
-
+    {% if user.groups.all|length > 0 %}
+        {% for group in user.groups.all %}
+            {% if group.name == "Librarians" %}
+                <a href="{% url 'notes_app:librarian_dashboard' %}">Librarian Dashboard</a><br>
+            {% elif group.name == "Patrons" %}
+                <a href="{% url 'notes_app:patron_dashboard' %}">Patron Dashboard</a><br>
+            {% endif %}
+        {% endfor %}
     {% else %}
-        <h2>Please sign in to access the website.</h2>
-        <a class = "btn btn-link" href="{% provider_login_url 'google' %}?next=/">Google Login</a>
+        <p>You do not belong to a group yet.</p>
     {% endif %}
-    </div>
-</body>
-</html>
+
+    <h3>Menu:</h3>
+    <ul class = "list-group">
+        <li class = "list-group-item"><a href="{% url 'account_email' %}">Change Email</a></li>
+        <li class = "list-group-item"><a href="{% url 'account_change_password' %}">Change Password</a></li>
+        <li class = "list-group-item"><a href="{% url 'socialaccount_connections' %}">Account Connections</a></li>
+        <li class = "list-group-item"><a href="{% url 'account_logout' %}">Sign Out</a></li>
+    </ul>
+
+{% else %}
+    <h2>Please sign in to access the website.</h2>
+    <a class = "btn btn-link" href="{% provider_login_url 'google' %}?next=/">Google Login</a>
+{% endif %}
+</div>
+{% endblock %}
