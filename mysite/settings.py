@@ -80,6 +80,7 @@ SOCIALACCOUNT_PROVIDERS = {
             "email"
         ],
         "AUTH_PARAMS": {"access_type":"online"},
+
         'APP': {
             'client_id': '853630016343-4gq432pasgft87a73qot8tnoa0d8k93m.apps.googleusercontent.com',
             'secret': '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',
@@ -225,5 +226,5 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend', #for google login
 ]
 
-ACCOUNT_LOGIN_REDIRECT_URL = "/"
+ACCOUNT_LOGIN_REDIRECT_URL = ""
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
