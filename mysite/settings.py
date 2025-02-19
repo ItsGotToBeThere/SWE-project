@@ -41,10 +41,6 @@ if IS_HEROKU_APP:
     ALLOWED_HOSTS = ["class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
     SITE_ID = 4
-    SESSION_COOKIE_SECURE = True  # Enforce HTTPS cookies
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_DOMAIN = ".class-notes-sharing-app-571bb3710a1e.herokuapp.com"  # Note leading dot
-    CSRF_TRUSTED_ORIGINS = ["https://class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
 else:
     # DEBUG = True 
     ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
