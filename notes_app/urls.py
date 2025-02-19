@@ -10,4 +10,5 @@ urlpatterns = [
     path("patron-dashboard/", views.patron_dashboard, name='patron_dashboard'),
     path("librarian-dashboard/", views.librarian_dashboard, name='librarian_dashboard'),
     path('upload/', upload_note, name='upload_note'),
+    path('', views.notes_list, name='notes_list'),
 ]

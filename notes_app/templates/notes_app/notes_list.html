@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notes List</title>
+</head>
+<body>
+    <h2>Available Notes</h2>
+    <ul>
+        {% for note in notes %}
+            <li>{{ note.title }} - Uploaded by {{ note.created_by }}</li>
+        {% empty %}
+            <p>No notes available.</p>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -7,6 +7,8 @@ from allauth.account.signals import user_signed_up
 from django.contrib.auth.decorators import login_required
 from .decorators import librarian_required, patron_required
 from .forms import NoteForm
+from django.shortcuts import render
+from .models import Note
 
 def index(request):
     return render(request, "notes_app/home.html")
@@ -35,6 +37,10 @@ def patron_dashboard(request):
 @librarian_required
 def librarian_dashboard(request):
     return render(request, "notes_app/librarian_dashboard.html")
+
+def notes_list(request):
+    notes = Note.objects.all()
+    return render(request, 'notes_app/notes_list.html', {'notes': notes})
 
 @login_required
 def upload_note(request):
