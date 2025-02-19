@@ -40,13 +40,13 @@ if IS_HEROKU_APP:
     # DEBUG = False -> TODO: make this false after everything is finished
     ALLOWED_HOSTS = ["class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
-    SITE_ID = 3
+    SITE_ID = 4
 else:
     # DEBUG = True 
     ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
     SITE_ID = 2
 
-DEBUG = False
+DEBUG = True
 
 
 INSTALLED_APPS = [
@@ -225,5 +225,5 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend', #for google login
 ]
 
-LOGIN_REDIRECT_URL = "/"
+ACCOUNT_LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
