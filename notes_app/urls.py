@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import upload_note
 
 app_name = "notes_app"
 
@@ -8,4 +9,5 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout_view"),
     path("patron-dashboard/", views.patron_dashboard, name='patron_dashboard'),
     path("librarian-dashboard/", views.librarian_dashboard, name='librarian_dashboard'),
+    path('upload/', upload_note, name='upload_note'),
 ]
