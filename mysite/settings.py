@@ -41,6 +41,10 @@ if IS_HEROKU_APP:
     ALLOWED_HOSTS = ["class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
     SITE_ID = 4
+    SESSION_COOKIE_SECURE = True  # Enforce HTTPS cookies
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_DOMAIN = ".class-notes-sharing-app-571bb3710a1e.herokuapp.com"  # Note leading dot
+    CSRF_TRUSTED_ORIGINS = ["https://class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
 else:
     # DEBUG = True 
     ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
@@ -70,7 +74,6 @@ INSTALLED_APPS = [
 SOCIALACCOUNT_LOGIN_ON_GET = True #immediately redirects user to google login page
 ACCOUNT_LOGOUT_ON_GET = True
 SOCIALACCOUNT_STORE_TOKENS = True
-
 
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -226,5 +229,5 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend', #for google login
 ]
 
-ACCOUNT_LOGIN_REDIRECT_URL = ""
+ACCOUNT_LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
