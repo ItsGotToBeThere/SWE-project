@@ -8,6 +8,8 @@
 {% if user.is_authenticated %}
     <h2>Welcome, {{ user.email }}!</h2>
 
+    <p><a class="btn btn-primary" href="{% url 'upload_note' %}">Upload Notes</a></p>
+
     {% if user.groups.all|length > 0 %}
         {% for group in user.groups.all %}
             {% if group.name == "Librarians" %}
