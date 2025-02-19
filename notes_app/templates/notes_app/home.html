@@ -30,7 +30,7 @@
 
 {% else %}
     <h2>Please sign in to access the website.</h2>
-    <a class = "btn btn-link" href="{% provider_login_url 'google' %}?next=">Google Login</a>
+    <a class="btn btn-link" href="{% provider_login_url 'google' %}?next={{ request.path }}">Google Login</a>
 {% endif %}
 </div>
 {% endblock %}

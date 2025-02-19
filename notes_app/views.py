@@ -13,7 +13,7 @@ def index(request):
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect("")  #go back to home page
+    return redirect("/")  #go back to home page
 
 def anonymous_view(request):
     return render(request, "notes_app/anonymous_view.html")
