@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'notes_app.apps.NotesAppConfig',
+    'notes_app',
 
     #google oauth apps
     'django.contrib.sites',
