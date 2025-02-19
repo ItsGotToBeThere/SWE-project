@@ -225,6 +225,6 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend', #for google login
 ]
 
-LOGIN_DIRECT_URL = "/"
+LOGIN_DIRECT_URL = "/notes/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 LOGOUT_DIRECT_URL = "/"

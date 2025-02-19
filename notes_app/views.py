@@ -50,7 +50,7 @@ def upload_note(request):
             note = form.save(commit=False)
             note.created_by = request.user  # Attach the logged-in user
             note.save()
-            return redirect('notes_list')  # Redirect to notes list after upload
+            return redirect('notes_app:notes_list')  # Redirect to notes list after upload
     else:
         form = NoteForm()
 
