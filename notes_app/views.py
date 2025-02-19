@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from allauth.account.signals import user_signed_up
 from django.contrib.auth.decorators import login_required
 from .decorators import librarian_required, patron_required
+from .forms import NoteForm
 
 def index(request):
     return render(request, "notes_app/home.html")
@@ -34,3 +35,17 @@ def patron_dashboard(request):
 @librarian_required
 def librarian_dashboard(request):
     return render(request, "notes_app/librarian_dashboard.html")
+
+@login_required
+def upload_note(request):
+    if request.method == 'POST':
+        form = NoteForm(request.POST, request.FILES)
+        if form.is_valid():
+            note = form.save(commit=False)
+            note.created_by = request.user  # Attach the logged-in user
+            note.save()
+            return redirect('notes_list')  # Redirect to notes list after upload
+    else:
+        form = NoteForm()
+
+    return render(request, 'notes_app/upload_note.html', {'form': form})
