@@ -40,13 +40,13 @@ if IS_HEROKU_APP:
     # DEBUG = False -> TODO: make this false after everything is finished
     ALLOWED_HOSTS = ["class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
-    SITE_ID = 3
+    SITE_ID = 4
 else:
     # DEBUG = True 
     ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
     SITE_ID = 2
 
-DEBUG = False
+DEBUG = True
 
 
 INSTALLED_APPS = [
@@ -72,7 +72,6 @@ ACCOUNT_LOGOUT_ON_GET = True
 SOCIALACCOUNT_STORE_TOKENS = True
 
 
-
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE":[
@@ -80,6 +79,7 @@ SOCIALACCOUNT_PROVIDERS = {
             "email"
         ],
         "AUTH_PARAMS": {"access_type":"online"},
+
         'APP': {
             'client_id': '853630016343-4gq432pasgft87a73qot8tnoa0d8k93m.apps.googleusercontent.com',
             'secret': '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',
@@ -225,6 +225,5 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend', #for google login
 ]
 
-LOGIN_DIRECT_URL = "/"
+ACCOUNT_LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
-LOGOUT_DIRECT_URL = "/"
