@@ -18,6 +18,7 @@ import secrets
 from pathlib import Path
 
 import dj_database_url
+from django.conf.global_settings import CSRF_TRUSTED_ORIGINS, SECURE_PROXY_SSL_HEADER
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,7 @@ if IS_HEROKU_APP:
     # DEBUG = False -> TODO: make this false after everything is finished
     ALLOWED_HOSTS = ["class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER=("HTTP_X_FORWARDED_PROTO", "https")
     SITE_ID = 4
 else:
     # DEBUG = True 
