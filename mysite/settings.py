@@ -40,9 +40,7 @@ IS_HEROKU_APP = "DYNO" in os.environ and "CI" not in os.environ
 if IS_HEROKU_APP:
     ALLOWED_HOSTS = ["class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
-    SECURE_PROXY_SSL_HEADER=("HTTP_X_FORWARDED_PROTO", "https")
-    CSRF_TRUSTED_ORIGINS = ["https://class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
-    SITE_ID = 4
+    SITE_ID = 6
 else:
     ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
     SITE_ID = 2
@@ -80,11 +78,6 @@ SOCIALACCOUNT_PROVIDERS = {
             "email"
         ],
         "AUTH_PARAMS": {"access_type":"online"},
-
-        'APP': {
-            'client_id': os.environ.get('GOOGLE_CLIENT_ID', ''),
-            'secret': os.environ.get('GOOGLE_CLIENT_SECRET', ''),
-        }
     }
 }
 
