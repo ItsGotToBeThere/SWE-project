@@ -38,17 +38,16 @@ IS_HEROKU_APP = "DYNO" in os.environ and "CI" not in os.environ
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if IS_HEROKU_APP:
-    # DEBUG = False -> TODO: make this false after everything is finished
     ALLOWED_HOSTS = ["class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER=("HTTP_X_FORWARDED_PROTO", "https")
+    CSRF_TRUSTED_ORIGINS = ["https://class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SITE_ID = 4
 else:
-    # DEBUG = True 
     ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
     SITE_ID = 2
 
-DEBUG = True
+DEBUG = not IS_HEROKU_APP
 
 
 INSTALLED_APPS = [
@@ -83,8 +82,8 @@ SOCIALACCOUNT_PROVIDERS = {
         "AUTH_PARAMS": {"access_type":"online"},
 
         'APP': {
-            'client_id': '853630016343-4gq432pasgft87a73qot8tnoa0d8k93m.apps.googleusercontent.com',
-            'secret': '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',
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID', ''),
+            'secret': os.environ.get('GOOGLE_CLIENT_SECRET', ''),
         }
     }
 }
@@ -167,7 +166,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'EST'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
