@@ -36,4 +36,10 @@ def patron_dashboard(request):
 
 @librarian_required
 def librarian_dashboard(request):
+    patron_group = Group.objects.get(name="Patrons")
+    patrons = patron_group.user_set.all()
+    
+    context = {
+        'patrons': patrons,
+    }
     return render(request, "notes_app/librarian_dashboard.html")
