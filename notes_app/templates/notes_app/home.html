@@ -1,36 +1,18 @@
-{% extends 'base.html'%}
-{% block title %} Home {% endblock %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+    {% load static %}
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <link rel = "stylesheet" href = "{% static 'notes_app/css/home_style.css' %}">
+</head>
+<body>
 
-{% block content %}
-<div class = 'container'>
-{% load socialaccount %}
-
-{% if user.is_authenticated %}
-    <h2>Welcome, {{ user.email }}!</h2>
-
-    {% if user.groups.all|length > 0 %}
-        {% for group in user.groups.all %}
-            {% if group.name == "Librarians" %}
-                <a href="{% url 'notes_app:librarian_dashboard' %}">Librarian Dashboard</a><br>
-            {% elif group.name == "Patrons" %}
-                <a href="{% url 'notes_app:patron_dashboard' %}">Patron Dashboard</a><br>
-            {% endif %}
-        {% endfor %}
-    {% else %}
-        <p>You do not belong to a group yet.</p>
-    {% endif %}
-
-    <h3>Menu:</h3>
-    <ul class = "list-group">
-        <li class = "list-group-item"><a href="{% url 'account_email' %}">Change Email</a></li>
-        <li class = "list-group-item"><a href="{% url 'account_change_password' %}">Change Password</a></li>
-        <li class = "list-group-item"><a href="{% url 'socialaccount_connections' %}">Account Connections</a></li>
-        <li class = "list-group-item"><a href="{% url 'account_logout' %}">Sign Out</a></li>
-    </ul>
-
-{% else %}
-    <h2>Please sign in to access the website.</h2>
-    <a class = "btn btn-link" href="{% provider_login_url 'google' %}?next=/">Google Login</a>
-{% endif %}
-</div>
-{% endblock %}
+</body>
+</html>
