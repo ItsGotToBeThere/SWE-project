@@ -9,4 +9,5 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout_view"),
     path("patron-dashboard/", views.patron_dashboard, name='patron_dashboard'),
     path("librarian-dashboard/", views.librarian_dashboard, name='librarian_dashboard'),
+    path("promote/<int:patron_id>/", views.PromotePatronView.as_view(), name='promote_patron_view'),
 ]
