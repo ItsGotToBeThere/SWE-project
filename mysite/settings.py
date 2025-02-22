@@ -66,9 +66,12 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 ]
 
-SOCIALACCOUNT_LOGIN_ON_GET = True #immediately redirects user to google login page
-ACCOUNT_LOGOUT_ON_GET = True
-SOCIALACCOUNT_STORE_TOKENS = True
+SOCIALACCOUNT_LOGIN_ON_GET=True
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -219,5 +222,3 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend', #for google login
 ]
 
-ACCOUNT_LOGIN_REDIRECT_URL = "/"
-ACCOUNT_LOGOUT_REDIRECT_URL = "/"
