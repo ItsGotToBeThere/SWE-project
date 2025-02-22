@@ -14,11 +14,14 @@
 </ul>
 
 <h3>All Patrons:</h3>
-    <ul>
-        {% for patron in patrons %}
-            <li>{{ patron.username }}</li>
-        {% endfor %}
-    </ul>
+  <ul>
+      {% for patron in patrons %}
+          <li>
+              {{ patron.username }}
+              <a href="{% url 'notes_app:promote_patron_view' patron.id %}">Promote to Librarian</a>
+          </li>
+      {% endfor %}
+  </ul>
     
 <br>
 <a class = "g_id_signout" href="{% url 'account_logout' %}">Logout</a>
