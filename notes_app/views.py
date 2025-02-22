@@ -13,9 +13,9 @@ def index(request):
 def dashboard(request):
     return render(request, "notes_app/dashboard.html")
 
-@login_required
 def logout_view(request):
-    logout(request)
+    if request.user.is_authenticated:
+        logout(request)
     return redirect("/")  #go back to home page
 
 def anonymous_view(request):
