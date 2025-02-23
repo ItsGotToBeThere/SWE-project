@@ -4,7 +4,7 @@ from . import views
 app_name = "notes_app"
 
 urlpatterns = [
-    path("", views.dashboard, name="index"),
+    path("", views.index, name="index"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("accounts/logout/", views.logout_view, name="account_logout"),
     path("logout/", views.logout_view, name="logout_view"),
