@@ -30,7 +30,12 @@
 
 {% else %}
     <h2>Please sign in to access the website.</h2>
-    <a class = "btn btn-link" href="{% provider_login_url 'google' %}?next=/">Google Login</a>
+    <button class="btn btn-outline-info">
+        <a href="{% provider_login_url 'google'%}?next=/">
+            <i class="fab fa-google"></i>
+            Login with Google
+        </a>
+    </button>
 {% endif %}
 </div>
 {% endblock %}
