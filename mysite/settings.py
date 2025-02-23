@@ -37,16 +37,14 @@ IS_HEROKU_APP = "DYNO" in os.environ and "CI" not in os.environ
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if IS_HEROKU_APP:
-    # DEBUG = False -> TODO: make this false after everything is finished
     ALLOWED_HOSTS = ["class-notes-sharing-app-571bb3710a1e.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
-    SITE_ID = 3
+    SITE_ID = 6
 else:
-    # DEBUG = True 
     ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
     SITE_ID = 2
 
-DEBUG = False
+DEBUG = not IS_HEROKU_APP
 
 
 INSTALLED_APPS = [
@@ -57,7 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'notes_app',
+    'notes_app.apps.NotesAppConfig',
 
     #google oauth apps
     'django.contrib.sites',
@@ -67,10 +65,12 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 ]
 
-SOCIALACCOUNT_LOGIN_ON_GET = True #immediately redirects user to google login page
-ACCOUNT_LOGOUT_ON_GET = True
-SOCIALACCOUNT_STORE_TOKENS = True
-
+SOCIALACCOUNT_LOGIN_ON_GET=True
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
 
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -80,10 +80,6 @@ SOCIALACCOUNT_PROVIDERS = {
             "email"
         ],
         "AUTH_PARAMS": {"access_type":"online"},
-        'APP': {
-            'client_id': '853630016343-4gq432pasgft87a73qot8tnoa0d8k93m.apps.googleusercontent.com',
-            'secret': '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',
-        }
     }
 }
 
@@ -165,7 +161,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'EST'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
@@ -225,6 +221,5 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend', #for google login
 ]
 
-LOGIN_DIRECT_URL = "/notes/"
-ACCOUNT_LOGOUT_REDIRECT_URL = "/"
-LOGOUT_DIRECT_URL = "/"
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('GOOGLE_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
