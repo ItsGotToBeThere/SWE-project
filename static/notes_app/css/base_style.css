@@ -1,0 +1,61 @@
+:root {
+    --color1: #F2EFE7;
+    --color2: #9ACBD0;
+    --color3: #48A6A7;
+    --color4: #2973B2;
+}
+
+
+.container{
+    margin-top:5vh;
+    width: 70vw;
+    height: 60vh;
+
+    border: solid thick var(--color4);
+    border-radius:10px;
+    background-color:var(--color1);
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.container > h2,a{
+    text-align:center;
+    font-family: "Trebuchet MS", "Georgia", sans-serif;
+}
+
+a{
+    color: var(--color3);
+}
+
+.list-group{
+    width:90%;
+}
+
+.list-group-item{
+    margin:auto;
+    width:70%
+}
+
+.navbar{
+    background-color:var(--color4);
+    color:white;
+}
+
+body{
+    background-color:var(--color2);
+}
+
+html, body {
+    height:100vh;
+}
+
+footer{
+    background-color:var(--color4);
+    position:sticky;
+    top:100vh;
+    color:white;
+    justify-content: center;
+}
