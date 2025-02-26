@@ -15,7 +15,23 @@
 </head>
 <body>
 
-{% include 'navbar.html' %}
+
+
+{% if user.is_authenticated %}
+    {% if user.groups.all|length > 0 %}
+        {% for group in user.groups.all %}
+            {% if group.name == "Librarians" %}
+                {% include 'notes_app/navbars/librarian_navbar.html' %}
+            {% elif group.name == "Patrons" %}
+                {% include 'notes_app/navbars/patron_navbar.html' %}
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        {% include 'notes_app/navbars/anonymous_navbar.html' %}
+    {% endif %}
+{% else %}
+    {% include 'notes_app/navbars/anonymous_navbar.html' %}
+{% endif %}
 
 {% block content %}
 
