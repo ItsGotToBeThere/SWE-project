@@ -5,7 +5,7 @@ app_name = "notes_app"
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("dashboard/", views.dashboard, name="dashboard"),
+    path("profile/", views.profile, name="profile"),
     path("accounts/logout/", views.logout_view, name="account_logout"),
     path("logout/", views.logout_view, name="logout_view"),
     

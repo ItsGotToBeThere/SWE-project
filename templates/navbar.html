@@ -1,3 +1,4 @@
+{% load static %}
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -5,12 +6,9 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="{% url 'notes_app:index' %}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'notes_app:dashboard' %}">Dashboard</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Available Notes</a>
@@ -21,7 +19,16 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Borrowed Notes</a>
                 </li>
-
+            </ul>
+            <ul class = "navbar-nav">
+                <li class = "nav-item">
+                    <a class = "nav-link active profile-picture" aria-current="page" href="{% url 'notes_app:profile' %}">
+<!--                        <img src = "{% static 'notes_app/images/default_profile.png' %}"  alt="profile_picture"-->
+<!--                        width = "30"-->
+<!--                        height= "30">-->
+                        login
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

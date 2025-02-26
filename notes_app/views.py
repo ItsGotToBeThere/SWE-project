@@ -12,8 +12,8 @@ from django.utils.decorators import method_decorator
 def index(request):
     return render(request, "notes_app/home.html")
 
-def dashboard(request):
-    return render(request, "notes_app/dashboard.html")
+def profile(request):
+    return render(request, "notes_app/profile.html")
 
 def logout_view(request):
     if request.user.is_authenticated:
