@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %} View Patron Requests {% endblock %}
+
+{% block content %}
+<h2>View Patron Requests</h2>
+<p>List of patron requests to review.</p>
+<a href="{% url 'notes_app:librarian_dashboard' %}">Back to Dashboard</a>
+{% endblock %}

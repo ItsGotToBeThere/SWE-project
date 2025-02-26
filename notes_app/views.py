@@ -23,6 +23,34 @@ def logout_view(request):
 def anonymous_view(request):
     return render(request, "notes_app/anonymous_view.html")
 
+
+# Librarian Views
+def add_notes(request):
+    return render(request, "notes_app/navbar_librarian/add_notes.html")
+
+def manage_borrowed(request):
+    return render(request, "notes_app/navbar_librarian/manage_borrowed.html")
+
+def view_requests(request):
+    return render(request, "notes_app/navbar_librarian/view_requests.html")
+
+# Patron Views
+def available_notes(request):
+    return render(request, "notes_app/navbar_patron/available_notes.html")
+
+def request_notes(request):
+    return render(request, "notes_app/navbar_patron/request_notes.html")
+
+def borrowed_notes(request):
+    return render(request, "notes_app/navbar_patron/borrowed_notes.html")
+
+# Dashboards
+def librarian_dashboard(request):
+    return render(request, "notes_app/librarian_dashboard.html")
+
+def patron_dashboard(request):
+    return render(request, "notes_app/patron_dashboard.html")
+
 # assign new users to patrons group by default
 @receiver(user_signed_up)
 def assign_user_group(user, **kwargs):
@@ -65,3 +93,4 @@ class PromotePatronView(View):
         
         # Redirect back to librarian dashboard after promotion
         return redirect("notes_app:librarian_dashboard")
+

@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %} Request Notes {% endblock %}
+{% block content %}
+<h2>Request Notes</h2>
+<p>Request a note from the library.</p>
+<a href="{% url 'notes_app:patron_dashboard' %}">Back to Dashboard</a>
+{% endblock %}
