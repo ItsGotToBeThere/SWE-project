@@ -3,11 +3,11 @@
 {% load socialaccount %}
 
 {% block content %}
-    <li class="nav-item"><a class="nav-link" href="#">Available Notes</a></li>
-    <li class="nav-item"><a class="nav-link" href="#">Request</a></li>
-    <li class="nav-item"><a class="nav-link" href="#">Borrowed Notes</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:available_notes' %}">Available Notes</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:request_notes' %}">Request Notes</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:borrowed_notes' %}">Borrowed Notes</a></li>
 {% endblock %}
 
 {% block log %}
-    <li class = "dropdown-item nav-item"><a class = "g_id_signout" href="{% url 'account_logout' %}">Logout</a></li>
+    <li class="dropdown-item nav-item"><a class="g_id_signout" href="{% url 'account_logout' %}">Logout</a></li>
 {% endblock %}

@@ -7,9 +7,9 @@
 <p><small>You have access to librarian features here.</small></p>
 
 <ul class = "list-group">
-    <li class = "list-group-item"><a href="#">Add New Notes</a></li>
-    <li class = "list-group-item"><a href="#">Manage Borrowed Notes</a></li>
-    <li class = "list-group-item"><a href="#">View Patron Requests</a></li>
+    <li class = "list-group-item"><a class="nav-link" href="{% url 'notes_app:add_notes' %}">Add New Notes</a></li>
+    <li class = "list-group-item"><a class="nav-link" href="{% url 'notes_app:manage_borrowed' %}">Manage Borrowed Notes</a></li>
+    <li class = "list-group-item"><a class="nav-link" href="{% url 'notes_app:view_requests' %}">View Patron Requests</a></li>
 </ul>
 
 <h3>All Patrons:</h3>

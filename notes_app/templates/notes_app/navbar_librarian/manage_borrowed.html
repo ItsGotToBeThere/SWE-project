@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %} Manage Borrowed Notes {% endblock %}
+
+{% block content %}
+<h2>Manage Borrowed Notes</h2>
+<p>List of borrowed notes to manage.</p>
+<a href="{% url 'notes_app:librarian_dashboard' %}">Back to Dashboard</a>
+{% endblock %}
