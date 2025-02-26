@@ -1,18 +1,12 @@
 {% extends 'navbar_base.html' %}
 {% load static %}
+{% load socialaccount %}
 
 {% block content %}
 
-
-<ul class = "navbar-nav align-right">
-                <li class = "nav-item">
-                    <a class = "nav-link active profile-picture" aria-current="page" href="{% url 'notes_app:profile' %}">
-<!--                        <img src = "{% static 'notes_app/images/default_profile.png' %}"  alt="profile_picture"-->
-<!--                        width = "30"-->
-<!--                        height= "30">-->
-                        login
-                    </a>
-                </li>
-            </ul>
 {% endblock %}
 
+
+{% block log %}
+    <li class = "dropdown-item nav-item"><a href="{% provider_login_url 'google' next='/' %}">Login</a></li>
+{% endblock %}

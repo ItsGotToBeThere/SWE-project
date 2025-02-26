@@ -15,7 +15,6 @@
 <body>
 
 {% if user.is_authenticated %}
-
     {% if user.groups.all|length > 0 %}
         {% for group in user.groups.all %}
             {% if group.name == "Librarians" %}

@@ -102,6 +102,11 @@ body, html{
   color:white;
 }
 
+a{
+  text-decoration: none;
+  color:black;
+}
+
 footer{
   background-color: black;
   position:sticky;
