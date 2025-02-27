@@ -16,6 +16,57 @@ import boto3
 from django.conf import settings
 from .forms import NoteForm
 
+def borrowed_notes(request):
+    user = request.user
+    notes = Note.objects.filter(borrowed_by=user) 
+    collections = Collection.objects.all()
+    title = request.GET.get("title")
+    subject = request.GET.get("subject")
+    semester = request.GET.get("semester")
+    date = request.GET.get("date")
+    visibility = request.GET.get("visibility")
+    collection_id = request.GET.get("collection")
+
+    if title:
+        notes = notes.filter(title__icontains=title)
+    if subject:
+        notes = notes.filter(subject__icontains=subject)
+    if semester:
+        notes = notes.filter(semester__icontains=semester)
+    if date:
+        notes = notes.filter(date=date)
+    if visibility:
+        notes = notes.filter(visibility=visibility)
+    if collection_id:
+        notes = notes.filter(collections__id=collection_id)
+
+    return render(request, "notes_app/borrowed_notes.html", {"notes": notes, "collections": collections})
+
+def available_notes(request):
+    notes = Note.objects.filter(visibility="public") 
+    collections = Collection.objects.all()
+    title = request.GET.get("title")
+    subject = request.GET.get("subject")
+    semester = request.GET.get("semester")
+    date = request.GET.get("date")
+    visibility = request.GET.get("visibility")
+    collection_id = request.GET.get("collection")
+
+    if title:
+        notes = notes.filter(title__icontains=title)
+    if subject:
+        notes = notes.filter(subject__icontains=subject)
+    if semester:
+        notes = notes.filter(semester__icontains=semester)
+    if date:
+        notes = notes.filter(date=date)
+    if visibility:
+        notes = notes.filter(visibility=visibility)
+    if collection_id:
+        notes = notes.filter(collections__id=collection_id)
+
+    return render(request, "notes_app/available_notes.html", {"notes": notes, "collections": collections})
+
 def add_notes(request):
     if request.method == 'POST':
         form = NoteForm(request.POST, request.FILES)
