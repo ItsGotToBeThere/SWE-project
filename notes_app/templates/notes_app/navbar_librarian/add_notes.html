@@ -3,36 +3,32 @@
 
 {% block content %}
 <style>
-    /* Make the entire screen fixed (no scrolling) */
     html, body {
         height: 100vh;
-        overflow: hidden;  /* Prevent outer scrolling */
+        overflow: hidden;  
         display: flex;
         flex-direction: column;
     }
 
-    /* Reduce the height of the tan box to leave space for the footer */
     .tan-container {
         flex-grow: 1;
         display: flex;
         justify-content: center;
-        align-items: center;  /* Center vertically */
-        padding-bottom: 40px; /* Ensures space above the footer */
+        align-items: center;  
+        padding-bottom: 40px; 
         flex-direction: column;
     }
 
-    /* Center the form box and add a scrollbar only inside it */
+   
     .scroll-box {
         width: 500px;
-        max-height: 75vh;  /* Reduced height */
-        overflow-y: auto;  /* Enable vertical scroll */
+        max-height: 75vh;  
+        overflow-y: auto;  
         padding: 20px;
         background: white;
         border-radius: 10px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
     }
-
-    /* Ensure the footer stays at the bottom */
     .footer {
         height: 40px;
         background: #1E6BB8;
@@ -42,12 +38,10 @@
         align-items: center;
         justify-content: center;
     }
-
-    /* Style for the back button */
     .back-btn-container {
         text-align: center;
-        margin-top: 20px; /* Creates space between form & button */
-        margin-bottom: 20px; /* Creates space before footer */
+        margin-top: 20px; 
+        margin-bottom: 20px; 
     }
 </style>
 
@@ -101,7 +95,7 @@
                 <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
             </div>
 
-            <!-- Collections (Multi-Select with Scrollbar) -->
+            <!-- Collections -->
             <div class="mb-3">
                 <label for="collections" class="form-label">Select Collections</label>
                 <select multiple class="form-control" id="collections" name="collections" style="height: 100px; overflow-y: auto;">
@@ -131,7 +125,7 @@
         </form>
     </div>
 
-    <!-- Back to Dashboard Button Centered Below White Box -->
+
     <div class="back-btn-container">
         <a href="{% url 'notes_app:librarian_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
     </div>

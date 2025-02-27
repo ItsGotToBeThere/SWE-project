@@ -12,51 +12,38 @@ from django.utils.decorators import method_decorator
 from django.core.files.storage import FileSystemStorage
 from .models import Note, Collection
 
+import boto3
+from django.conf import settings
+from .forms import NoteForm
+
 def add_notes(request):
-    if request.method == "POST":
-        title = request.POST["title"]
-        subject = request.POST["subject"]
-        semester = request.POST["semester"]
-        date = request.POST["date"]
-        visibility = request.POST["visibility"]
-        description = request.POST["description"]
-        file = request.FILES["file"]
+    if request.method == 'POST':
+        form = NoteForm(request.POST, request.FILES)
+        if form.is_valid():
+            note = form.save(commit=False)
+            file = request.FILES['file']
+            s3 = boto3.client(
+                's3',
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                region_name=settings.AWS_S3_REGION_NAME,
+            )
+            s3_key = f"uploads/notes/{file.name}"
+            s3.upload_fileobj(file, settings.AWS_STORAGE_BUCKET_NAME, s3_key)
 
-        # Process collections
-        selected_collections = request.POST.getlist("collections")  # Multi-select returns list
-        new_collection_name = request.POST.get("new_collection")  # Check for new collection input
+            note.s3_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{s3_key}"
 
-        # Save file to media directory
-        fs = FileSystemStorage()
-        filename = fs.save(file.name, file)
+            note.save()
 
-        # Create the note
-        note = Note.objects.create(
-            title=title,
-            subject=subject,
-            semester=semester,
-            date=date,
-            visibility=visibility,
-            description=description,
-            file=file
-        )
+            collections = request.POST.getlist('collections')
+            note.collections.set(collections)
 
-        # Add selected collections
-        for collection_id in selected_collections:
-            collection = Collection.objects.get(id=collection_id)
-            note.collections.add(collection)
-
-        # Create and add new collection if provided
-        if new_collection_name:
-            new_collection, created = Collection.objects.get_or_create(name=new_collection_name)
-            note.collections.add(new_collection)
-
-        return redirect("notes_app:librarian_dashboard")  # Redirect after successful upload
-
-    # Pass existing collections to the template
+            return redirect('notes_app:librarian_dashboard')
+    else:
+        form = NoteForm()
+    
     collections = Collection.objects.all()
-    return render(request, "notes_app/navbar_librarian/add_notes.html", {"collections": collections})
-
+    return render(request, 'notes_app/add_notes.html', {'form': form, 'collections': collections})
 def index(request):
     return render(request, "notes_app/home.html")
 

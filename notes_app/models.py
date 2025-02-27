@@ -9,7 +9,7 @@ class Collection(models.Model):
 class Note(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    file = models.FileField(upload_to='uploads/')  # File storage
+    file = models.FileField(upload_to='notes/')  # File storage
     course_name = models.CharField(max_length=100)
     professor = models.CharField(max_length=100, blank=True)
     semester = models.CharField(max_length=20, blank=True)
@@ -29,6 +29,7 @@ class Note(models.Model):
     description = models.TextField()
     collections = models.ManyToManyField(Collection, blank=True)  # Multi-select
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    s3_url = models.URLField(blank=True, null=True)  
 
     def __str__(self):
         return self.title
