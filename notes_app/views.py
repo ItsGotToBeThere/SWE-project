@@ -9,6 +9,54 @@ from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
 
+from django.core.files.storage import FileSystemStorage
+from .models import Note, Collection
+
+def add_notes(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        subject = request.POST["subject"]
+        semester = request.POST["semester"]
+        date = request.POST["date"]
+        visibility = request.POST["visibility"]
+        description = request.POST["description"]
+        file = request.FILES["file"]
+
+        # Process collections
+        selected_collections = request.POST.getlist("collections")  # Multi-select returns list
+        new_collection_name = request.POST.get("new_collection")  # Check for new collection input
+
+        # Save file to media directory
+        fs = FileSystemStorage()
+        filename = fs.save(file.name, file)
+
+        # Create the note
+        note = Note.objects.create(
+            title=title,
+            subject=subject,
+            semester=semester,
+            date=date,
+            visibility=visibility,
+            description=description,
+            file=file
+        )
+
+        # Add selected collections
+        for collection_id in selected_collections:
+            collection = Collection.objects.get(id=collection_id)
+            note.collections.add(collection)
+
+        # Create and add new collection if provided
+        if new_collection_name:
+            new_collection, created = Collection.objects.get_or_create(name=new_collection_name)
+            note.collections.add(new_collection)
+
+        return redirect("notes_app:librarian_dashboard")  # Redirect after successful upload
+
+    # Pass existing collections to the template
+    collections = Collection.objects.all()
+    return render(request, "notes_app/navbar_librarian/add_notes.html", {"collections": collections})
+
 def index(request):
     return render(request, "notes_app/home.html")
 

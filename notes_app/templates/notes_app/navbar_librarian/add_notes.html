@@ -2,7 +2,140 @@
 {% block title %} Add New Notes {% endblock %}
 
 {% block content %}
-<h2>Add New Notes</h2>
-<p>Form to add new notes will go here.</p>
-<a href="{% url 'notes_app:librarian_dashboard' %}">Back to Dashboard</a>
+<style>
+    /* Make the entire screen fixed (no scrolling) */
+    html, body {
+        height: 100vh;
+        overflow: hidden;  /* Prevent outer scrolling */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Reduce the height of the tan box to leave space for the footer */
+    .tan-container {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;  /* Center vertically */
+        padding-bottom: 40px; /* Ensures space above the footer */
+        flex-direction: column;
+    }
+
+    /* Center the form box and add a scrollbar only inside it */
+    .scroll-box {
+        width: 500px;
+        max-height: 75vh;  /* Reduced height */
+        overflow-y: auto;  /* Enable vertical scroll */
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Ensure the footer stays at the bottom */
+    .footer {
+        height: 40px;
+        background: #1E6BB8;
+        color: white;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Style for the back button */
+    .back-btn-container {
+        text-align: center;
+        margin-top: 20px; /* Creates space between form & button */
+        margin-bottom: 20px; /* Creates space before footer */
+    }
+</style>
+
+<div class="tan-container">
+    <div class="scroll-box">
+        <h2 class="text-center">Add New Notes</h2>
+        
+        <form method="POST" enctype="multipart/form-data" action="{% url 'notes_app:add_notes' %}">
+            {% csrf_token %}
+            
+            <!-- Title -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+
+            <!-- Subject -->
+            <div class="mb-3">
+                <label for="subject" class="form-label">Subject</label>
+                <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter Subject" required>
+            </div>
+
+            <!-- Semester -->
+            <div class="mb-3">
+                <label for="semester" class="form-label">Semester</label>
+                <input type="text" class="form-control" id="semester" name="semester" placeholder="Enter Semester" required>
+            </div>
+
+            <!-- Date -->
+            <div class="mb-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="date" name="date" required>
+            </div>
+
+            <!-- Public/Private -->
+            <div class="mb-3">
+                <label class="form-label">Visibility</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="public" name="visibility" value="public" checked>
+                    <label class="form-check-label" for="public">Public</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="private" name="visibility" value="private">
+                    <label class="form-check-label" for="private">Private</label>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+            </div>
+
+            <!-- Collections (Multi-Select with Scrollbar) -->
+            <div class="mb-3">
+                <label for="collections" class="form-label">Select Collections</label>
+                <select multiple class="form-control" id="collections" name="collections" style="height: 100px; overflow-y: auto;">
+                    {% for collection in collections %}
+                        <option value="{{ collection.id }}">{{ collection.name }}</option>
+                    {% endfor %}
+                </select>
+                <small class="form-text text-muted">Hold CTRL (Windows) or CMD (Mac) to select multiple collections.</small>
+            </div>
+
+            <!-- Create New Collection -->
+            <div class="mb-3">
+                <label for="new_collection" class="form-label">Create New Collection</label>
+                <input type="text" class="form-control" id="new_collection" name="new_collection" placeholder="Enter new collection name">
+            </div>
+
+            <!-- File Upload -->
+            <div class="mb-3">
+                <label for="file" class="form-label">Upload File</label>
+                <input type="file" class="form-control" id="file" name="file" required>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary w-100">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Back to Dashboard Button Centered Below White Box -->
+    <div class="back-btn-container">
+        <a href="{% url 'notes_app:librarian_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+
+</div>
 {% endblock %}
