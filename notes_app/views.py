@@ -9,6 +9,92 @@ from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
 
+from django.core.files.storage import FileSystemStorage
+from .models import Note, Collection
+
+import boto3
+from django.conf import settings
+from .forms import NoteForm
+
+def borrowed_notes(request):
+    user = request.user
+    notes = Note.objects.filter(borrowed_by=user) 
+    collections = Collection.objects.all()
+    title = request.GET.get("title")
+    subject = request.GET.get("subject")
+    semester = request.GET.get("semester")
+    date = request.GET.get("date")
+    visibility = request.GET.get("visibility")
+    collection_id = request.GET.get("collection")
+
+    if title:
+        notes = notes.filter(title__icontains=title)
+    if subject:
+        notes = notes.filter(subject__icontains=subject)
+    if semester:
+        notes = notes.filter(semester__icontains=semester)
+    if date:
+        notes = notes.filter(date=date)
+    if visibility:
+        notes = notes.filter(visibility=visibility)
+    if collection_id:
+        notes = notes.filter(collections__id=collection_id)
+
+    return render(request, "notes_app/borrowed_notes.html", {"notes": notes, "collections": collections})
+
+def available_notes(request):
+    notes = Note.objects.filter(visibility="public") 
+    collections = Collection.objects.all()
+    title = request.GET.get("title")
+    subject = request.GET.get("subject")
+    semester = request.GET.get("semester")
+    date = request.GET.get("date")
+    visibility = request.GET.get("visibility")
+    collection_id = request.GET.get("collection")
+
+    if title:
+        notes = notes.filter(title__icontains=title)
+    if subject:
+        notes = notes.filter(subject__icontains=subject)
+    if semester:
+        notes = notes.filter(semester__icontains=semester)
+    if date:
+        notes = notes.filter(date=date)
+    if visibility:
+        notes = notes.filter(visibility=visibility)
+    if collection_id:
+        notes = notes.filter(collections__id=collection_id)
+
+    return render(request, "notes_app/available_notes.html", {"notes": notes, "collections": collections})
+
+def add_notes(request):
+    if request.method == 'POST':
+        form = NoteForm(request.POST, request.FILES)
+        if form.is_valid():
+            note = form.save(commit=False)
+            file = request.FILES['file']
+            s3 = boto3.client(
+                's3',
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                region_name=settings.AWS_S3_REGION_NAME,
+            )
+            s3_key = f"uploads/notes/{file.name}"
+            s3.upload_fileobj(file, settings.AWS_STORAGE_BUCKET_NAME, s3_key)
+
+            note.s3_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{s3_key}"
+
+            note.save()
+
+            collections = request.POST.getlist('collections')
+            note.collections.set(collections)
+
+            return redirect('notes_app:librarian_dashboard')
+    else:
+        form = NoteForm()
+    
+    collections = Collection.objects.all()
+    return render(request, 'notes_app/add_notes.html', {'form': form, 'collections': collections})
 def index(request):
     return render(request, "notes_app/home.html")
 
