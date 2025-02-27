@@ -2,16 +2,29 @@
     https://css-tricks.com/snippets/css/typewriter-effect/
 */
 
+.dark {
+  --background-color: rgb(25, 25, 25);
+  --text-color: rgb(255, 255, 255, .75);
+  --caret-color:white;
+}
+
+.light{
+  --background-color: white;
+  --text-color: black;
+  --caret-color: black;
+}
+
 /* font */
 @import url(https://fonts.googleapis.com/css?family=Anonymous+Pro);
 
 body, html{
-  background-color:rgb(25,25,25);
-  color: rgb(255,255,255,.75);
+  background-color:var(--background-color);
+  color: var(--text-color);
   font-family: 'Anonymous Pro', monospace;
   width:100%;
   height:100%;
   overflow-x:hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .typewriter{
@@ -92,14 +105,8 @@ body, html{
 
 /* The typewriter cursor effect */
 @keyframes blink-caret {
-  1% { border-right: 0.15em solid white;}
+  1% { border-right: 0.15em solid var(--caret-color);}
   100% { border-right: solid transparent }
-}
-
-
-.navbar{
-  background-color: black;
-  color:white;
 }
 
 a{
@@ -107,11 +114,34 @@ a{
   color:black;
 }
 
-footer{
+.navbar, footer{
   background-color: black;
+  color:white;
+}
+
+footer{
   position:sticky;
   top:100vh;
-  color:white;
   justify-content: center;
 }
 
+#theme-icon{
+  width: 30px;
+  height: 30px;
+
+  position:relative;
+  background-color: yellow;
+  border-radius: 50%;
+  clip-path: circle(50%);
+}
+
+#black-circle{
+  content: "";
+  width:30px;
+  height:30px;
+  background-color: black;
+  position:absolute;
+  border-radius:50%;
+  clip-path:circle(50%);
+  transform: translate(6px,-6px);
+}

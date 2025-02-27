@@ -12,7 +12,7 @@
     {% bootstrap_javascript %}
     <link rel = "stylesheet" href = "{% static 'notes_app/css/home_style.css' %}">
 </head>
-<body>
+<body class = "{{ request.COOKIES.theme|default:'dark'}}">
 
 {% if user.is_authenticated %}
     {% if user.groups.all|length > 0 %}
@@ -41,4 +41,5 @@
     </div>
 </div>
 {% include 'footer.html' %}
+<script src = "{% static 'notes_app/js/set_theme.js' %}"></script>
 </body>

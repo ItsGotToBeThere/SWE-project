@@ -94,3 +94,9 @@ class PromotePatronView(View):
         # Redirect back to librarian dashboard after promotion
         return redirect("notes_app:librarian_dashboard")
 
+
+def set_theme(request):
+    theme = request.GET.get("theme","dark") #default dark
+    response = redirect(request.META.get("HTTP_REFERER","/")) #Go back to page prev page
+    response.set_cookie("theme", theme, max_age=10512000) #Third of a year
+    return response
