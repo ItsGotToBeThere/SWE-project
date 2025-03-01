@@ -128,15 +128,28 @@ footer{
 #theme-icon{
   width: 30px;
   height: 30px;
-
   position:relative;
-  background-color: yellow;
+  background-color: white;
   border-radius: 50%;
   clip-path: circle(50%);
 }
 
+#sun-rays{
+  width: 30px;
+  height: 30px;
+  background: conic-gradient(
+    yellow 0deg 20deg,
+    transparent 20deg 40deg,
+    yellow 40deg 60deg,
+    transparent 60deg 80deg
+  );
+  border-radius: 50%;
+  clip-path: circle(50%);
+}
+
+
+
 #black-circle{
-  content: "";
   width:30px;
   height:30px;
   background-color: black;
@@ -145,3 +158,5 @@ footer{
   clip-path:circle(50%);
   transform: translate(6px,-6px);
 }
+
+
