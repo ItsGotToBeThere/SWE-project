@@ -1,6 +1,7 @@
 Django
 gunicorn
 django-heroku
+django-environ
 dj-database-url
 django-bootstrap-v5
 
