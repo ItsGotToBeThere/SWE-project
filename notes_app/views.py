@@ -16,6 +16,65 @@ import boto3
 from django.conf import settings
 from .forms import NoteForm
 
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Note, Collection, PatronRequest  
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def view_requests(request):
+    """View to list patron requests for approval."""
+    requests = PatronRequest.objects.filter(status="pending") 
+
+    if request.method == "POST":
+        request_id = request.POST.get("request_id")
+        action = request.POST.get("action")
+        patron_request = get_object_or_404(PatronRequest, id=request_id)
+
+        if action == "approve":
+            patron_request.status = "approved"
+            patron_request.note.is_requested = False  
+        elif action == "deny":
+            patron_request.status = "denied"
+
+        patron_request.save()
+        return redirect("notes_app:view_requests") 
+
+    return render(request, "notes_app/view_requests.html", {"requests": requests})
+
+@login_required
+def request_notes(request):
+    """View to display private notes available for request."""
+    notes = Note.objects.filter(is_requested=False, visibility="private") # only private notes
+    title_query = request.GET.get('title', '')
+    subject_query = request.GET.get('subject', '')
+    semester_query = request.GET.get('semester', '')
+    date_query = request.GET.get('date', '')
+    collection_query = request.GET.get('collection', '')
+
+    if title_query:
+        notes = notes.filter(title__icontains=title_query)
+    if subject_query:
+        notes = notes.filter(subject__icontains=subject_query)
+    if semester_query:
+        notes = notes.filter(semester__icontains=semester_query)
+    if date_query:
+        notes = notes.filter(date=date_query)
+    if collection_query:
+        notes = notes.filter(collections__id=collection_query)
+
+    if request.method == "POST":
+        note_id = request.POST.get("note_id")
+        note = get_object_or_404(Note, id=note_id)
+        note.is_requested = True 
+        note.save()
+        return redirect("notes_app:request_notes")  
+
+    return render(request, "notes_app/request_notes.html", {
+        "notes": notes,
+        "collections": collections
+    })
+
+
 def borrowed_notes(request):
     user = request.user
     notes = Note.objects.filter(borrowed_by=user) 
