@@ -4,5 +4,41 @@
 {% block content %}
 <h2>View Patron Requests</h2>
 <p>List of patron requests to review.</p>
-<a href="{% url 'notes_app:librarian_dashboard' %}">Back to Dashboard</a>
+
+{% if requests %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Patron Name</th>
+                <th>Email</th>
+                <th>Note Title</th>
+                <th>Requested Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in requests %}
+                <tr>
+                    <td>{{ request.patron.get_full_name }}</td>
+                    <td>{{ request.patron.email }}</td>
+                    <td>{{ request.note.title }}</td>
+                    <td>{{ request.requested_at }}</td>
+                    <td>
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="request_id" value="{{ request.id }}">
+                            <button type="submit" name="action" value="approve" class="btn btn-success">Approve</button>
+                            <button type="submit" name="action" value="deny" class="btn btn-danger">Deny</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No pending patron requests.</p>
+{% endif %}
+
+<a href="{% url 'notes_app:librarian_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+
 {% endblock %}

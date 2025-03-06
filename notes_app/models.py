@@ -30,6 +30,21 @@ class Note(models.Model):
     collections = models.ManyToManyField(Collection, blank=True)  # Multi-select
     uploaded_at = models.DateTimeField(auto_now_add=True)
     s3_url = models.URLField(blank=True, null=True)  
+    is_requested = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
+
+class PatronRequest(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("denied", "Denied"),
+    ]
+    patron = models.ForeignKey(User, on_delete=models.CASCADE) 
+    note = models.ForeignKey(Note, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    requested_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.patron.username} - {self.note.title} - {self.status}"  
