@@ -19,6 +19,7 @@ from .forms import NoteForm
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Note, Collection, PatronRequest  
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import default_storage
 
 @login_required
 def view_requests(request):
@@ -131,29 +132,13 @@ def add_notes(request):
         form = NoteForm(request.POST, request.FILES)
         if form.is_valid():
             note = form.save(commit=False)
-            file = request.FILES['file']
-            s3 = boto3.client(
-                's3',
-                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-                region_name=settings.AWS_S3_REGION_NAME,
-            )
-            s3_key = f"uploads/notes/{file.name}"
-            s3.upload_fileobj(file, settings.AWS_STORAGE_BUCKET_NAME, s3_key)
-
-            note.s3_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{s3_key}"
-
+            note.created_by = request.user
             note.save()
-
-            collections = request.POST.getlist('collections')
-            note.collections.set(collections)
-
             return redirect('notes_app:librarian_dashboard')
     else:
         form = NoteForm()
-    
-    collections = Collection.objects.all()
-    return render(request, 'notes_app/add_notes.html', {'form': form, 'collections': collections})
+    return render(request, 'notes_app/navbar_librarian/add_notes.html', {'form': form})
+
 def index(request):
     return render(request, "notes_app/home.html")
 
@@ -170,8 +155,8 @@ def anonymous_view(request):
 
 
 # Librarian Views
-def add_notes(request):
-    return render(request, "notes_app/navbar_librarian/add_notes.html")
+# def add_notes(request):
+#     return render(request, "notes_app/navbar_librarian/add_notes.html")
 
 def manage_borrowed(request):
     return render(request, "notes_app/navbar_librarian/manage_borrowed.html")

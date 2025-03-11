@@ -5,9 +5,17 @@ django-environ
 dj-database-url
 django-bootstrap-v5
 
+#form styling dependencies
+django-crispy-forms
+crispy-bootstrap5
+
 #google login dependencies
 django-allauth
 PyJWT
 requests
 cryptography
+boto3
+
+#amazon s3 dependencies
+django-storages
 boto3
