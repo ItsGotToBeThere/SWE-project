@@ -8,18 +8,12 @@ from django.contrib.auth.decorators import login_required
 from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
-
-from django.core.files.storage import FileSystemStorage
 from .models import Note, Collection, NoteFile
-
-import boto3
-from django.conf import settings
 from .forms import NoteForm
-
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Note, Collection, PatronRequest  
 from django.contrib.auth.decorators import login_required
-from django.core.files.storage import default_storage
+from django.contrib import messages
 
 @login_required
 def view_requests(request):
@@ -141,11 +135,9 @@ def add_notes(request):
                 notefile.note = note
                 notefile.file = file
                 notefile.save()
-
-            return redirect('notes_app:librarian_dashboard')
-    else:
-        form = NoteForm()
-    return render(request, 'notes_app/navbar_librarian/add_notes.html', {'form': form})
+            
+            messages.success(request, 'Note created successfully!')
+    return render(request, 'notes_app/navbar_librarian/add_notes.html', {'form': NoteForm()})
 
 def index(request):
     return render(request, "notes_app/home.html")

@@ -16,6 +16,7 @@
 <body class = "{{ request.COOKIES.theme|default:'dark'}}">
     {% include 'notes_app/navbars/librarian_navbar.html' %}
     <div class="container mt-4">
+        {% include 'notes_app/messages.html' %}
         <h1>Create A Note</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
