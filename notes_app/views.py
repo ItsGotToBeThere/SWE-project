@@ -10,7 +10,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 
 from django.core.files.storage import FileSystemStorage
-from .models import Note, Collection
+from .models import Note, Collection, NoteFile
 
 import boto3
 from django.conf import settings
@@ -129,11 +129,19 @@ def available_notes(request):
 
 def add_notes(request):
     if request.method == 'POST':
-        form = NoteForm(request.POST, request.FILES)
+        form = NoteForm(request.POST)
         if form.is_valid():
             note = form.save(commit=False)
             note.created_by = request.user
             note.save()
+
+            files = request.FILES.getlist('files') #fetches from dictionary based on input html tag name in add_notes.html
+            for file in files:
+                notefile = NoteFile()
+                notefile.note = note
+                notefile.file = file
+                notefile.save()
+
             return redirect('notes_app:librarian_dashboard')
     else:
         form = NoteForm()
