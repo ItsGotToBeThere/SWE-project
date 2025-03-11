@@ -2,33 +2,31 @@
     background:white;
     height: 50%;
     width:40%;
-    margin: 2% 30%;
-    display: grid;
-    grid-template-columns: [first] 40px [line2] 50px [line3] auto [col4-start] 50px [five] 40px [end];
-    grid-template-rows: [row1-start] 25% [row1-end] 100px [third-line] auto [last-line];
 }
 
 .profile-picture{
     background:black;
-    grid-column-start: 1;
-    grid-column-end: 3;
-    grid-row-start: 2;
-    grid-row-end: 3;
 }
 
 
 .username{
     background:blue;
-    grid-column-start: 3;
-    grid-column-end: 5;
-    grid-row-start: 2;
-    grid-row-end: 3;
 }
 
 .bio{
     background:red;
-    grid-column-start: 1;
-    grid-column-end: 5;
-    grid-row-start: 3;
-    grid-row-end: 5;
+}
+
+.login-required{
+    background:white;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height: 50%;
+    width:40%;
+    margin: 2% 30%;
+}
+
+.error{
+    border-color: red;
 }

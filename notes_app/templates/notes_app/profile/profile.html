@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+{% block title %} Profile {% endblock %}
+
+{% block content %}
+
+<link rel = "stylesheet" href = "{% static 'notes_app/css/profile.css' %}">
+
+{% if user.is_authenticated %}
+
+<div class = 'profile-container'>
+
+
+    <div class = 'profile-picture'>
+        <img src = "{{ user.profile.get_profile_pic_url }}" alt = "Profile Picture">
+    </div>
+    <div class = 'username'>
+        {{ user.profile.username }}
+    </div>
+    <div class = 'bio'>
+        {{ user.profile.bio }}
+    </div>
+    <a class = "btn btn-dark" href = {% url 'notes_app:edit_profile' %}>Edit Profile</a>
+
+
+</div>
+
+{% else %}
+    <div class = 'login-required'>
+    <p>You are not signed in.</p>
+     <a href="{% provider_login_url 'google' next='/' %}">Google Login</a>
+    </div>
+{% endif %}
+
+
+
+
+{% endblock %}

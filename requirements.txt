@@ -2,8 +2,10 @@ Django
 gunicorn
 django-heroku
 django-environ
+django-storages
 dj-database-url
 django-bootstrap-v5
+Pillow
 
 #google login dependencies
 django-allauth

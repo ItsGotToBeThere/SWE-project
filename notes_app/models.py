@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.templatetags.static import static
+from storages.backends.s3boto3 import S3Boto3Storage
+
 class Collection(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -26,7 +29,6 @@ class Note(models.Model):
     ]
     date = models.DateField()
     visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default="public")
-    description = models.TextField()
     collections = models.ManyToManyField(Collection, blank=True)  # Multi-select
     uploaded_at = models.DateTimeField(auto_now_add=True)
     s3_url = models.URLField(blank=True, null=True)  
@@ -48,3 +50,22 @@ class PatronRequest(models.Model):
 
     def __str__(self):
         return f"{self.patron.username} - {self.note.title} - {self.status}"  
+
+
+PRONOUN_CHOICES = (('he/him',"He/Him"), ('she/her',"She/Her"), ('they/them',"They/Them"), ('other',"Other"))
+
+class Profile(models.Model):
+    """
+    User class + other information (Bio, Profile pic, etc.)
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.ImageField(storage=S3Boto3Storage(), blank = True, upload_to='profile-pictures/')
+    preferred_named = models.CharField(max_length = 40,blank=True)
+    preferred_pronouns = models.CharField(max_length = 17,choices = PRONOUN_CHOICES, blank=True)
+    bio = models.TextField(blank=True)
+
+    def get_profile_pic_url(self):
+        if self.profile_picture:
+            return self.profile_picture.url
+        else:
+            return static('notes_app/images/default_profile.png')
