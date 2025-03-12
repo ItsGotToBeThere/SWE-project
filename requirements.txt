@@ -7,9 +7,16 @@ dj-database-url
 django-bootstrap-v5
 Pillow
 
+#form styling dependencies
+django-crispy-forms
+crispy-bootstrap5
+
 #google login dependencies
 django-allauth
 PyJWT
 requests
 cryptography
+
+#amazon s3 dependencies
+django-storages
 boto3

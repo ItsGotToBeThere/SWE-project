@@ -1,0 +1,17 @@
+<!--messages /alerts template used across pages, used to display error & success messages-->
+<!--https://www.youtube.com/watch?v=e96HiBcyPsY-->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <script>
+        var messages = document.querySelectorAll('.alert');
+        messages.forEach(function(message) {
+            setTimeout(function() {
+                message.style.display = 'none';
+            }, 2000); // hide message after a 2 second delay
+        });
+    </script>
+{% endif %}

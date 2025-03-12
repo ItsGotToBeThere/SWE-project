@@ -5,7 +5,7 @@ from .models import Note, Profile
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
-        fields = ['title', 'description', 'file', 'course_name', 'professor', 'semester', 'privacy']
+        fields = ['title', 'description', 'file', 'course_name', 'professor', 'semester']
 
 
 

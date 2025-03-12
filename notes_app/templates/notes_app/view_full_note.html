@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mt-4">
+        {% include 'notes_app/messages.html' %}
+        <h1>{{note.title}}</h1>
+        <p><strong>ID: </strong>{{note.id}}</p>
+        <p><strong>Course Name: </strong>{{note.course_name}}</p>
+        <p><strong>Professor: </strong>{{note.professor}}</p>
+        <p><strong>Semester: </strong>{{note.semester}}</p>
+        <p><strong>Creation Date: </strong>{{note.created_at}}</p>
+        <p><strong>Description: </strong>{{note.description}}</p>
+        <p><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
+        <p><strong>Location: </strong> Virtual </p>
+        <p>
+            <p><strong>Files:</strong></p> 
+            {% for file in files %}
+                <!--_blank opens the link in a new tab-->
+                <a href="{{ file.file.url }}" target="_blank">
+                    {{ file.file.url }}
+                </a>
+                <br>
+            {% endfor %}
+        </p>
+        <a href="{% url 'notes_app:view_notes' %}" class="btn btn-secondary">Back</a>
+        <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
+        <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
+    </div>
+    <br>
+{% endblock %}
