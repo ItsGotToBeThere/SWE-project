@@ -2,7 +2,7 @@
 {% block content %}
     <div class="container mt-4">
         {% include 'notes_app/messages.html' %}
-        <p>Title: {{note.title}}</p>
+        <h1>{{note.title}}</h1>
         <p>ID: {{note.id}}</p>
         <p>Course Name: {{note.course_name}}</p>
         <p>Professor: {{note.professor}}</p>
@@ -14,8 +14,8 @@
             <p>Files:</p> 
             {% for file in files %}
                 <!--_blank opens the link in a new tab-->
-                <a href="https://notes-sharing-app.s3.us-east-1.amazonaws.com/{{file.file}}" target="_blank">
-                    https://notes-sharing-app.s3.us-east-1.amazonaws.com/{{file.file}}
+                <a href="{{ file.file.url }}" target="_blank">
+                    {{ file.file.url }}
                 </a>
                 <br>
             {% endfor %}

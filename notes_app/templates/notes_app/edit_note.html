@@ -1,1 +1,55 @@
-{% include 'notes_app/messages.html' %}
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mt-4">
+        {% include 'notes_app/messages.html' %}
+        <h1>Edit Note</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" name="title" id="title" value ={{note.title}} required>
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" class="form-control" name="description" id="description" value ={{note.description}}>
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="course_name">Course Name</label>
+                <input type="text" class="form-control" name="course_name" id="course_name" value ={{note.course_name}} required>
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="professor">Professor</label>
+                <input type="text" class="form-control" name="professor" id="professor" value ={{note.professor}}>
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="semester">Semester</label>
+                <input type="text" class="form-control" name="semester" id="semester" value ={{note.semester}}>
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="files">Upload New File(s)</label>
+                <div class="input-group">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" name="files" id="files" multiple>
+                </div>
+                </div>
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="files">Existing Files To Include In Updated Note</label>
+                <select class="form-select" multiple aria-label="multiple select example" name="select_files" id="select_files">
+                    {% for file in files %}
+                        <option value="{{file.file.url}}" selected>{{ file.file.url }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <br>  
+{% endblock %}
