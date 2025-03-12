@@ -1,7 +1,16 @@
 from django import forms
-from .models import Note
+from .models import Note, Profile
+
 
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
-        fields = ['title', 'description', 'course_name', 'professor', 'semester']
+        fields = ['title', 'description', 'file', 'course_name', 'professor', 'semester']
+
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        exclude = ['user']
+        error_css_class = 'error'

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Profile {% endblock %}
+
+
+{% block content %}
+
+    <link rel = "stylesheet" href = "{% static 'notes_app/css/profile.css' %}">
+
+    <h2>Edit Profile</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}  {# Renders the form fields nicely #}
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <a href="{% url 'notes_app:profile' %}">Cancel</a> {# Link back to profile page #}
+
+{% endblock %}

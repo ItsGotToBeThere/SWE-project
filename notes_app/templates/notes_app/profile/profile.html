@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load static %}
+
+
+{% block title %}Profile{% endblock %}
+{% block content %}
+<link rel = "stylesheet" href = "{% static 'notes_app/css/profile.css' %}">
+
+<div class = 'profile-container'>
+
+    <div class = "banner-container"><img class = "banner" src = "{{ user.profile.get_banner_url }}" alt = "Banner"></div>
+    <div class = "profile-picture-container" ><img class = "profile-picture rounded-circle" src = "{{ user.profile.get_profile_pic_url }}" alt = "Profile Picture"></div>
+    <div class = "social-stats">
+        <div class = "role">{{ user.profile.get_role }}</div>
+        <div class = "posts">
+            <div class = "posts-number">74</div>
+            <div class = "posts-text grey">Notes</div>
+        </div>
+        <div class = "follows">
+            <div class = "follow-count">675</div>
+            <div class = "follow-text grey">Followers</div>
+        </div>
+        <a class = "edit-button btn btn-dark" href = "{% url 'notes_app:edit_profile' %}">Edit</a>
+    </div>
+    <div class = "info">
+        <div class = "name">{{ user.profile.get_preferred_name }}</div>
+        <div class = "pronouns grey">{{ user.profile.preferred_pronouns }}</div>
+    </div>
+    <div class = "bio">{{ user.profile.bio }}</div>
+    <div class = "notes-selection">
+        <a class = "public-button btn btn-light">Public</a>
+        <a class = "private-button btn btn-light">Private</a>
+    </div>
+    <div class = "notes scroll-pane">Notes</div>
+</div>
+{% endblock %}

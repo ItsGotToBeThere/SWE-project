@@ -5,13 +5,17 @@ from django.contrib.auth.models import Group
 from django.dispatch import receiver
 from allauth.account.signals import user_signed_up
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from django.views import generic
+
 from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
-from .models import Note, Collection, NoteFile
-from .forms import NoteForm
+from django.core.files.storage import FileSystemStorage
+from .models import Note, Collection, PatronRequest, Profile, NoteFile
+from django.conf import settings
+from .forms import NoteForm, ProfileForm
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Note, Collection, PatronRequest  
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import boto3
@@ -220,7 +224,7 @@ def index(request):
     return render(request, "notes_app/home.html")
 
 def profile(request):
-    return render(request, "notes_app/profile.html")
+    return render(request, "notes_app/profile/profile.html")
 
 def logout_view(request):
     if request.user.is_authenticated:
@@ -250,13 +254,6 @@ def request_notes(request):
 
 def borrowed_notes(request):
     return render(request, "notes_app/navbar_patron/borrowed_notes.html")
-
-# Dashboards
-def librarian_dashboard(request):
-    return render(request, "notes_app/librarian_dashboard.html")
-
-def patron_dashboard(request):
-    return render(request, "notes_app/patron_dashboard.html")
 
 # assign new users to patrons group by default
 @receiver(user_signed_up)
@@ -307,3 +304,21 @@ def set_theme(request):
     response = redirect(request.META.get("HTTP_REFERER","/")) #Go back to page prev page
     response.set_cookie("theme", theme, max_age=10512000) #Third of a year
     return response
+
+
+class EditProfileView(generic.UpdateView):
+    model = Profile
+    form_class = ProfileForm
+    template_name = "notes_app/profile/edit_profile.html"
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Profile, user=self.request.user)
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("notes_app:profile")
+
+

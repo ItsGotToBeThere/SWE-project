@@ -81,7 +81,7 @@
 
 /* The typewriter cursor effect */
 @keyframes blink-caret {
-  1% { border-right: 0.15em solid var(--caret-color);}
+  1% { border-right: 0.15em solid var(--text-color);}
   100% { border-right: solid transparent }
 }
 
