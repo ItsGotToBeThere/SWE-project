@@ -11,7 +11,7 @@
     {% load bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
-    <link rel = "stylesheet" href = "{% static 'notes_app/css/home_style.css' %}">
+    <link rel = "stylesheet" href = "{% static 'notes_app/css/default_style.css' %}">
 </head>
 <body class = "{{ request.COOKIES.theme|default:'dark'}}">
 
@@ -38,5 +38,6 @@
 {% endblock %}
 <script src = "{% static 'notes_app/js/set_theme.js' %}"></script>
 {% include 'footer.html' %}
+<script src = "{% static 'notes_app/js/set_theme.js' %}"></script>
 </body>
 </html>

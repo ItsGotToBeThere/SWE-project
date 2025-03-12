@@ -1,41 +1,23 @@
 {% extends 'base.html'%}
-{% block title %} Dashboard {% endblock %}
+{% load static %}
+{% block title %} profile {% endblock %}
 
 {% block content %}
-<div class = 'container'>
-{% load socialaccount %}
 
-{% if user.is_authenticated %}
-    <h2>Welcome, {{ user.email }}!</h2>
+<link rel = "stylesheet" href = "{% static 'notes_app/css/profile.css' %}">
 
-    {% if user.groups.all|length > 0 %}
-        {% for group in user.groups.all %}
-            {% if group.name == "Librarians" %}
-                <a href="{% url 'notes_app:librarian_dashboard' %}">Librarian Dashboard</a><br>
-            {% elif group.name == "Patrons" %}
-                <a href="{% url 'notes_app:patron_dashboard' %}">Patron Dashboard</a><br>
-            {% endif %}
-        {% endfor %}
-    {% else %}
-        <p>You do not belong to a group yet.</p>
-    {% endif %}
+<div class = 'profile-container'>
 
-    <h3>Menu:</h3>
-    <ul class = "list-group">
-        <li class = "list-group-item"><a href="{% url 'account_email' %}">Change Email</a></li>
-        <li class = "list-group-item"><a href="{% url 'account_change_password' %}">Change Password</a></li>
-        <li class = "list-group-item"><a href="{% url 'socialaccount_connections' %}">Account Connections</a></li>
-        <li class = "list-group-item"><a href="{% url 'account_logout' %}">Sign Out</a></li>
-    </ul>
+    <div class = 'profile-picture'>
+        profile picture
+    </div>
+    <div class = 'username'>
+        username
+    </div>
+    <div class = 'bio'>
+        biography
+    </div>
 
-{% else %}
-    <h2>Please sign in to access the website.</h2>
-    <button class="btn btn-outline-info">
-        <a href="{% provider_login_url 'google'%}?next=/">
-            <i class="fab fa-google"></i>
-            Login with Google
-        </a>
-    </button>
-{% endif %}
 </div>
+
 {% endblock %}
