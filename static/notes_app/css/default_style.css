@@ -6,13 +6,16 @@ https://www.youtube.com/watch?v=nCJtL_-kDGU
 .dark {
   --background-color: rgb(25, 25, 25);
   --text-color: rgb(255, 255, 255, .75);
-  --caret-color:white;
+  --navbar-footer-color: black;
+  --navbar-footer-text-color: white;
+
 }
 
 .light{
-  --background-color: white;
-  --text-color: black;
-  --caret-color: black;
+  --background-color: #f1faee;
+  --text-color: #457b9d;
+  --navbar-footer-color: #1d3557;
+  --navbar-footer-text-color: white;
 }
 
 :root{
@@ -38,12 +41,12 @@ body, html{
 
 a{
   text-decoration: none;
-  color:black;
+  color:var(--navbar-footer-color);
 }
 
 .navbar, footer{
-  background-color: black;
-  color:white;
+  background-color: var(--navbar-footer-color);
+  color:var(--navbar-footer-text-color);
 }
 
 footer{

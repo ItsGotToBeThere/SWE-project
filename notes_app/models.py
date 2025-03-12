@@ -59,13 +59,30 @@ class Profile(models.Model):
     User class + other information (Bio, Profile pic, etc.)
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_picture = models.ImageField(storage=S3Boto3Storage(), blank = True, upload_to='profile-pictures/')
+    banner = models.ImageField(storage=S3Boto3Storage(), null = True, blank = True, upload_to='banners/', default = None)
+    profile_picture = models.ImageField(storage=S3Boto3Storage(), null = True, blank = True, upload_to='profile-pictures/', default=None)
     preferred_named = models.CharField(max_length = 40,blank=True)
     preferred_pronouns = models.CharField(max_length = 17,choices = PRONOUN_CHOICES, blank=True)
     bio = models.TextField(blank=True)
+
+
+    def get_banner_url(self):
+        if self.banner:
+            return self.banner.url
+        else:
+            return static('notes_app/images/default_banner.png')
 
     def get_profile_pic_url(self):
         if self.profile_picture:
             return self.profile_picture.url
         else:
             return static('notes_app/images/default_profile.png')
+
+    def get_role(self):
+        return str(self.user.groups.all()[0])[:-1]
+
+    def get_preferred_name(self):
+        if self.preferred_named:
+            return self.preferred_named
+        else:
+            return self.user.username
