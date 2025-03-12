@@ -16,8 +16,6 @@ class Note(models.Model):
     semester = models.CharField(max_length=20, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)  # User refers to the auth_user table
     created_at = models.DateTimeField(auto_now_add=True)
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-    s3_url = models.URLField(blank=True, null=True)  
     is_requested = models.BooleanField(default=False)
 
     def __str__(self):
@@ -44,9 +42,9 @@ class PatronRequest(models.Model):
 
 PRONOUN_CHOICES = (('he/him',"He/Him"), ('she/her',"She/Her"), ('they/them',"They/Them"), ('other',"Other"))
 
-class Profile(models.Model):
+class UserProfile(models.Model):
     """
-    User class + other information (Bio, Profile pic, etc.)
+    User class + other information (Bio, UserProfile pic, etc.)
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     banner = models.ImageField(storage=S3Boto3Storage(), null = True, blank = True, upload_to='banners/', default = None)

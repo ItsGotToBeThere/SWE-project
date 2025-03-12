@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from django.http import HttpResponse
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
@@ -12,7 +13,7 @@ from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.core.files.storage import FileSystemStorage
-from .models import Note, Collection, PatronRequest, Profile, NoteFile
+from .models import Note, Collection, PatronRequest, UserProfile, NoteFile
 from django.conf import settings
 from .forms import NoteForm, ProfileForm
 from django.shortcuts import render, get_object_or_404, redirect
@@ -223,18 +224,22 @@ def delete_note(request, note_id):
 
 def add_notes(request):
     if request.method == 'POST':
-        form = NoteForm(request.POST)
-        if form.is_valid():
-            note = form.save(commit=False)
-            note.created_by = request.user
-            note.save()
+        try:
+            form = NoteForm(request.POST)
+            if form.is_valid():
+                note = form.save(commit=False)
+                note.created_by = request.user
+                note.save()
 
-            files = request.FILES.getlist('files') #fetches from dictionary based on input html tag name in add_notes.html
-            for file in files:
-                notefile = NoteFile()
-                notefile.note = note
-                notefile.file = file
-                notefile.save()
+                files = request.FILES.getlist('files') #fetches from dictionary based on input html tag name in add_notes.html
+                for file in files:
+                    notefile = NoteFile()
+                    notefile.note = note
+                    notefile.file = file
+                    notefile.save()
+        except ValidationError as e:
+            # Handle the validation error
+            print("error was" + str(e.message_dict))  # This will show which field failed validation
             
             messages.success(request, 'Note created successfully!')
     return render(request, 'notes_app/navbar_librarian/add_notes.html', {'form': NoteForm()})
@@ -326,12 +331,12 @@ def set_theme(request):
 
 
 class EditProfileView(generic.UpdateView):
-    model = Profile
+    model = UserProfile
     form_class = ProfileForm
     template_name = "notes_app/profile/edit_profile.html"
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Profile, user=self.request.user)
+        return get_object_or_404(UserProfile, user=self.request.user)
 
     def form_valid(self, form):
         form.instance.user = self.request.user
