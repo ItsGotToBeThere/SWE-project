@@ -15,11 +15,16 @@ urlpatterns = [
     path("librarian-dashboard/", views.librarian_dashboard, name='librarian_dashboard'),
     path("promote/<int:patron_id>/", views.PromotePatronView.as_view(), name='promote_patron_view'),
     
+    #patron specific urls
     path("available-notes/", views.available_notes, name="available_notes"),
     path("request-notes/", views.request_notes, name="request_notes"),
     path("borrowed-notes/", views.borrowed_notes, name="borrowed_notes"),
 
+    #librarian specific urls
     path("add-notes/", views.add_notes, name="add_notes"),
+    path("view-notes/", views.view_notes, name="view_notes"),
     path("manage-borrowed/", views.manage_borrowed, name="manage_borrowed"),
+    path("view_full_note/<int:note_id>/", views.view_full_note, name="view_full_note"),
+    path("edit_note/<int:note_id>/", views.edit_note, name="edit_note"),
     path("view-requests/", views.view_requests, name="view_requests"),
 ]

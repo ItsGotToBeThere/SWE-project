@@ -121,6 +121,40 @@ def available_notes(request):
 
     return render(request, "notes_app/available_notes.html", {"notes": notes, "collections": collections})
 
+
+def view_notes(request):
+    collections = Collection.objects.all()
+    notes = Note.objects.all()
+    # title = request.GET.get("title")
+    # subject = request.GET.get("subject")
+    # semester = request.GET.get("semester")
+    # date = request.GET.get("date")
+    # visibility = request.GET.get("visibility")
+    # collection_id = request.GET.get("collection")
+
+    # if title:
+    #     notes = notes.filter(title__icontains=title)
+    # if subject:
+    #     notes = notes.filter(subject__icontains=subject)
+    # if semester:
+    #     notes = notes.filter(semester__icontains=semester)
+    # if date:
+    #     notes = notes.filter(date=date)
+    # if visibility:
+    #     notes = notes.filter(visibility=visibility)
+    # if collection_id:
+    #     notes = notes.filter(collections__id=collection_id)
+
+    return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes": notes, "collections": collections})
+
+def edit_note(request, note_id):
+    return render(request, "notes_app/edit_note.html", context={'note_id': note_id})
+
+def view_full_note(request, note_id):
+    note = get_object_or_404(Note, pk=note_id) #fetch one note object
+    files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
+    return render(request, "notes_app/view_full_note.html", context={'note': note, 'files': files})
+
 def add_notes(request):
     if request.method == 'POST':
         form = NoteForm(request.POST)

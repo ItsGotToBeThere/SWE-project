@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mt-4">
+        {% include 'notes_app/messages.html' %}
+        <p>Title: {{note.title}}</p>
+        <p>ID: {{note.id}}</p>
+        <p>Course Name: {{note.course_name}}</p>
+        <p>Professor: {{note.professor}}</p>
+        <p>Semester: {{note.semester}}</p>
+        <p>Creation Date: {{note.created_at}}</p>
+        <p>Description: {{note.description}}</p>
+        <p>Request / Lent Out: {{note.is_requested}}</p>
+        <p>
+            <p>Files:</p> 
+            {% for file in files %}
+                <!--_blank opens the link in a new tab-->
+                <a href="https://notes-sharing-app.s3.us-east-1.amazonaws.com/{{file.file}}" target="_blank">
+                    https://notes-sharing-app.s3.us-east-1.amazonaws.com/{{file.file}}
+                </a>
+                <br>
+            {% endfor %}
+        </p>
+        <a href="{% url 'notes_app:view_notes' %}" class="btn btn-secondary">Back</a>
+        <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
+    </div>
+    <br>
+{% endblock %}
