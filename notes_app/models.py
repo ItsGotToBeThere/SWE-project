@@ -44,7 +44,7 @@ PRONOUN_CHOICES = (('he/him',"He/Him"), ('she/her',"She/Her"), ('they/them',"The
 
 class Profile(models.Model):
     """
-    User class + other information (Bio, UserProfile pic, etc.)
+    User class + other information (Bio, Profile pic, etc.)
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     banner = models.ImageField(storage=S3Boto3Storage(), null = True, blank = True, upload_to='banners/', default = None)
