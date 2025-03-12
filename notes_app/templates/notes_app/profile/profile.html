@@ -8,6 +8,7 @@
 <link rel = "stylesheet" href = "{% static 'notes_app/css/profile.css' %}">
 
 <div class = 'profile-container'>
+    {% if user.is_authenticated %}
 
     <div class = "banner-container"><img class = "banner" src = "{{ user.profile.get_banner_url }}" alt = "Banner"></div>
     <div class = "profile-picture-container" ><img class = "profile-picture rounded-circle" src = "{{ user.profile.get_profile_pic_url }}" alt = "Profile Picture"></div>
@@ -33,5 +34,9 @@
         <a class = "private-button btn btn-light">Private</a>
     </div>
     <div class = "notes scroll-pane">Notes</div>
+    {% else %}
+        <p>You are not signed in.</p>
+        <a href="{% provider_login_url 'google' next='/' %}">Google Login</a>
+    {% endif %}
 </div>
 {% endblock %}

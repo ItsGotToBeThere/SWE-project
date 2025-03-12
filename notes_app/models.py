@@ -42,7 +42,7 @@ class PatronRequest(models.Model):
 
 PRONOUN_CHOICES = (('he/him',"He/Him"), ('she/her',"She/Her"), ('they/them',"They/Them"), ('other',"Other"))
 
-class UserProfile(models.Model):
+class Profile(models.Model):
     """
     User class + other information (Bio, UserProfile pic, etc.)
     """

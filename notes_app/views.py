@@ -13,7 +13,7 @@ from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.core.files.storage import FileSystemStorage
-from .models import Note, Collection, PatronRequest, UserProfile, NoteFile
+from .models import Note, Collection, PatronRequest, Profile, NoteFile
 from django.conf import settings
 from .forms import NoteForm, ProfileForm
 from django.shortcuts import render, get_object_or_404, redirect
@@ -331,12 +331,12 @@ def set_theme(request):
 
 
 class EditProfileView(generic.UpdateView):
-    model = UserProfile
+    model = Profile
     form_class = ProfileForm
     template_name = "notes_app/profile/edit_profile.html"
 
     def get_object(self, queryset=None):
-        return get_object_or_404(UserProfile, user=self.request.user)
+        return get_object_or_404(Profile, user=self.request.user)
 
     def form_valid(self, form):
         form.instance.user = self.request.user

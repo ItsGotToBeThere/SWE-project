@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
-from .models import UserProfile
+from .models import Profile
 
 User = get_user_model()
 """
@@ -10,7 +10,7 @@ Connect the User model and the UserProfile model.
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
+        Profile.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
@@ -20,7 +20,7 @@ def save_user_profile(sender, instance, **kwargs):
 """
 Delete old profile picture on setting new profile picture
 """
-@receiver(pre_save, sender=UserProfile)
+@receiver(pre_save, sender=Profile)
 def delete_old_profile_picture(sender, instance, **kwargs):
     print("method called")
     if instance.pk:
@@ -33,7 +33,7 @@ def delete_old_profile_picture(sender, instance, **kwargs):
         except sender.DoesNotExist:
             pass
 
-@receiver(post_delete, sender=UserProfile)
+@receiver(post_delete, sender=Profile)
 def delete_profile_picture_on_delete(sender, instance, **kwargs):
     print("method called")
     if instance.profile_picture:

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Note, UserProfile
+from .models import Note, Profile
 
 
 class NoteForm(forms.ModelForm):
@@ -11,6 +11,6 @@ class NoteForm(forms.ModelForm):
 
 class ProfileForm(forms.ModelForm):
     class Meta:
-        model = UserProfile
+        model = Profile
         exclude = ['user']
         error_css_class = 'error'
