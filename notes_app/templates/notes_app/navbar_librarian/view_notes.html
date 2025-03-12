@@ -68,23 +68,36 @@
     </form>
 
     <!-- List of Available Notes -->
-    <div class="notes-list">
-        {% if notes %}
-            {% for note in notes %}
-                <div class="note-item">
-                    <h4>{{ note.title }}</h4>
-                    <p><strong>Course Name:</strong> {{ note.course_name }}</p>
-                    <p><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
-                    <p><strong>Creation Date:</strong> {{ note.created_at }}</p>
-                    <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
-                    <a href="{% url 'notes_app:view_full_note' note.id %}" class="btn btn-secondary">View Full Note</a>
-                    <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
-                </div>
+    {% load utils %}
+        {% if notes_and_file %}
+            {% for tuple in notes_and_file %}
+                {% with note=tuple|get_note %} <!--from utils.py since django templates doesn't support indexing into a tuple-->
+                {% with file=tuple|get_file %}
+                <div class="card">
+                    <div class="row">
+                        <div class="col-md-4 d-flex justify-content-center"">
+                            <img src="{{ file.file.url }}" class="img-fluid">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                            <h4>{{ note.title }}</h4>
+                            <p><strong>Course Name:</strong> {{ note.course_name }}</p>
+                            <p><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
+                            <p><strong>Creation Date:</strong> {{ note.created_at }}</p>
+                            <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
+                            <a href="{% url 'notes_app:view_full_note' note.id %}" class="btn btn-secondary">View Full Note</a>
+                            <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>              
+                <br>
+                {% endwith %}
+                {% endwith %}
             {% endfor %}
         {% else %}
             <p>No notes found matching your criteria.</p>
         {% endif %}
-    </div>
-</div>
 <br>
+</div>
 {% endblock %}

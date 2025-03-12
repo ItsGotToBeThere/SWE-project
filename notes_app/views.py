@@ -15,6 +15,8 @@ from .models import Note, Collection, PatronRequest
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import boto3
+import urllib.request
+from django.core.files.base import ContentFile
 
 @login_required
 def view_requests(request):
@@ -122,10 +124,27 @@ def available_notes(request):
 
     return render(request, "notes_app/available_notes.html", {"notes": notes, "collections": collections})
 
+#to do: iterate through all the files (check if one is an image -> if so, display, else display default image)
 
 def view_notes(request):
     collections = Collection.objects.all()
     notes = Note.objects.all()
+    notes_and_file = [] #creates a list of tuples (Note, NoteFile)
+    for note in notes:
+        files = NoteFile.objects.filter(note_id=note.id) #fetch an array of notefile objects
+        
+        #get default display icon and use it to make a notefile object
+        response = urllib.request.urlopen('https://notes-sharing-app.s3.us-east-1.amazonaws.com/notes/default_image.png')
+        file_obj = ContentFile(response.read(), name='notes/default_image.png')
+        file_display_image = NoteFile(note=note,file=file_obj)
+        
+        #if any files associated with the note are images, use that instead of the defualt icon
+        for file in files:
+            if '.jpg' in str(file.file) or '.jpeg' in str(file.file) or '.png' in str(file.file):
+                print('reached')
+                file_display_image = file
+                break
+        notes_and_file.append((note, file_display_image))
     # title = request.GET.get("title")
     # subject = request.GET.get("subject")
     # semester = request.GET.get("semester")
@@ -146,7 +165,7 @@ def view_notes(request):
     # if collection_id:
     #     notes = notes.filter(collections__id=collection_id)
 
-    return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes": notes, "collections": collections})
+    return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes": notes, "collections": collections, "notes_and_file": notes_and_file})
 
 def edit_note(request, note_id):
     note = get_object_or_404(Note, pk=note_id) #fetch one note object
