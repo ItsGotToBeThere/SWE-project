@@ -42,7 +42,7 @@ IS_HEROKU_APP = "DYNO" in os.environ and "CI" not in os.environ
 if IS_HEROKU_APP:
     ALLOWED_HOSTS = ["notes-sharing-app-d8b5cb736270.herokuapp.com"]
     SECURE_SSL_REDIRECT = True
-    SITE_ID = 6
+    SITE_ID = 8
 else:
     ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
     SITE_ID = 2
