@@ -27,6 +27,8 @@
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+        <a href="{% url 'notes_app:view_notes' %}" class="btn btn-secondary">View Notes</a>
+        <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
     </div>
     <br>  
 {% endblock %}

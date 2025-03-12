@@ -26,5 +26,6 @@ urlpatterns = [
     path("manage-borrowed/", views.manage_borrowed, name="manage_borrowed"),
     path("view_full_note/<int:note_id>/", views.view_full_note, name="view_full_note"),
     path("edit_note/<int:note_id>/", views.edit_note, name="edit_note"),
+    path("delete_note/<int:note_id>/", views.delete_note, name="delete_note"),
     path("view-requests/", views.view_requests, name="view_requests"),
 ]

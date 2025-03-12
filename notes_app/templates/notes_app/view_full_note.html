@@ -23,6 +23,7 @@
         </p>
         <a href="{% url 'notes_app:view_notes' %}" class="btn btn-secondary">Back</a>
         <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
+        <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
     </div>
     <br>
 {% endblock %}
