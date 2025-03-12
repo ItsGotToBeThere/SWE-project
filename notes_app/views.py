@@ -195,6 +195,7 @@ def delete_note(request, note_id):
 
     collections = Collection.objects.all()
     notes = Note.objects.all()
+    messages.success(request, "Successfully deleted note!")
     return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes": notes, "collections": collections})
 
 def add_notes(request):

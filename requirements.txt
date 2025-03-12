@@ -14,7 +14,6 @@ django-allauth
 PyJWT
 requests
 cryptography
-boto3
 
 #amazon s3 dependencies
 django-storages
