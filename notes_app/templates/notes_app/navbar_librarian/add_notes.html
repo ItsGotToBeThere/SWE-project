@@ -5,8 +5,8 @@
         {% include 'notes_app/messages.html' %}
         <h1>Create A Note</h1>
         <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form | crispy}}
+            {% csrf_token %} 
+            {{ form | crispy}} <!--crispy styles django forms using bootstrap-->
             <p>Upload File(s)*</p>
             <input type="file" name="files" multiple required>
             <br>

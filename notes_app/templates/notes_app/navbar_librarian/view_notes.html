@@ -74,7 +74,7 @@
                 <div class="note-item">
                     <h4>{{ note.title }}</h4>
                     <p><strong>Course Name:</strong> {{ note.course_name }}</p>
-                    <p><strong>Requested / Lent Out:</strong> {{ note.is_requested }}</p>
+                    <p><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
                     <p><strong>Creation Date:</strong> {{ note.created_at }}</p>
                     <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
                     <a href="{% url 'notes_app:view_full_note' note.id %}" class="btn btn-secondary">View Full Note</a>

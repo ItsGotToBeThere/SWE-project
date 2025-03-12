@@ -1,35 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load crispy_forms_tags %}
     <div class="container mt-4">
         {% include 'notes_app/messages.html' %}
         <h1>Edit Note</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="title">Title</label>
-                <input type="text" class="form-control" name="title" id="title" value ={{note.title}} required>
-            </div>
-            <br>
-            <div class="form-group">
-                <label for="description">Description</label>
-                <input type="text" class="form-control" name="description" id="description" value ={{note.description}}>
-            </div>
-            <br>
-            <div class="form-group">
-                <label for="course_name">Course Name</label>
-                <input type="text" class="form-control" name="course_name" id="course_name" value ={{note.course_name}} required>
-            </div>
-            <br>
-            <div class="form-group">
-                <label for="professor">Professor</label>
-                <input type="text" class="form-control" name="professor" id="professor" value ={{note.professor}}>
-            </div>
-            <br>
-            <div class="form-group">
-                <label for="semester">Semester</label>
-                <input type="text" class="form-control" name="semester" id="semester" value ={{note.semester}}>
-            </div>
-            <br>
+            {{ form | crispy}}
             <div class="form-group">
                 <label for="files">Upload New File(s)</label>
                 <div class="input-group">

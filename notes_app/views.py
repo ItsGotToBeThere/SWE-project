@@ -152,19 +152,19 @@ def edit_note(request, note_id):
     files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
     if request.method == 'POST':
         #update core note attributes 
-        form = NoteForm(request.POST)
+        form = NoteForm(request.POST, instance=note)
         if form.is_valid():
-            note.title = form.cleaned_data["title"]
-            note.course_name = form.cleaned_data["course_name"]
-            note.professor = form.cleaned_data["professor"]
-            note.semester = form.cleaned_data["semester"]
-            note.description = form.cleaned_data["description"]
             note.save()
         else:
-            messages.error("Unable to modify note, please try again.")
+            messages.error(request, "Unable to modify note, note name already exists.")
+            return render(request, "notes_app/edit_note.html", context={'form': form, 'files': files})
         
+        #delete files from existing files that were not selected
+        existing_files_to_keep = request.POST.getlist('select_files')
+        for file in files:
+            if file.file.url not in existing_files_to_keep:
+                file.delete()    
 
-        #TODO: fix this - deletion is being a bit weird / inconsistent
         #add new files that were uploaded
         new_files = request.FILES.getlist('files') 
         for file in new_files:
@@ -173,14 +173,12 @@ def edit_note(request, note_id):
             notefile.file = file
             notefile.save()
         
-        #delete files from existing files that were not selected
-        existing_files_to_keep = request.POST.getlist('select_files')
-        for file in files:
-            if file.file.url not in existing_files_to_keep:
-                file.delete()
-    
+        files = NoteFile.objects.filter(note_id=note_id) #refresh file information for new render
         messages.success(request, 'Note edited successfully!')
-    return render(request, "notes_app/edit_note.html", context={'note': note, 'files': files})
+    else: #GET request
+        form = NoteForm(instance=note)
+
+    return render(request, "notes_app/edit_note.html", context={'form': form, 'files': files})
 
 def view_full_note(request, note_id):
     note = get_object_or_404(Note, pk=note_id) #fetch one note object

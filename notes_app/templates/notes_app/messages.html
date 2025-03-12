@@ -1,6 +1,5 @@
 <!--messages /alerts template used across pages, used to display error & success messages-->
 <!--https://www.youtube.com/watch?v=e96HiBcyPsY-->
-<!--TODO: figure out how to not make google auth messages display-->
 {% if messages %}
     {% for message in messages %}
         <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}" role="alert">
