@@ -1,5 +1,3 @@
-from django.forms import ValidationError
-from django.http import HttpResponse
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import Group
@@ -9,13 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.models import User
-
 from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
-from django.core.files.storage import FileSystemStorage
 from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron
-from django.conf import settings
 from .forms import NoteForm, ProfileForm, CollectionForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -23,6 +18,35 @@ from django.contrib import messages
 import boto3
 import urllib.request
 from django.core.files.base import ContentFile
+
+#PERMISSION RELATED VIEWS
+@method_decorator(librarian_required, name='dispatch')
+class PromotePatronView(View):
+    def get(self, request, patron_id, *args, **kwargs):
+        # Retrieve patron using provided ID
+        patron = get_object_or_404(User, id=patron_id)
+        
+        # Get the groups for patrons and librarians
+        patrons_group = Group.objects.get(name="Patrons")
+        librarians_group, created = Group.objects.get_or_create(name="Librarians")
+        
+        # If user is in Patrons group, promote them
+        if patrons_group in patron.groups.all():
+            patron.groups.remove(patrons_group)
+            patron.groups.add(librarians_group)
+            patron.save()
+        
+        # Redirect back to librarian dashboard after promotion
+        return redirect("notes_app:librarian_dashboard")
+    
+def manage_borrowed(request):
+    return render(request, "notes_app/navbar_librarian/manage_borrowed.html")
+
+def request_notes(request):
+    return render(request, "notes_app/navbar_patron/request_notes.html")
+
+def borrowed_notes(request):
+    return render(request, "notes_app/navbar_patron/borrowed_notes.html")
 
 @login_required
 def view_requests(request):
@@ -105,214 +129,80 @@ def borrowed_notes(request):
 
     return render(request, "notes_app/borrowed_notes.html", {"notes": notes, "collections": collections})
 
-def available_notes(request):
-    notes = Note.objects.filter(visibility="public") 
-    collections = Collection.objects.all()
-    title = request.GET.get("title")
-    subject = request.GET.get("subject")
-    semester = request.GET.get("semester")
-    date = request.GET.get("date")
-    visibility = request.GET.get("visibility")
-    collection_id = request.GET.get("collection")
-
-    if title:
-        notes = notes.filter(title__icontains=title)
-    if subject:
-        notes = notes.filter(subject__icontains=subject)
-    if semester:
-        notes = notes.filter(semester__icontains=semester)
-    if date:
-        notes = notes.filter(date=date)
-    if visibility:
-        notes = notes.filter(visibility=visibility)
-    if collection_id:
-        notes = notes.filter(collections__id=collection_id)
-
-    return render(request, "notes_app/available_notes.html", {"notes": notes, "collections": collections})
-
-#TODO: pass in fewer items for the context
-def view_notes(request):
-    collections = Collection.objects.all()
-    notes = Note.objects.all()
-    notes_and_file = [] #creates a list of tuples (Note, NoteFile)
-
-    title = request.GET.get("title")
-    subject = request.GET.get("subject")
-    semester = request.GET.get("semester")
-    date = request.GET.get("date")
-    visibility = request.GET.get("visibility")
-    collection_id = request.GET.get("collection")
-
-    if title:
-        notes = notes.filter(title__icontains=title)
-    if subject:
-        notes = notes.filter(subject__icontains=subject)
-    if semester:
-        notes = notes.filter(semester__icontains=semester)
-    if date:
-        notes = notes.filter(date=date)
-    if visibility:
-        notes = notes.filter(visibility=visibility)
-    if collection_id:
-        notes = notes.filter(collections__id=collection_id)
-
-    for note in notes:
-        files = NoteFile.objects.filter(note_id=note.id) #fetch an array of notefile objects
-        
-        #get default display icon and use it to make a notefile object
-        response = urllib.request.urlopen('https://notes-sharing-app.s3.us-east-1.amazonaws.com/notes/default_image.png')
-        file_obj = ContentFile(response.read(), name='notes/default_image.png')
-        file_display_image = NoteFile(note=note,file=file_obj)
-        
-        #if any files associated with the note are images, use that instead of the defualt icon
-        for file in files:
-            if '.jpg' in str(file.file) or '.jpeg' in str(file.file) or '.png' in str(file.file):
-                print('reached')
-                file_display_image = file
-                break
-        notes_and_file.append((note, file_display_image))
-
-    return render(request, "notes_app/navbar_librarian/view_notes.html", {"collections": collections, "notes_and_file": notes_and_file})
-
-def edit_note(request, note_id):
-    note = get_object_or_404(Note, pk=note_id) #fetch one note object
-    files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
-    if request.method == 'POST':
-        #update core note attributes 
-        form = NoteForm(request.POST, instance=note)
-        if form.is_valid():
-            note.save()
-        else:
-            messages.error(request, "Unable to modify note, note name already exists.")
-            return render(request, "notes_app/edit_note.html", context={'form': form, 'files': files})
-        
-        #delete files from existing files that were not selected
-        existing_files_to_keep = request.POST.getlist('select_files')
-        for file in files:
-            if file.file.url not in existing_files_to_keep:
-                file.delete()    
-
-        #add new files that were uploaded
-        new_files = request.FILES.getlist('files') 
-        for file in new_files:
-            notefile = NoteFile()
-            notefile.note = note
-            notefile.file = file
-            notefile.save()
-        
-        files = NoteFile.objects.filter(note_id=note_id) #refresh file information for new render
-        messages.success(request, 'Note edited successfully!')
-    else: #GET request
-        form = NoteForm(instance=note)
-
-    return render(request, "notes_app/edit_note.html", context={'form': form, 'files': files})
-
-def view_full_note(request, note_id):
-    note = get_object_or_404(Note, pk=note_id) #fetch one note object
-    files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
-    return render(request, "notes_app/view_full_note.html", context={'note': note, 'files': files})
-
-def delete_note(request, note_id):
-    note = get_object_or_404(Note, pk=note_id) #fetch one note object
-    files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
-    for file in files:
-        boto3.client('s3').delete_object(Bucket='notes-sharing-app', Key=str(file.file))
-    note.delete()
-
-    collections = Collection.objects.all()
-    notes = Note.objects.all()
-    messages.success(request, "Successfully deleted note!")
-    return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes": notes, "collections": collections})
-
-def add_notes(request):
-    if request.method == 'POST':
-        form = NoteForm(request.POST)
-        if form.is_valid():
-            note = form.save(commit=False)
-            note.created_by = request.user
-            note.save()
-
-            files = request.FILES.getlist('files') #fetches from dictionary based on input html tag name in add_notes.html
-            for file in files:
-                notefile = NoteFile()
-                notefile.note = note
-                notefile.file = file
-                notefile.save()
-        messages.success(request, 'Note created successfully!')
-    return render(request, 'notes_app/navbar_librarian/add_notes.html', {'form': NoteForm()})
-
-def index(request):
-    return render(request, "notes_app/home.html")
-
-def profile(request):
-    return render(request, "notes_app/profile/profile.html")
-
-def logout_view(request):
-    if request.user.is_authenticated:
-        logout(request)
-    return redirect("/")  #go back to home page
-
-def anonymous_view(request):
-    return render(request, "notes_app/anonymous_view.html")
-
-
-# Librarian Views
-# def add_notes(request):
-#     return render(request, "notes_app/navbar_librarian/add_notes.html")
-
-def manage_borrowed(request):
-    return render(request, "notes_app/navbar_librarian/manage_borrowed.html")
-
 def view_requests(request):
     return render(request, "notes_app/navbar_librarian/view_requests.html")
 
-def create_collection(request):
-    users = []
-    for user in User.objects.all():
-        if Group.objects.get(name="Patrons") in user.groups.all():
-            users.append(user)
-    
-    notes = []
-    for note in Note.objects.all():
-        if note.visibility == 'public':
-            notes.append(note)
+#DISPLAYING AVAILABLE COLELCTIONS / NOTES VIEWS
 
-    if request.method == 'POST':
-        form = CollectionForm(request.POST)
-        if form.is_valid():
-            collection = form.save(commit=False)
-            collection.created_by = request.user
-            collection.save()
-        
-            #create a list of note objects from note names
-            note_names_in_collection = request.POST.getlist('collection_notes')
-            notes_in_collection = []
-            for note in Note.objects.all():
-                if note.title in note_names_in_collection:
-                    notes_in_collection.append(note)
+#Patron 
+def patron_view_collections(request):
+    collections = Collection.objects.all()
+    return render(request, "notes_app/navbar_patron/view_collections.html", {"collections": collections})
 
-            for note in notes_in_collection:
-                collection_item = CollectionItem(note=note, collection=collection)
-                collection_item.save()
-                if collection.visibility == 'private':
-                    note.visibility = 'private'
-                    note.save() 
-            if collection.visibility == 'private':
-                private_collection_patrons_with_access = request.POST.getlist('access_users')
-                for access_patron in private_collection_patrons_with_access:
-                    for patron in users:
-                        if patron.email == access_patron:
-                            patron = PrivateCollectionPatron(patron = patron, collection = collection)
-                            patron.save()
+def available_notes(request):
+    collections = Collection.objects.all()
+    notes = Note.objects.all()
 
-            messages.success(request, 'Collection created successfully!')
+    title = request.GET.get("title")
+    subject = request.GET.get("subject")
+    semester = request.GET.get("semester")
+    date = request.GET.get("date")
+    visibility = request.GET.get("visibility")
+    collection_id = request.GET.get("collection")
 
-    return render(request, 'notes_app/navbar_librarian/create_collection.html', {'form': CollectionForm(), 'notes': notes, 'users': users })
+    if title:
+        notes = notes.filter(title__icontains=title)
+    if subject:
+        notes = notes.filter(subject__icontains=subject)
+    if semester:
+        notes = notes.filter(semester__icontains=semester)
+    if date:
+        notes = notes.filter(date=date)
+    if visibility:
+        notes = notes.filter(visibility=visibility)
+    if collection_id:
+        notes = notes.filter(collections__id=collection_id)
 
+    notes_and_file = get_notes_and_associated_file(notes)
+    return render(request, "notes_app/navbar_patron/available_notes.html", {"collections": collections, "notes_and_file": notes_and_file})
+
+#Librarian
+def view_notes(request):
+    collections = Collection.objects.all()
+    notes = Note.objects.all()
+
+    title = request.GET.get("title")
+    subject = request.GET.get("subject")
+    semester = request.GET.get("semester")
+    date = request.GET.get("date")
+    visibility = request.GET.get("visibility")
+    collection_id = request.GET.get("collection")
+
+    if title:
+        notes = notes.filter(title__icontains=title)
+    if subject:
+        notes = notes.filter(subject__icontains=subject)
+    if semester:
+        notes = notes.filter(semester__icontains=semester)
+    if date:
+        notes = notes.filter(date=date)
+    if visibility:
+        notes = notes.filter(visibility=visibility)
+    if collection_id:
+        notes = notes.filter(collections__id=collection_id)
+
+    notes_and_file = get_notes_and_associated_file(notes)
+    return render(request, "notes_app/navbar_librarian/view_notes.html", {"collections": collections, "notes_and_file": notes_and_file})
 
 def view_collections(request):
     collections = Collection.objects.all()
     return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": collections})
+
+#Both Librarian + Patron
+def view_full_note(request, note_id):
+    note = get_object_or_404(Note, pk=note_id) #fetch one note object
+    files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
+    return render(request, "notes_app/view_full_note.html", context={'note': note, 'files': files})
 
 def view_full_collection(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id) 
@@ -334,6 +224,30 @@ def view_full_collection(request, collection_id):
         collection_notes.append(item.note)
     return render(request, "notes_app/view_full_collection.html", context={'collection': collection, 'private_collection_patrons': private_collection_patrons, 'librarians': librarians, 'collection_notes': collection_notes})
 
+
+#Helper function
+def get_notes_and_associated_file(notes):
+    notes_and_file = [] #creates a list of tuples (Note, NoteFile)
+    for note in notes:
+        files = NoteFile.objects.filter(note_id=note.id) #fetch an array of notefile objects
+        
+        #get default display icon and use it to make a notefile object
+        response = urllib.request.urlopen('https://notes-sharing-app.s3.us-east-1.amazonaws.com/notes/default_image.png')
+        file_obj = ContentFile(response.read(), name='notes/default_image.png')
+        file_display_image = NoteFile(note=note,file=file_obj)
+        
+        #if any files associated with the note are images, use that instead of the defualt icon
+        for file in files:
+            if '.jpg' in str(file.file) or '.jpeg' in str(file.file) or '.png' in str(file.file):
+                print('reached')
+                file_display_image = file
+                break
+        notes_and_file.append((note, file_display_image))
+    return notes_and_file
+
+#EDITING / MODIFICATION RELATED VIEWS
+
+#Librarian
 def edit_collection(request, collection_id):
     #need to pass notes (all notes + notes in collection), collection information, and then also private users if they exist
     collection = get_object_or_404(Collection, pk=collection_id) #fetch one note object
@@ -417,58 +331,127 @@ def delete_collection(request, collection_id):
     messages.success(request, "Successfully deleted collection!")
     return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": Collection.objects.all()})
 
-# Patron Views
-def available_notes(request):
+def delete_note(request, note_id):
+    note = get_object_or_404(Note, pk=note_id) #fetch one note object
+    files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
+    for file in files:
+        boto3.client('s3').delete_object(Bucket='notes-sharing-app', Key=str(file.file))
+    note.delete()
+
     collections = Collection.objects.all()
     notes = Note.objects.all()
-    notes_and_file = [] #creates a list of tuples (Note, NoteFile)
+    messages.success(request, "Successfully deleted note!")
+    return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes": notes, "collections": collections})
 
-    title = request.GET.get("title")
-    subject = request.GET.get("subject")
-    semester = request.GET.get("semester")
-    date = request.GET.get("date")
-    visibility = request.GET.get("visibility")
-    collection_id = request.GET.get("collection")
 
-    if title:
-        notes = notes.filter(title__icontains=title)
-    if subject:
-        notes = notes.filter(subject__icontains=subject)
-    if semester:
-        notes = notes.filter(semester__icontains=semester)
-    if date:
-        notes = notes.filter(date=date)
-    if visibility:
-        notes = notes.filter(visibility=visibility)
-    if collection_id:
-        notes = notes.filter(collections__id=collection_id)
-
-    for note in notes:
-        files = NoteFile.objects.filter(note_id=note.id) #fetch an array of notefile objects
+def edit_note(request, note_id):
+    note = get_object_or_404(Note, pk=note_id) #fetch one note object
+    files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
+    if request.method == 'POST':
+        #update core note attributes 
+        form = NoteForm(request.POST, instance=note)
+        if form.is_valid():
+            note.save()
+        else:
+            messages.error(request, "Unable to modify note, note name already exists.")
+            return render(request, "notes_app/edit_note.html", context={'form': form, 'files': files})
         
-        #get default display icon and use it to make a notefile object
-        response = urllib.request.urlopen('https://notes-sharing-app.s3.us-east-1.amazonaws.com/notes/default_image.png')
-        file_obj = ContentFile(response.read(), name='notes/default_image.png')
-        file_display_image = NoteFile(note=note,file=file_obj)
-        
-        #if any files associated with the note are images, use that instead of the defualt icon
+        #delete files from existing files that were not selected
+        existing_files_to_keep = request.POST.getlist('select_files')
         for file in files:
-            if '.jpg' in str(file.file) or '.jpeg' in str(file.file) or '.png' in str(file.file):
-                print('reached')
-                file_display_image = file
-                break
-        notes_and_file.append((note, file_display_image))
-    return render(request, "notes_app/navbar_patron/available_notes.html", {"collections": collections, "notes_and_file": notes_and_file})
+            if file.file.url not in existing_files_to_keep:
+                file.delete()    
 
-def request_notes(request):
-    return render(request, "notes_app/navbar_patron/request_notes.html")
+        #add new files that were uploaded
+        new_files = request.FILES.getlist('files') 
+        for file in new_files:
+            notefile = NoteFile()
+            notefile.note = note
+            notefile.file = file
+            notefile.save()
+        
+        files = NoteFile.objects.filter(note_id=note_id) #refresh file information for new render
+        messages.success(request, 'Note edited successfully!')
+    else: #GET request
+        form = NoteForm(instance=note)
 
-def borrowed_notes(request):
-    return render(request, "notes_app/navbar_patron/borrowed_notes.html")
+    return render(request, "notes_app/edit_note.html", context={'form': form, 'files': files})
 
-def patron_view_collections(request):
-    collections = Collection.objects.all()
-    return render(request, "notes_app/navbar_patron/view_collections.html", {"collections": collections})
+def add_notes(request):
+    if request.method == 'POST':
+        form = NoteForm(request.POST)
+        if form.is_valid():
+            note = form.save(commit=False)
+            note.created_by = request.user
+            note.save()
+
+            files = request.FILES.getlist('files') #fetches from dictionary based on input html tag name in add_notes.html
+            for file in files:
+                notefile = NoteFile()
+                notefile.note = note
+                notefile.file = file
+                notefile.save()
+        messages.success(request, 'Note created successfully!')
+    return render(request, 'notes_app/navbar_librarian/add_notes.html', {'form': NoteForm()})
+
+def create_collection(request):
+    users = []
+    for user in User.objects.all():
+        if Group.objects.get(name="Patrons") in user.groups.all():
+            users.append(user)
+    
+    notes = []
+    for note in Note.objects.all():
+        if note.visibility == 'public':
+            notes.append(note)
+
+    if request.method == 'POST':
+        form = CollectionForm(request.POST)
+        if form.is_valid():
+            collection = form.save(commit=False)
+            collection.created_by = request.user
+            collection.save()
+        
+            #create a list of note objects from note names
+            note_names_in_collection = request.POST.getlist('collection_notes')
+            notes_in_collection = []
+            for note in Note.objects.all():
+                if note.title in note_names_in_collection:
+                    notes_in_collection.append(note)
+
+            for note in notes_in_collection:
+                collection_item = CollectionItem(note=note, collection=collection)
+                collection_item.save()
+                if collection.visibility == 'private':
+                    note.visibility = 'private'
+                    note.save() 
+            if collection.visibility == 'private':
+                private_collection_patrons_with_access = request.POST.getlist('access_users')
+                for access_patron in private_collection_patrons_with_access:
+                    for patron in users:
+                        if patron.email == access_patron:
+                            patron = PrivateCollectionPatron(patron = patron, collection = collection)
+                            patron.save()
+
+            messages.success(request, 'Collection created successfully!')
+
+    return render(request, 'notes_app/navbar_librarian/create_collection.html', {'form': CollectionForm(), 'notes': notes, 'users': users })
+
+
+#OTHER VIEWS
+def index(request):
+    return render(request, "notes_app/home.html")
+
+def profile(request):
+    return render(request, "notes_app/profile/profile.html")
+
+def logout_view(request):
+    if request.user.is_authenticated:
+        logout(request)
+    return redirect("/")  #go back to home page
+
+def anonymous_view(request):
+    return render(request, "notes_app/anonymous_view.html")
 
 # assign new users to patrons group by default
 @receiver(user_signed_up)
@@ -493,33 +476,11 @@ def librarian_dashboard(request):
     }
     return render(request, "notes_app/librarian_dashboard.html")
 
-
-@method_decorator(librarian_required, name='dispatch')
-class PromotePatronView(View):
-    def get(self, request, patron_id, *args, **kwargs):
-        # Retrieve patron using provided ID
-        patron = get_object_or_404(User, id=patron_id)
-        
-        # Get the groups for patrons and librarians
-        patrons_group = Group.objects.get(name="Patrons")
-        librarians_group, created = Group.objects.get_or_create(name="Librarians")
-        
-        # If user is in Patrons group, promote them
-        if patrons_group in patron.groups.all():
-            patron.groups.remove(patrons_group)
-            patron.groups.add(librarians_group)
-            patron.save()
-        
-        # Redirect back to librarian dashboard after promotion
-        return redirect("notes_app:librarian_dashboard")
-
-
 def set_theme(request):
     theme = request.GET.get("theme","dark") #default dark
     response = redirect(request.META.get("HTTP_REFERER","/")) #Go back to page prev page
     response.set_cookie("theme", theme, max_age=10512000) #Third of a year
     return response
-
 
 class EditProfileView(generic.UpdateView):
     model = Profile
