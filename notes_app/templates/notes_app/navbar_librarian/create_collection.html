@@ -1,23 +1,64 @@
 {% extends 'base.html' %}
+
 {% block content %}
 {% load crispy_forms_tags %}
-    <div class="container mt-4">
-        {% include 'notes_app/messages.html' %}
-        <h1>Create A Collection</h1>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form | crispy}}
-            <div class="form-group">
-                <label for="files">Notes To Include In Collection*</label>
-                <select class="form-select" multiple aria-label="multiple select" name="collection_notes" id="collection_notes" required>
-                    {% for note in notes %}
-                        <option value="{{note.title}}">{{ note.title }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+
+<div class="container mt-4">
+    {% include 'notes_app/messages.html' %}
+    <h1>Create A Collection</h1>
+    <form id="collectionForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form | crispy}}
+        <div class="form-group">
+            <label for="visibility">Visibility</label>
+            <select class="form-select" name="visibility" id="visibility">
+                <option value="public" selected>Public</option>
+                <option value="private">Private</option>
+            </select>
+        </div>
+        <!-- Second dropdown will be hidden initially -->
+        <div class="form-group hidden" id="access-users">
             <br>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
-    <br>  
+            <label for="access-users-select">Select Patrons to Give Access</label>
+            <select class="form-select" multiple aria-label="multiple select" name="access_users" id="access-users-select">
+                {% for user in users %}
+                    <option value="{{ user.email }}">{{ user.email }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="files">Notes To Include In Collection*</label>
+            <select class="form-select" multiple aria-label="multiple select" name="collection_notes" id="collection_notes" required>
+                {% for note in notes %}
+                    <option value="{{note.title}}">{{ note.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+<br>
+
+<script>
+    document.getElementById('visibility').onchange = function() {
+        var selectedValue = this.value;
+        var accessUsersDiv = document.getElementById('access-users');
+        
+        if (selectedValue === 'private') {
+            accessUsersDiv.classList.remove('hidden');
+        } else {
+            accessUsersDiv.classList.add('hidden');
+        }
+    };
+    // Ensure form submission is not prevented
+    document.getElementById('collectionForm').addEventListener('submit', function(event) {});
+</script>
+
 {% endblock %}

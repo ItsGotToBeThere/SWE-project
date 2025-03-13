@@ -8,12 +8,13 @@ from allauth.account.signals import user_signed_up
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.views import generic
+from django.contrib.auth.models import User
 
 from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.core.files.storage import FileSystemStorage
-from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem
+from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron
 from django.conf import settings
 from .forms import NoteForm, ProfileForm, CollectionForm
 from django.shortcuts import render, get_object_or_404, redirect
@@ -263,12 +264,23 @@ def view_requests(request):
     return render(request, "notes_app/navbar_librarian/view_requests.html")
 
 def create_collection(request):
+    users = []
+    for user in User.objects.all():
+        if Group.objects.get(name="Patrons") in user.groups.all():
+            users.append(user)
+    
+    notes = []
+    for note in Note.objects.all():
+        if note.visibility == 'public':
+            notes.append(note)
+
     if request.method == 'POST':
         form = CollectionForm(request.POST)
         if form.is_valid():
             collection = form.save(commit=False)
             collection.created_by = request.user
-            visibility = collection.visibility
+            visibility = request.POST.get('visibility')
+            collection.visibility = visibility 
             collection.save()
         
             #create a list of note objects from note names
@@ -284,9 +296,18 @@ def create_collection(request):
                 if visibility == 'private':
                     note.visibility = 'private'
                     note.save() 
-                          
+            if visibility == 'private':
+                private_collection_patrons_with_access = request.POST.getlist('access_users')
+                for access_patron in private_collection_patrons_with_access:
+                    for patron in users:
+                        if patron.email == access_patron:
+                            patron = PrivateCollectionPatron(patron = patron, collection = collection)
+                            patron.save()
+
             messages.success(request, 'Collection created successfully!')
-    return render(request, 'notes_app/navbar_librarian/create_collection.html', {'form': CollectionForm(), 'notes': Note.objects.all()})
+
+    return render(request, 'notes_app/navbar_librarian/create_collection.html', {'form': CollectionForm(), 'notes': notes, 'users': users })
+
 
 def view_collections(request):
     collections = Collection.objects.all()

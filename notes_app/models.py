@@ -44,6 +44,10 @@ class CollectionItem(models.Model):
     note = models.ForeignKey(Note, on_delete=models.CASCADE)
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
 
+class PrivateCollectionPatron(models.Model):
+    patron = models.ForeignKey(User, on_delete=models.CASCADE) 
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
+
 class PatronRequest(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending"),
