@@ -19,6 +19,7 @@ urlpatterns = [
     #patron specific urls
     path("available-notes/", views.available_notes, name="available_notes"),
     path("request-notes/", views.request_notes, name="request_notes"),
+    path("patron-view-collections/", views.patron_view_collections, name="patron_view_collections"),
     path("borrowed-notes/", views.borrowed_notes, name="borrowed_notes"),
 
     #librarian specific urls

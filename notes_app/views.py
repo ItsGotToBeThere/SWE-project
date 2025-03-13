@@ -135,6 +135,27 @@ def view_notes(request):
     collections = Collection.objects.all()
     notes = Note.objects.all()
     notes_and_file = [] #creates a list of tuples (Note, NoteFile)
+
+    title = request.GET.get("title")
+    subject = request.GET.get("subject")
+    semester = request.GET.get("semester")
+    date = request.GET.get("date")
+    visibility = request.GET.get("visibility")
+    collection_id = request.GET.get("collection")
+
+    if title:
+        notes = notes.filter(title__icontains=title)
+    if subject:
+        notes = notes.filter(subject__icontains=subject)
+    if semester:
+        notes = notes.filter(semester__icontains=semester)
+    if date:
+        notes = notes.filter(date=date)
+    if visibility:
+        notes = notes.filter(visibility=visibility)
+    if collection_id:
+        notes = notes.filter(collections__id=collection_id)
+
     for note in notes:
         files = NoteFile.objects.filter(note_id=note.id) #fetch an array of notefile objects
         
@@ -150,26 +171,8 @@ def view_notes(request):
                 file_display_image = file
                 break
         notes_and_file.append((note, file_display_image))
-    # title = request.GET.get("title")
-    # subject = request.GET.get("subject")
-    # semester = request.GET.get("semester")
-    # date = request.GET.get("date")
-    # visibility = request.GET.get("visibility")
-    # collection_id = request.GET.get("collection")
 
-    # if title:
-    #     notes = notes.filter(title__icontains=title)
-    # if subject:
-    #     notes = notes.filter(subject__icontains=subject)
-    # if semester:
-    #     notes = notes.filter(semester__icontains=semester)
-    # if date:
-    #     notes = notes.filter(date=date)
-    # if visibility:
-    #     notes = notes.filter(visibility=visibility)
-    # if collection_id:
-    #     notes = notes.filter(collections__id=collection_id)
-    return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes": notes, "collections": collections, "notes_and_file": notes_and_file})
+    return render(request, "notes_app/navbar_librarian/view_notes.html", {"collections": collections, "notes_and_file": notes_and_file})
 
 def edit_note(request, note_id):
     note = get_object_or_404(Note, pk=note_id) #fetch one note object
@@ -416,13 +419,56 @@ def delete_collection(request, collection_id):
 
 # Patron Views
 def available_notes(request):
-    return render(request, "notes_app/navbar_patron/available_notes.html")
+    collections = Collection.objects.all()
+    notes = Note.objects.all()
+    notes_and_file = [] #creates a list of tuples (Note, NoteFile)
+
+    title = request.GET.get("title")
+    subject = request.GET.get("subject")
+    semester = request.GET.get("semester")
+    date = request.GET.get("date")
+    visibility = request.GET.get("visibility")
+    collection_id = request.GET.get("collection")
+
+    if title:
+        notes = notes.filter(title__icontains=title)
+    if subject:
+        notes = notes.filter(subject__icontains=subject)
+    if semester:
+        notes = notes.filter(semester__icontains=semester)
+    if date:
+        notes = notes.filter(date=date)
+    if visibility:
+        notes = notes.filter(visibility=visibility)
+    if collection_id:
+        notes = notes.filter(collections__id=collection_id)
+
+    for note in notes:
+        files = NoteFile.objects.filter(note_id=note.id) #fetch an array of notefile objects
+        
+        #get default display icon and use it to make a notefile object
+        response = urllib.request.urlopen('https://notes-sharing-app.s3.us-east-1.amazonaws.com/notes/default_image.png')
+        file_obj = ContentFile(response.read(), name='notes/default_image.png')
+        file_display_image = NoteFile(note=note,file=file_obj)
+        
+        #if any files associated with the note are images, use that instead of the defualt icon
+        for file in files:
+            if '.jpg' in str(file.file) or '.jpeg' in str(file.file) or '.png' in str(file.file):
+                print('reached')
+                file_display_image = file
+                break
+        notes_and_file.append((note, file_display_image))
+    return render(request, "notes_app/navbar_patron/available_notes.html", {"collections": collections, "notes_and_file": notes_and_file})
 
 def request_notes(request):
     return render(request, "notes_app/navbar_patron/request_notes.html")
 
 def borrowed_notes(request):
     return render(request, "notes_app/navbar_patron/borrowed_notes.html")
+
+def patron_view_collections(request):
+    collections = Collection.objects.all()
+    return render(request, "notes_app/navbar_patron/view_collections.html", {"collections": collections})
 
 # assign new users to patrons group by default
 @receiver(user_signed_up)

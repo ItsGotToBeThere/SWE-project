@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %} View Notes {% endblock %}
+{% block title %} View Collections {% endblock %}
 
 {% block content %}
 <style>
@@ -43,7 +43,7 @@
 <br>
 <!-- Main Container -->
 <div class="main-container">
-    <h2>View Notes</h2>
+    <h2>View Collections</h2>
     {% include 'notes_app/messages.html' %}
 
     <!-- Search Form -->
@@ -67,36 +67,21 @@
     </form>
 
     <!-- List of Available Notes -->
-    {% load utils %}
-        {% if notes_and_file %}
-            {% for tuple in notes_and_file %}
-                {% with note=tuple|get_note %} <!--from utils.py since django templates doesn't support indexing into a tuple-->
-                {% with file=tuple|get_file %}
-                <div class="card">
-                    <div class="row">
-                        <div class="col-md-4 d-flex justify-content-center"">
-                            <img src="{{ file.file.url }}" class="img-fluid">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                            <h4>{{ note.title }}</h4>
-                            <p><strong>Course Name:</strong> {{ note.course_name }}</p>
-                            <p><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
-                            <p><strong>Creation Date:</strong> {{ note.created_at }}</p>
-                            <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
-                            <a href="{% url 'notes_app:view_full_note' note.id %}" class="btn btn-secondary">View Full Note</a>
-                            <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>              
-                <br>
-                {% endwith %}
-                {% endwith %}
+    <div class="notes-list"> <!--may be able to use bootstrap card class instead of creating a custom class-->
+        {% if collections %}
+            {% for collection in collections %}
+                <div class="note-item">
+                    <h4>{{ collection.title }}</h4>
+                    <p><strong>Visibility:</strong> {{ collection.visibility }}</p>
+                    <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit Collection</a>
+                    <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View Full Collection</a>
+                    <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete Collection</a>
+            </div>
             {% endfor %}
         {% else %}
-            <p>No notes found matching your criteria.</p>
+            <p>No collections found matching your criteria.</p>
         {% endif %}
-<br>
+    </div>
 </div>
+<br>
 {% endblock %}
