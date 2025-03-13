@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+    <div class="container mt-4">
+        {% include 'notes_app/messages.html' %}
+        <h1>Create A Collection</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form | crispy}}
+            <div class="form-group">
+                <label for="files">Notes To Include In Collection*</label>
+                <select class="form-select" multiple aria-label="multiple select" name="collection_notes" id="collection_notes" required>
+                    {% for note in notes %}
+                        <option value="{{note.title}}">{{ note.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <br>  
+{% endblock %}

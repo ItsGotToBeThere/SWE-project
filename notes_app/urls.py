@@ -22,11 +22,22 @@ urlpatterns = [
     path("borrowed-notes/", views.borrowed_notes, name="borrowed_notes"),
 
     #librarian specific urls
+
+    #note related
     path("add-notes/", views.add_notes, name="add_notes"),
     path("view-notes/", views.view_notes, name="view_notes"),
-    path("manage-borrowed/", views.manage_borrowed, name="manage_borrowed"),
     path("view_full_note/<int:note_id>/", views.view_full_note, name="view_full_note"),
     path("edit_note/<int:note_id>/", views.edit_note, name="edit_note"),
     path("delete_note/<int:note_id>/", views.delete_note, name="delete_note"),
+    
+    #collection related
+    path("create-collection/", views.create_collection, name="create_collection"),
+    path("view-collections/", views.view_collections, name="view_collections"),
+    path("view_full_collection/<int:collection_id>/", views.view_full_collection, name="view_full_collection"),
+    path("edit_collection/<int:collection_id>/", views.edit_collection, name="edit_collection"),
+    path("delete_collection/<int:collection_id>/", views.delete_collection, name="delete_collection"),
+
+    #permissions related
+    path("manage-borrowed/", views.manage_borrowed, name="manage_borrowed"),
     path("view-requests/", views.view_requests, name="view_requests"),
 ]

@@ -13,9 +13,9 @@ from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.core.files.storage import FileSystemStorage
-from .models import Note, Collection, PatronRequest, Profile, NoteFile
+from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem
 from django.conf import settings
-from .forms import NoteForm, ProfileForm
+from .forms import NoteForm, ProfileForm, CollectionForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -129,8 +129,6 @@ def available_notes(request):
 
     return render(request, "notes_app/available_notes.html", {"notes": notes, "collections": collections})
 
-#to do: iterate through all the files (check if one is an image -> if so, display, else display default image)
-
 def view_notes(request):
     collections = Collection.objects.all()
     notes = Note.objects.all()
@@ -224,24 +222,19 @@ def delete_note(request, note_id):
 
 def add_notes(request):
     if request.method == 'POST':
-        try:
-            form = NoteForm(request.POST)
-            if form.is_valid():
-                note = form.save(commit=False)
-                note.created_by = request.user
-                note.save()
+        form = NoteForm(request.POST)
+        if form.is_valid():
+            note = form.save(commit=False)
+            note.created_by = request.user
+            note.save()
 
-                files = request.FILES.getlist('files') #fetches from dictionary based on input html tag name in add_notes.html
-                for file in files:
-                    notefile = NoteFile()
-                    notefile.note = note
-                    notefile.file = file
-                    notefile.save()
-        except ValidationError as e:
-            # Handle the validation error
-            print("error was" + str(e.message_dict))  # This will show which field failed validation
-            
-            messages.success(request, 'Note created successfully!')
+            files = request.FILES.getlist('files') #fetches from dictionary based on input html tag name in add_notes.html
+            for file in files:
+                notefile = NoteFile()
+                notefile.note = note
+                notefile.file = file
+                notefile.save()
+        messages.success(request, 'Note created successfully!')
     return render(request, 'notes_app/navbar_librarian/add_notes.html', {'form': NoteForm()})
 
 def index(request):
@@ -268,6 +261,44 @@ def manage_borrowed(request):
 
 def view_requests(request):
     return render(request, "notes_app/navbar_librarian/view_requests.html")
+
+def create_collection(request):
+    if request.method == 'POST':
+        form = CollectionForm(request.POST)
+        if form.is_valid():
+            collection = form.save(commit=False)
+            collection.created_by = request.user
+            visibility = collection.visibility
+            collection.save()
+        
+            #create a list of note objects from note names
+            note_names_in_collection = request.POST.getlist('collection_notes')
+            notes_in_collection = []
+            for note in Note.objects.all():
+                if note.title in note_names_in_collection:
+                    notes_in_collection.append(note)
+
+            for note in notes_in_collection:
+                collection_item = CollectionItem(note=note, collection=collection)
+                collection_item.save()
+                if visibility == 'private':
+                    note.visibility = 'private'
+                    note.save() 
+                          
+            messages.success(request, 'Collection created successfully!')
+    return render(request, 'notes_app/navbar_librarian/create_collection.html', {'form': CollectionForm(), 'notes': Note.objects.all()})
+
+def view_collections(request):
+    pass
+
+def view_full_collection(request, collection_id):
+    pass
+
+def edit_collection(request, collection_id):
+    pass
+
+def delete_collection(request, collection_id):
+    pass
 
 # Patron Views
 def available_notes(request):

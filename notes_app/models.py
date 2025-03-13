@@ -3,19 +3,34 @@ from django.contrib.auth.models import User
 from django.templatetags.static import static
 from storages.backends.s3boto3 import S3Boto3Storage
 class Collection(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    VISIBILITY_CHOICES = [
+        ("public", "Public"), #public = database value, Public = human-readable value
+        ("private", "Private"),
+    ]
+    visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default="public") 
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)  # User refers to the auth_user table
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_requested = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return self.title
 
 class Note(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
     course_name = models.CharField(max_length=100)
     professor = models.CharField(max_length=100, blank=True)
     semester = models.CharField(max_length=20, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)  # User refers to the auth_user table
     created_at = models.DateTimeField(auto_now_add=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    VISIBILITY_CHOICES = [
+        ("public", "Public"), #public = database value, Public = human-readable value
+        ("private", "Private"),
+    ]
+    visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default="public") #private = in private collection
     is_requested = models.BooleanField(default=False)
 
     def __str__(self):
@@ -24,6 +39,10 @@ class Note(models.Model):
 class NoteFile(models.Model): #allows multiple file instances to be associated with one note
     note = models.ForeignKey(Note, on_delete=models.CASCADE)
     file = models.FileField(storage=S3Boto3Storage(), upload_to='notes/')
+
+class CollectionItem(models.Model):
+    note = models.ForeignKey(Note, on_delete=models.CASCADE)
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
 
 class PatronRequest(models.Model):
     STATUS_CHOICES = [

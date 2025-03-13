@@ -5,6 +5,7 @@
 {% block content %}
     <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:add_notes' %}">Add New Notes</a></li>
     <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:view_notes' %}">View Notes</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:create_collection' %}">Create Collections</a></li>
     <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:manage_borrowed' %}">Manage Borrowed Notes</a></li>
     <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:view_requests' %}">View Patron Requests</a></li>
 {% endblock %}
