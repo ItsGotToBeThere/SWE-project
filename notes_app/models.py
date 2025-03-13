@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.templatetags.static import static
 from storages.backends.s3boto3 import S3Boto3Storage
 class Collection(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
     VISIBILITY_CHOICES = [
         ("public", "Public"), #public = database value, Public = human-readable value

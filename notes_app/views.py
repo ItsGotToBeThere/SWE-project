@@ -279,8 +279,6 @@ def create_collection(request):
         if form.is_valid():
             collection = form.save(commit=False)
             collection.created_by = request.user
-            visibility = request.POST.get('visibility')
-            collection.visibility = visibility 
             collection.save()
         
             #create a list of note objects from note names
@@ -293,10 +291,10 @@ def create_collection(request):
             for note in notes_in_collection:
                 collection_item = CollectionItem(note=note, collection=collection)
                 collection_item.save()
-                if visibility == 'private':
+                if collection.visibility == 'private':
                     note.visibility = 'private'
                     note.save() 
-            if visibility == 'private':
+            if collection.visibility == 'private':
                 private_collection_patrons_with_access = request.POST.getlist('access_users')
                 for access_patron in private_collection_patrons_with_access:
                     for patron in users:
@@ -334,10 +332,87 @@ def view_full_collection(request, collection_id):
     return render(request, "notes_app/view_full_collection.html", context={'collection': collection, 'private_collection_patrons': private_collection_patrons, 'librarians': librarians, 'collection_notes': collection_notes})
 
 def edit_collection(request, collection_id):
-    pass
+    #need to pass notes (all notes + notes in collection), collection information, and then also private users if they exist
+    collection = get_object_or_404(Collection, pk=collection_id) #fetch one note object
+    collection_notes = [obj.note for obj in CollectionItem.objects.filter(collection_id=collection_id)]
+    private_collection_patrons = [obj.patron for obj in PrivateCollectionPatron.objects.filter(collection_id=collection_id)]
+    users = [user for user in User.objects.all() if Group.objects.get(name="Patrons") in user.groups.all()]
+    notes = [note for note in Note.objects.all() if note.visibility == 'public']
+
+    #add private notes that are part of the collection
+    for note in collection_notes:
+        if note not in notes: 
+            notes.append(note)
+
+    if request.method == 'POST':
+        #update core note attributes 
+        form = CollectionForm(request.POST, instance=collection)
+        if form.is_valid():
+            form.save() 
+        else:
+            messages.error(request, "Unable to modify collection, collection name already exists.")
+            return render(request, "notes_app/edit_collection.html", context={'users': users, 'notes': notes, 'collection_notes':collection_notes, 'private_collection_patrons': private_collection_patrons})
+        
+        #remove notes from collection if they were part of the collection but were not selected to be in the modified collection
+        new_collection_notes_list = request.POST.getlist('collection_notes')
+        new_collection_notes = Note.objects.filter(title__in=new_collection_notes_list)
+        for note in collection_notes:
+            if note not in new_collection_notes:
+                if note.visibility == 'private':
+                    note.visibility = 'public'
+                    note.save()
+                collection_item = CollectionItem.objects.get(note=note, collection=collection)
+                collection_item.delete()
+            else: #ensure that the visibility is correct for notes still in the collection
+                if note.visibility != collection.visibility:
+                    note.visibility = collection.visibility
+                    note.save()
+
+
+        #add new notes that used to not be in the collection
+        for note in new_collection_notes:
+            if note not in collection_notes: #check to see if it wasn't part of the collection originally
+                if collection.visibility == 'private':
+                    note.visibility = 'private'
+                    note.save()
+                collection_item = CollectionItem(note=note, collection=collection)
+                collection_item.save()
+
+        if collection.visibility == 'private':
+            #remove patrons from collection if they were part of the collection but were not selected to be in the modified collection
+            new_patron_list_emails = request.POST.getlist('access_users')
+            new_patron_list = User.objects.filter(email__in=new_patron_list_emails)
+            for patron in private_collection_patrons:
+                if patron not in new_patron_list:
+                    collection_patron = PrivateCollectionPatron.objects.get(patron=patron, collection=collection)
+                    collection_patron.delete()
+
+            #add new patrons that used to not be in the collection
+            for patron in new_patron_list:
+                if patron not in private_collection_patrons: #check to see if it wasn't part of the collection originally
+                    print("reached")
+                    collection_patron = PrivateCollectionPatron(patron=patron, collection=collection)
+                    collection_patron.save()
+        
+        #refresh information
+        collection_notes = [obj.note for obj in CollectionItem.objects.filter(collection_id=collection_id)]
+        private_collection_patrons = [obj.patron for obj in PrivateCollectionPatron.objects.filter(collection_id=collection_id)]
+        collection = get_object_or_404(Collection, pk=collection_id)
+
+        messages.success(request, 'Collection edited successfully!')
+    else: #GET request
+        form = CollectionForm(instance=collection)
+    print("collection visibility is: " + str(collection.visibility))
+    print("is public: " + str(collection.visibility=='public'))
+
+    return render(request, "notes_app/edit_collection.html", context={'form':form, 'collection':collection, 'users': users, 'notes': notes, 'collection_notes':collection_notes, 'private_collection_patrons': private_collection_patrons})
 
 def delete_collection(request, collection_id):
-    pass
+    collection = get_object_or_404(Collection, pk=collection_id) #fetch one note object
+    collection.delete()
+
+    messages.success(request, "Successfully deleted collection!")
+    return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": Collection.objects.all()})
 
 # Patron Views
 def available_notes(request):

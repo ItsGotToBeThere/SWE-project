@@ -9,7 +9,7 @@ class NoteForm(forms.ModelForm):
 class CollectionForm(forms.ModelForm):
     class Meta:
         model = Collection
-        fields = ['title', 'description']
+        fields = ['title', 'description', 'visibility']
 
 
 

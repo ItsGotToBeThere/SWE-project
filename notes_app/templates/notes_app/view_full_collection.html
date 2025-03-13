@@ -15,15 +15,17 @@
             {% endfor %}
         {% endif %}
         <p>
-            <p><strong>Notes:</strong></p> 
+            <p><strong>Notes In Collection:</strong></p> 
             {% for note in collection_notes %}
                 <a href="{% url 'notes_app:view_full_note' note.id %}" target="_blank">
-                    {{ note.title }}
+                    <u>{{ note.title }}</u>
                 </a>
                 <br>
             {% endfor %}
         </p>
         <a href="{% url 'notes_app:view_collections' %}" class="btn btn-secondary">Back</a>
+        <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit Collection</a>
+        <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete Collection</a>
     </div>
     <br>
 {% endblock %}

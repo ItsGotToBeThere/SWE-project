@@ -14,14 +14,7 @@
     <form id="collectionForm" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form | crispy}}
-        <div class="form-group">
-            <label for="visibility">Visibility</label>
-            <select class="form-select" name="visibility" id="visibility">
-                <option value="public" selected>Public</option>
-                <option value="private">Private</option>
-            </select>
-        </div>
-        <!-- Second dropdown will be hidden initially -->
+        <!-- second dropdown will be hidden initially, contains list of users and is dependent on visibility selected -->
         <div class="form-group hidden" id="access-users">
             <br>
             <label for="access-users-select">Select Patrons to Give Access</label>
@@ -33,7 +26,7 @@
         </div>
         <br>
         <div class="form-group">
-            <label for="files">Notes To Include In Collection*</label>
+            <label for="files">Public Notes To Include In Collection*</label>
             <select class="form-select" multiple aria-label="multiple select" name="collection_notes" id="collection_notes" required>
                 {% for note in notes %}
                     <option value="{{note.title}}">{{ note.title }}</option>
@@ -47,17 +40,16 @@
 <br>
 
 <script>
-    document.getElementById('visibility').onchange = function() {
-        var selectedValue = this.value;
-        var accessUsersDiv = document.getElementById('access-users');
-        
-        if (selectedValue === 'private') {
-            accessUsersDiv.classList.remove('hidden');
-        } else {
-            accessUsersDiv.classList.add('hidden');
-        }
-    };
-    // Ensure form submission is not prevented
+    document.getElementById('id_visibility').onchange = function() {
+    var selectedValue = this.value;
+    var accessUsersDiv = document.getElementById('access-users');
+    
+    if (selectedValue === 'private') {
+        accessUsersDiv.classList.remove('hidden');
+    } else {
+        accessUsersDiv.classList.add('hidden');
+    }
+};
     document.getElementById('collectionForm').addEventListener('submit', function(event) {});
 </script>
 

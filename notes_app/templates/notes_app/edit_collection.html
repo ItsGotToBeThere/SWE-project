@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="container mt-4">
+    {% include 'notes_app/messages.html' %}
+    <h1>Edit Collection</h1>
+    <form id="collectionForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form | crispy}}
+    <!--second dropdown for list of users, only displayed if 'private' is selected as collection visibility type-->
+    {% if collection.visibility == 'public' %}
+        <div class="form-group d-none" id="access-users">
+    {% else %}
+        <div class="form-group" id="access-users">   
+    {% endif %}
+            <label for="access-users-select">Select Patrons to Give Access</label>
+            <select class="form-select" multiple aria-label="multiple select" name="access_users" id="access-users-select">
+                {% for user in users %}
+                    {% if user in private_collection_patrons%}
+                        <option value="{{ user.email }}" selected>{{ user.email }}</option>
+                    {% else %}
+                        <option value="{{ user.email }}">{{ user.email }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="files">Notes To Include In Collection*</label>
+            <select class="form-select" multiple aria-label="multiple select" name="collection_notes" id="collection_notes" required>
+                {% for note in notes %}
+                    {% if note in collection_notes%}
+                        <option value="{{note.title}}" selected>{{ note.title }}</option>
+                    {% else %}
+                        <option value="{{note.title}}">{{ note.title }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <br>
+    <a href="{% url 'notes_app:view_collections' %}" class="btn btn-secondary">View Collections</a>
+</div>
+<br>
+
+
+<!--handles hiding / displaying the users list based on collection visibility selection-->
+<script>
+    document.getElementById('id_visibility').onchange = function() {
+        var selectedValue = this.value;
+        var accessUsersDiv = document.getElementById('access-users');
+        
+        if (selectedValue === 'private') {
+            accessUsersDiv.classList.remove('d-none');
+        } else {
+            accessUsersDiv.classList.add('d-none');
+        }
+    };
+    // Ensure form submission is not prevented
+    document.getElementById('collectionForm').addEventListener('submit', function(event) {});
+</script>
+
+{% endblock %}
