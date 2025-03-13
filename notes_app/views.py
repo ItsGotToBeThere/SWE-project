@@ -129,6 +129,7 @@ def available_notes(request):
 
     return render(request, "notes_app/available_notes.html", {"notes": notes, "collections": collections})
 
+#TODO: pass in fewer items for the context
 def view_notes(request):
     collections = Collection.objects.all()
     notes = Note.objects.all()
@@ -167,7 +168,6 @@ def view_notes(request):
     #     notes = notes.filter(visibility=visibility)
     # if collection_id:
     #     notes = notes.filter(collections__id=collection_id)
-
     return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes": notes, "collections": collections, "notes_and_file": notes_and_file})
 
 def edit_note(request, note_id):
@@ -289,7 +289,8 @@ def create_collection(request):
     return render(request, 'notes_app/navbar_librarian/create_collection.html', {'form': CollectionForm(), 'notes': Note.objects.all()})
 
 def view_collections(request):
-    pass
+    collections = Collection.objects.all()
+    return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": collections})
 
 def view_full_collection(request, collection_id):
     pass

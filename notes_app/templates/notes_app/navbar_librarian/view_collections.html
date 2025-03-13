@@ -1,0 +1,87 @@
+<!--NOTE: this is basically a duplicate of available_notes.html for now-->
+{% extends 'base.html' %}
+{% block title %} View Collections {% endblock %}
+
+{% block content %}
+<style>
+    .search-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .search-container input,
+    .search-container select {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .notes-list {
+        margin-top: 20px;
+    }
+    .note-item {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        background: #f9f9f9;
+    }
+    .back-btn-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+    /* Add styles for the container */
+    .main-container {
+        max-width: 800px; /* Adjust as needed */
+        margin: auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+</style>
+<br>
+<!-- Main Container -->
+<div class="main-container">
+    <h2>View Collections</h2>
+    {% include 'notes_app/messages.html' %}
+
+    <!-- Search Form -->
+    <form method="GET" action="{% url 'notes_app:available_notes' %}">
+        <div class="search-container">
+            <input type="text" name="title" placeholder="Search by Title" value="{{ request.GET.title }}">
+            <input type="text" name="subject" placeholder="Search by Subject" value="{{ request.GET.subject }}">
+            <input type="text" name="semester" placeholder="Search by Semester" value="{{ request.GET.semester }}">
+            <input type="date" name="date" value="{{ request.GET.date }}">
+
+            <select name="collection">
+                <option value="">Any Collection</option>
+                {% for collection in collections %}
+                    <option value="{{ collection.id }}" {% if request.GET.collection == collection.id|stringformat:"s" %}selected{% endif %}>
+                        {{ collection.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    <!-- List of Available Notes -->
+    <div class="notes-list"> <!--may be able to use bootstrap card class instead of creating a custom class-->
+        {% if collections %}
+            {% for collection in collections %}
+                <div class="note-item">
+                    <h4>{{ collection.title }}</h4>
+                    <p><strong>Visibility:</strong> {{ collection.visibility }}</p>
+                    <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit Collection</a>
+                    <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View Full Collection</a>
+                    <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete Collection</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No collections found matching your criteria.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
