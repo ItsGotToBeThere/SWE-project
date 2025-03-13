@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mt-4">
+        {% include 'notes_app/messages.html' %}
+        <h1>{{collection.title}}</h1>
+        <p><strong>Description: </strong>{{collection.description}}</p>
+        <p><strong>Visibility: </strong>{{collection.visibility}}</p>
+        {% if collection.visibility == 'private' %}
+            <p><strong>User(s) With Acccess To Private Collection: </strong>
+            {% for user in private_collection_patrons %}
+                <p> {{ user.email }} [Patron] </p>
+            {% endfor %}
+            {% for user in librarians %}
+                <p> {{ user.email }} [Librarian] </p>
+            {% endfor %}
+        {% endif %}
+        <p>
+            <p><strong>Notes:</strong></p> 
+            {% for note in collection_notes %}
+                <a href="{% url 'notes_app:view_full_note' note.id %}" target="_blank">
+                    {{ note.title }}
+                </a>
+                <br>
+            {% endfor %}
+        </p>
+        <a href="{% url 'notes_app:view_collections' %}" class="btn btn-secondary">Back</a>
+    </div>
+    <br>
+{% endblock %}
