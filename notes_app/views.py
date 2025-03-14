@@ -73,6 +73,7 @@ def view_requests(request):
 def request_notes(request):
     """View to display private notes available for request."""
     notes = Note.objects.filter(is_requested=False, visibility="private") # only private notes
+    collections = Collection.objects.filter(is_requested=False, visibility="private")
     title_query = request.GET.get('title', '')
     subject_query = request.GET.get('subject', '')
     semester_query = request.GET.get('semester', '')
@@ -97,7 +98,7 @@ def request_notes(request):
         note.save()
         return redirect("notes_app:request_notes")  
 
-    return render(request, "notes_app/request_notes.html", {
+    return render(request, "notes_app/navbar_patron/request_notes.html", {
         "notes": notes,
         "collections": collections
     })
@@ -127,7 +128,7 @@ def borrowed_notes(request):
     if collection_id:
         notes = notes.filter(collections__id=collection_id)
 
-    return render(request, "notes_app/borrowed_notes.html", {"notes": notes, "collections": collections})
+    return render(request, "notes_app/navbar_patron/borrowed_notes.html", {"notes": notes, "collections": collections})
 
 def view_requests(request):
     return render(request, "notes_app/navbar_librarian/view_requests.html")
