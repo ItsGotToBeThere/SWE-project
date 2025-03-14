@@ -1,4 +1,5 @@
 from django.contrib.auth import logout
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import Group
 from django.dispatch import receiver
@@ -42,12 +43,6 @@ class PromotePatronView(View):
 def manage_borrowed(request):
     return render(request, "notes_app/navbar_librarian/manage_borrowed.html")
 
-def request_notes(request):
-    return render(request, "notes_app/navbar_patron/request_notes.html")
-
-def borrowed_notes(request):
-    return render(request, "notes_app/navbar_patron/borrowed_notes.html")
-
 @login_required
 def view_requests(request):
     """View to list patron requests for approval."""
@@ -75,21 +70,19 @@ def request_notes(request):
     notes = Note.objects.filter(is_requested=False, visibility="private") # only private notes
     collections = Collection.objects.filter(is_requested=False, visibility="private")
     title_query = request.GET.get('title', '')
-    subject_query = request.GET.get('subject', '')
     semester_query = request.GET.get('semester', '')
-    date_query = request.GET.get('date', '')
-    collection_query = request.GET.get('collection', '')
+    professor_query = request.GET.get('professor', '')
+    collection_id = request.GET.get('collection', '')
 
     if title_query:
         notes = notes.filter(title__icontains=title_query)
-    if subject_query:
-        notes = notes.filter(subject__icontains=subject_query)
+        collections = collections.filter(title__icontains=title_query)
     if semester_query:
         notes = notes.filter(semester__icontains=semester_query)
-    if date_query:
-        notes = notes.filter(date=date_query)
-    if collection_query:
-        notes = notes.filter(collections__id=collection_query)
+    if professor_query:
+        notes = notes.filter(professor__icontains=professor_query)
+    if collection_id:
+        notes = notes.filter(collectionitem__collection_id__exact=collection_id)
 
     if request.method == "POST":
         note_id = request.POST.get("note_id")
@@ -106,27 +99,28 @@ def request_notes(request):
 
 def borrowed_notes(request):
     user = request.user
-    notes = Note.objects.filter(borrowed_by=user) 
-    collections = Collection.objects.all()
+    notes = Note.objects.filter(
+        Q(patron_request__user=user,patron_request__status="approved") | Q(visibility="public")
+    )
+    collections = Collection.objects.filter(
+        Q(privatecollectionpatron__patron=user) | Q(visibility="public")
+    )
     title = request.GET.get("title")
-    subject = request.GET.get("subject")
     semester = request.GET.get("semester")
-    date = request.GET.get("date")
+    professor = request.GET.get("professor")
     visibility = request.GET.get("visibility")
     collection_id = request.GET.get("collection")
 
     if title:
         notes = notes.filter(title__icontains=title)
-    if subject:
-        notes = notes.filter(subject__icontains=subject)
     if semester:
         notes = notes.filter(semester__icontains=semester)
-    if date:
-        notes = notes.filter(date=date)
     if visibility:
         notes = notes.filter(visibility=visibility)
+    if professor:
+        notes = notes.filter(professor__icontains=professor)
     if collection_id:
-        notes = notes.filter(collections__id=collection_id)
+        notes = notes.filter(collectionitem__collection_id__exact=collection_id)
 
     return render(request, "notes_app/navbar_patron/borrowed_notes.html", {"notes": notes, "collections": collections})
 
