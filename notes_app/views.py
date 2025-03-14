@@ -85,10 +85,14 @@ def request_notes(request):
         notes = notes.filter(collectionitem__collection_id__exact=collection_id)
 
     if request.method == "POST":
+        user = request.user
         note_id = request.POST.get("note_id")
         note = get_object_or_404(Note, id=note_id)
-        note.is_requested = True 
+        note.is_requested = True
+        patron_request = PatronRequest.objects.create(patron=user, note=note)
+        patron_request.save()
         note.save()
+
         return redirect("notes_app:request_notes")  
 
     return render(request, "notes_app/navbar_patron/request_notes.html", {
@@ -100,7 +104,7 @@ def request_notes(request):
 def borrowed_notes(request):
     user = request.user
     notes = Note.objects.filter(
-        Q(patron_request__user=user,patron_request__status="approved") | Q(visibility="public")
+        Q(patronrequest__user=user,patronrequest__status="approved") | Q(visibility="public")
     )
     collections = Collection.objects.filter(
         Q(privatecollectionpatron__patron=user) | Q(visibility="public")
