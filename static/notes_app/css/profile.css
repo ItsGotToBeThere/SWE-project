@@ -52,7 +52,7 @@
     grid-column: 1 / 2;
     grid-row: 4 / 5;
     display:flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .bio{
