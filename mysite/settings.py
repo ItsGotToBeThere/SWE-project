@@ -88,6 +88,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
