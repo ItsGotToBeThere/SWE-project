@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.templatetags.static import static
+from django.utils import timezone
 from storages.backends.s3boto3 import S3Boto3Storage
 class Collection(models.Model):
     title = models.CharField(max_length=255, unique=True)
@@ -75,6 +76,7 @@ class Profile(models.Model):
     preferred_named = models.CharField(max_length = 40,blank=True)
     preferred_pronouns = models.CharField(max_length = 17,choices = PRONOUN_CHOICES, blank=True)
     bio = models.TextField(blank=True)
+    date_joined = models.DateTimeField(blank=True, auto_now_add=True)
 
 
     def get_banner_url(self):
