@@ -139,24 +139,21 @@ def available_notes(request):
     notes = Note.objects.all()
 
     title = request.GET.get("title")
-    subject = request.GET.get("subject")
+    professor = request.GET.get("professor")
     semester = request.GET.get("semester")
-    date = request.GET.get("date")
     visibility = request.GET.get("visibility")
     collection_id = request.GET.get("collection")
 
     if title:
         notes = notes.filter(title__icontains=title)
-    if subject:
-        notes = notes.filter(subject__icontains=subject)
     if semester:
         notes = notes.filter(semester__icontains=semester)
-    if date:
-        notes = notes.filter(date=date)
     if visibility:
         notes = notes.filter(visibility=visibility)
+    if professor:
+        notes = notes.filter(professor__icontains=professor)
     if collection_id:
-        notes = notes.filter(collections__id=collection_id)
+        notes = notes.filter(collectionitem__collection_id__exact=collection_id)
 
     notes_and_file = get_notes_and_associated_file(notes)
     return render(request, "notes_app/navbar_patron/available_notes.html", {"collections": collections, "notes_and_file": notes_and_file})
