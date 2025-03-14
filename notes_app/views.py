@@ -104,7 +104,7 @@ def request_notes(request):
 def borrowed_notes(request):
     user = request.user
     notes = Note.objects.filter(
-        Q(patronrequest__user=user,patronrequest__status="approved") | Q(visibility="public")
+        Q(patronrequest__patron=user,patronrequest__status="approved") | Q(visibility="public")
     )
     collections = Collection.objects.filter(
         Q(privatecollectionpatron__patron=user) | Q(visibility="public")
