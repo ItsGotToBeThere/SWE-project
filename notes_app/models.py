@@ -53,7 +53,7 @@ class Profile(models.Model):
     preferred_named = models.CharField(max_length = 40,blank=True)
     preferred_pronouns = models.CharField(max_length = 17,choices = PRONOUN_CHOICES, blank=True)
     bio = models.TextField(blank=True)
-    date_joined = models.DateTimeField(blank=True, default = timezone.now)
+    date_joined = models.DateTimeField(blank=True, auto_now_add=True)
 
 
     def get_banner_url(self):
