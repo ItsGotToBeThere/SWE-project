@@ -19,4 +19,4 @@ cryptography
 
 #amazon s3 dependencies
 django-storages
-boto3
+boto3django-environ

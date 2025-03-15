@@ -15,7 +15,8 @@ urlpatterns = [
     path("patron-dashboard/", views.patron_dashboard, name='patron_dashboard'),
     path("librarian-dashboard/", views.librarian_dashboard, name='librarian_dashboard'),
     path("promote/<int:patron_id>/", views.PromotePatronView.as_view(), name='promote_patron_view'),
-    
+    path("elevate-patron/<int:patron_id>/", views.elevate_patron, name="elevate_patron"),
+
     #patron specific urls
     path("available-notes/", views.available_notes, name="available_notes"),
     path("request-notes/", views.request_notes, name="request_notes"),
