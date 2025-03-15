@@ -77,7 +77,7 @@ class Profile(models.Model):
     preferred_pronouns = models.CharField(max_length = 17,choices = PRONOUN_CHOICES, blank=True)
     bio = models.TextField(blank=True)
     date_joined = models.DateTimeField(blank=True, auto_now_add=True)
-
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="patron")
 
     def get_banner_url(self):
         if self.banner:
@@ -92,8 +92,8 @@ class Profile(models.Model):
             return static('notes_app/images/default_profile.png')
 
     def get_role(self):
-        return str(self.user.groups.all()[0])[:-1]
-
+        #return str(self.user.groups.all()[0])[:-1]
+        return self.role
     def get_preferred_name(self):
         if self.preferred_named:
             return self.preferred_named
