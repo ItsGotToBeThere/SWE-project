@@ -77,7 +77,7 @@ class Profile(models.Model):
     preferred_pronouns = models.CharField(max_length = 17,choices = PRONOUN_CHOICES, blank=True)
     bio = models.TextField(blank=True)
     date_joined = models.DateTimeField(blank=True, auto_now_add=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="patron")
+    # role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="patron")
 
     def get_banner_url(self):
         if self.banner:

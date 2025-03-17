@@ -23,47 +23,48 @@ from django.core.files.base import ContentFile
 #PERMISSION RELATED VIEWS
 @method_decorator(librarian_required, name='dispatch')
 class PromotePatronView(View):
-    def get(self, request, patron_id, *args, **kwargs):
-        # Retrieve patron using provided ID
-        patron = get_object_or_404(User, id=patron_id)
+    pass
+#     def get(self, request, patron_id, *args, **kwargs):
+#         # Retrieve patron using provided ID
+#         patron = get_object_or_404(User, id=patron_id)
         
-        # Get the groups for patrons and librarians
-        patrons_group = Group.objects.get(name="Patrons")
-        librarians_group, created = Group.objects.get_or_create(name="Librarians")
+#         # Get the groups for patrons and librarians
+#         patrons_group = Group.objects.get(name="Patrons")
+#         librarians_group, created = Group.objects.get_or_create(name="Librarians")
         
-        # If user is in Patrons group, promote them
-        if patrons_group in patron.groups.all():
-            patron.groups.remove(patrons_group)
-            patron.groups.add(librarians_group)
-            patron.save()
+#         # If user is in Patrons group, promote them
+#         if patrons_group in patron.groups.all():
+#             patron.groups.remove(patrons_group)
+#             patron.groups.add(librarians_group)
+#             patron.save()
         
-        # Redirect back to librarian dashboard after promotion
-        return redirect("notes_app:librarian_dashboard")
+#         # Redirect back to librarian dashboard after promotion
+#         return redirect("notes_app:librarian_dashboard")
 
-    def is_librarian(user):
-        return user.profile.role == "librarian"
+#     def is_librarian(user):
+#         return user.profile.role == "librarian"
 
-    @login_required
-    @user_passes_test(is_librarian)
-    def elevate_patron(request, patron_id):
-        patron_profile = get_object_or_404(Profile, user_id=patron_id)
+    # @login_required
+    # @user_passes_test(is_librarian)
+    # def elevate_patron(request, patron_id):
+    #     patron_profile = get_object_or_404(Profile, user_id=patron_id)
 
-        if patron_profile.role == "patron":  # Only elevate if they're a regular patron
-            patron_profile.role = "elevated_patron"
-            patron_profile.save()
+    #     if patron_profile.role == "patron":  # Only elevate if they're a regular patron
+    #         patron_profile.role = "elevated_patron"
+    #         patron_profile.save()
 
-            # Send email notification
-            send_mail(
-                subject="Your Patron Permissions Have Been Elevated!",
-                message=f"Hello {patron_profile.get_preferred_name()},\n\nYour account has been upgraded to Elevated Patron status. You now have access to additional note-sharing features.",
-                from_email="admin@classnotes.com",
-                recipient_list=[patron_profile.user.email],
-                fail_silently=False,
-            )
+    #         # Send email notification
+    #         send_mail(
+    #             subject="Your Patron Permissions Have Been Elevated!",
+    #             message=f"Hello {patron_profile.get_preferred_name()},\n\nYour account has been upgraded to Elevated Patron status. You now have access to additional note-sharing features.",
+    #             from_email="admin@classnotes.com",
+    #             recipient_list=[patron_profile.user.email],
+    #             fail_silently=False,
+    #         )
 
-            messages.success(request, f"{patron_profile.user.username} has been elevated to Elevated Patron.")
+    #         messages.success(request, f"{patron_profile.user.username} has been elevated to Elevated Patron.")
 
-        return redirect("notes_app:librarian_dashboard")  # Redirect back to librarian dashboard
+    #     return redirect("notes_app:librarian_dashboard")  # Redirect back to librarian dashboard
 def manage_borrowed(request):
     return render(request, "notes_app/navbar_librarian/manage_borrowed.html")
 
