@@ -92,8 +92,8 @@ class Profile(models.Model):
             return static('notes_app/images/default_profile.png')
 
     def get_role(self):
-        #return str(self.user.groups.all()[0])[:-1]
-        return self.role
+        return str(self.user.groups.all()[0])[:-1]
+        # return self.role HOTFIX
     def get_preferred_name(self):
         if self.preferred_named:
             return self.preferred_named
