@@ -45,7 +45,7 @@ if IS_HEROKU_APP:
     SITE_ID = 8
 else:
     ALLOWED_HOSTS = [".localhost", "127.0.0.1", "[::1]", "0.0.0.0", "[::]"]
-    SITE_ID = 5
+    SITE_ID = 6
 
 DEBUG = True
 
