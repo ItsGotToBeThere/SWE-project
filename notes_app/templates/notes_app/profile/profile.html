@@ -29,9 +29,13 @@
         <div class = "pronouns grey">{{ user.profile.preferred_pronouns }}</div>
     </div>
     <div class = "bio">{{ user.profile.bio }}</div>
-    <div class = "notes-selection">
-        <a class = "public-button btn btn-light">Public</a>
-        <a class = "private-button btn btn-light">Private</a>
+    <div class = "notes-selection form-check-inline">
+        <input class = "form-check-input" id = "private-check">
+        <label class = "form-check-label" for = "private-check">Private</label>
+        <input class = "form-check-input" id = "public-check">
+        <label class = "form-check-label" for = "public-check">Public</label>
+
+
     </div>
     <div class = "notes scroll-pane">Notes</div>
     {% else %}

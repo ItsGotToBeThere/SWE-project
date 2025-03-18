@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import Group
 from django.dispatch import receiver
 from allauth.account.signals import user_signed_up
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.models import User

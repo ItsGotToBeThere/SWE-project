@@ -69,7 +69,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border: solid red;
+}
+
+.public-button{
+    color: var(--text-color)
+}
+
+.private-button{
+    color: var(--text-color)
+}
+
+.clicked{
+    border-bottom: solid var(--background-color);
 }
 
 

@@ -65,6 +65,7 @@ class PatronRequest(models.Model):
 
 
 PRONOUN_CHOICES = (('he/him',"He/Him"), ('she/her',"She/Her"), ('they/them',"They/Them"), ('other',"Other"))
+ROLE_CHOICES = (('patron','Patron'),('librarian','Librarian'))
 
 class Profile(models.Model):
     """
