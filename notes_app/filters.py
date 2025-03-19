@@ -6,7 +6,7 @@ class NotesFilter(django_filters.FilterSet):
     class Meta:
         model = Note
         fields = {
-            'title': ['icontains'],
+            'title': ['icontains'], #icontains does a case-insensitive contains check
             'course_name': ['icontains'],
             'professor': ['icontains']
         }
