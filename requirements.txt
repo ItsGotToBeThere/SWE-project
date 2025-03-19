@@ -1,15 +1,14 @@
+#core app dependencies
 Django
 gunicorn
 django-heroku
-django-environ
-django-storages
 dj-database-url
-django-bootstrap-v5
 Pillow
 
 #form styling dependencies
 django-crispy-forms
 crispy-bootstrap5
+django-bootstrap-v5
 
 #google login dependencies
 django-allauth
@@ -20,3 +19,7 @@ cryptography
 #amazon s3 dependencies
 django-storages
 boto3
+django-environ
+
+#filtering dependencies
+django-filter
