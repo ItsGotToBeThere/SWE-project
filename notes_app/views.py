@@ -12,7 +12,7 @@ from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
 from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron
-from .filters import NotesFilter
+from .filters import NotesFilter, CollectionsFilter
 from .forms import NoteForm, ProfileForm, CollectionForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -161,15 +161,14 @@ def view_requests(request):
 
 #Patron 
 def patron_view_collections(request):
-    collections = Collection.objects.all()
-    return render(request, "notes_app/navbar_patron/view_collections.html", {"collections": collections})
+    collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
+    collections = collections_filter.qs
+    return render(request, "notes_app/navbar_patron/view_collections.html", {"collections": collections, "collections_filter": collections_filter})
 
 def available_notes(request):
     notes = NotesFilter(request.GET, queryset=Note.objects.all())
     notes_and_file = get_notes_and_associated_file(notes.qs)
-    return render(request, "notes_app/navbar_librarian/available_notes.html", {"notes_and_file": notes_and_file, "notes_filter": notes})
-
-    return render(request, "notes_app/navbar_patron/available_notes.html", {"collections": collections, "notes_and_file": notes_and_file})
+    return render(request, "notes_app/navbar_patron/available_notes.html", {"notes_and_file": notes_and_file, "notes_filter": notes})
 
 #Librarian
 def view_notes(request):
@@ -178,8 +177,9 @@ def view_notes(request):
     return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes_and_file": notes_and_file, "notes_filter": notes})
 
 def view_collections(request):
-    collections = Collection.objects.all()
-    return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": collections})
+    collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
+    collections = collections_filter.qs
+    return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": collections, "collections_filter": collections_filter})
 
 #Both Librarian + Patron
 def view_full_note(request, note_id):
