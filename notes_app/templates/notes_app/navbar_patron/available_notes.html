@@ -1,102 +1,43 @@
 {% extends 'base.html' %}
-{% block title %} View Notes {% endblock %}
-
 {% block content %}
-<style>
-    .search-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-    .search-container input,
-    .search-container select {
-        flex: 1;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-    .notes-list {
-        margin-top: 20px;
-    }
-    .note-item {
-        border: 1px solid #ddd;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        background: #f9f9f9;
-    }
-    .back-btn-container {
-        text-align: center;
-        margin-top: 20px;
-    }
-    /* Add styles for the container */
-    .main-container {
-        max-width: 800px; /* Adjust as needed */
-        margin: auto;
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-</style>
-<br>
-<!-- Main Container -->
-<div class="main-container">
-    <h2>View Notes</h2>
-    {% include 'notes_app/messages.html' %}
-
-    <!-- Search Form -->
-    <form method="GET" action="{% url 'notes_app:available_notes' %}">
-        <div class="search-container">
-            <input type="text" name="title" placeholder="Search by Title" value="{{ request.GET.title }}">
-            <input type="text" name="subject" placeholder="Search by Subject" value="{{ request.GET.subject }}">
-            <input type="text" name="semester" placeholder="Search by Semester" value="{{ request.GET.semester }}">
-            <input type="date" name="date" value="{{ request.GET.date }}">
-
-            <select name="collection">
-                <option value="">Any Collection</option>
-                {% for collection in collections %}
-                    <option value="{{ collection.id }}" {% if request.GET.collection == collection.id|stringformat:"s" %}selected{% endif %}>
-                        {{ collection.name }}
-                    </option>
-                {% endfor %}
-            </select>
-            <button type="submit" class="btn btn-primary">Search</button>
-        </div>
+{% load crispy_forms_tags %}
+<div class="container mt-4">
+    <h1>Filter Notes</h1>
+    <form method="get">
+        {{ notes_filter.form | crispy }}
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
-
-    <!-- List of Available Notes -->
+    <br>
     {% load utils %}
-        {% if notes_and_file %}
-            {% for tuple in notes_and_file %}
-                {% with note=tuple|get_note %} <!--from utils.py since django templates doesn't support indexing into a tuple-->
-                {% with file=tuple|get_file %}
-                <div class="card">
-                    <div class="row">
-                        <div class="col-md-4 d-flex justify-content-center">
-                            <img src="{{ file.file.url }}" class="img-fluid">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                            <h4>{{ note.title }}</h4>
-                            <p><strong>Course Name:</strong> {{ note.course_name }}</p>
-                            <p><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
-                            <p><strong>Creation Date:</strong> {{ note.created_at }}</p>
-                            <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
-                            <a href="{% url 'notes_app:view_full_note' note.id %}" class="btn btn-secondary">View Full Note</a>
-                            <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
-                            </div>
+    {% if notes_and_file %}
+        {% for tuple in notes_and_file %}
+            {% with note=tuple|get_note %} <!--from utils.py since django templates doesn't support indexing into a tuple-->
+            {% with file=tuple|get_file %}
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-4 d-flex justify-content-center">
+                        <img src="{{ file.file.url }}" class="img-fluid">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                        <h4>{{ note.title }}</h4>
+                        <p><strong>Course Name:</strong> {{ note.course_name }}</p>
+                        <p><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
+                        <p><strong>Creation Date:</strong> {{ note.created_at }}</p>
+                        <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
+                        <a href="{% url 'notes_app:view_full_note' note.id %}" class="btn btn-secondary">View Full Note</a>
+                        <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
                         </div>
                     </div>
-                </div>              
-                <br>
-                {% endwith %}
-                {% endwith %}
-            {% endfor %}
-        {% else %}
-            <p>No notes found matching your criteria.</p>
-        {% endif %}
-<br>
+                </div>
+            </div>              
+            <br>
+            {% endwith %}
+            {% endwith %}
+        {% endfor %}
+    {% else %}
+        <p>No notes found matching your criteria.</p>
+    {% endif %}
 </div>
+<br>  
 {% endblock %}

@@ -59,8 +59,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'notes_app.apps.NotesAppConfig',
+
+    #form styling
     "crispy_forms",
     "crispy_bootstrap5",
+
+    #filtering
+    'django_filters',
 
     #google oauth apps
     'django.contrib.sites',

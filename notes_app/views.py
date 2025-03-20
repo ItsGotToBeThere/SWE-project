@@ -12,6 +12,7 @@ from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
 from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron
+from .filters import NotesFilter, CollectionsFilter
 from .forms import NoteForm, ProfileForm, CollectionForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -160,64 +161,25 @@ def view_requests(request):
 
 #Patron 
 def patron_view_collections(request):
-    collections = Collection.objects.all()
-    return render(request, "notes_app/navbar_patron/view_collections.html", {"collections": collections})
+    collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
+    collections = collections_filter.qs
+    return render(request, "notes_app/navbar_patron/view_collections.html", {"collections": collections, "collections_filter": collections_filter})
 
 def available_notes(request):
-    collections = Collection.objects.all()
-    notes = Note.objects.all()
-
-    title = request.GET.get("title")
-    professor = request.GET.get("professor")
-    semester = request.GET.get("semester")
-    visibility = request.GET.get("visibility")
-    collection_id = request.GET.get("collection")
-
-    if title:
-        notes = notes.filter(title__icontains=title)
-    if semester:
-        notes = notes.filter(semester__icontains=semester)
-    if visibility:
-        notes = notes.filter(visibility=visibility)
-    if professor:
-        notes = notes.filter(professor__icontains=professor)
-    if collection_id:
-        notes = notes.filter(collectionitem__collection_id__exact=collection_id)
-
-    notes_and_file = get_notes_and_associated_file(notes)
-    return render(request, "notes_app/navbar_patron/available_notes.html", {"collections": collections, "notes_and_file": notes_and_file})
+    notes = NotesFilter(request.GET, queryset=Note.objects.all())
+    notes_and_file = get_notes_and_associated_file(notes.qs)
+    return render(request, "notes_app/navbar_patron/available_notes.html", {"notes_and_file": notes_and_file, "notes_filter": notes})
 
 #Librarian
 def view_notes(request):
-    collections = Collection.objects.all()
-    notes = Note.objects.all()
-
-    title = request.GET.get("title")
-    subject = request.GET.get("subject")
-    semester = request.GET.get("semester")
-    date = request.GET.get("date")
-    visibility = request.GET.get("visibility")
-    collection_id = request.GET.get("collection")
-
-    if title:
-        notes = notes.filter(title__icontains=title)
-    if subject:
-        notes = notes.filter(subject__icontains=subject)
-    if semester:
-        notes = notes.filter(semester__icontains=semester)
-    if date:
-        notes = notes.filter(date=date)
-    if visibility:
-        notes = notes.filter(visibility=visibility)
-    if collection_id:
-        notes = notes.filter(collections__id=collection_id)
-
-    notes_and_file = get_notes_and_associated_file(notes)
-    return render(request, "notes_app/navbar_librarian/view_notes.html", {"collections": collections, "notes_and_file": notes_and_file})
+    notes = NotesFilter(request.GET, queryset=Note.objects.all())
+    notes_and_file = get_notes_and_associated_file(notes.qs)
+    return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes_and_file": notes_and_file, "notes_filter": notes})
 
 def view_collections(request):
-    collections = Collection.objects.all()
-    return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": collections})
+    collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
+    collections = collections_filter.qs
+    return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": collections, "collections_filter": collections_filter})
 
 #Both Librarian + Patron
 def view_full_note(request, note_id):
