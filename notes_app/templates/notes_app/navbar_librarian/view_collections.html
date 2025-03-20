@@ -14,8 +14,8 @@
                 <div class="card">
                     <div class="row">
                         <div class="card-body">
-                            <h4>{{ collection.title }}</h4>
-                            <p><strong>Visibility:</strong> {{ collection.visibility }}</p>
+                            <h4 style = "color:#808080">{{ collection.title }}</h4>
+                            <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
                             <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit Collection</a>
                             <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View Full Collection</a>
                             <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete Collection</a>
@@ -24,7 +24,7 @@
                 </div>   
             {% endfor %}
         {% else %}
-            <p style = "color:black" >No collections found matching your criteria.</p>
+            <p style = "color:#808080" >No collections found matching your criteria.</p>
         {% endif %}
     </div>
 </div>
