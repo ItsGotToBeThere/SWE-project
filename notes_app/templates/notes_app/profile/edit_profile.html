@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load crispy_forms_tags %}
 {% block title %} Profile {% endblock %}
 
 
@@ -8,14 +8,26 @@
 
     <link rel = "stylesheet" href = "{% static 'notes_app/css/profile.css' %}">
 
+    <div class = "container mt-4">
     <h2>Edit Profile</h2>
 
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}  {# Renders the form fields nicely #}
+        {{ form | crispy }}  {# Renders the form fields nicely #}
+
+        {% if form.errors %}
+            <ul class="error-list">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li style="color: red;">{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+            {% endif %}
         <button type="submit">Save Changes</button>
     </form>
 
-    <a href="{% url 'notes_app:profile' %}">Cancel</a> {# Link back to profile page #}
+    <a class = "btn" href="{% url 'notes_app:profile' %}">Cancel</a> {# Link back to profile page #}
+    </div>
 
 {% endblock %}

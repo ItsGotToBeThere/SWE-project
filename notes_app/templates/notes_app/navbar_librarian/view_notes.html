@@ -9,6 +9,7 @@
     </form>
     <br>
     {% load utils %}
+    <div class = "card">
     {% if notes_and_file %}
         {% for tuple in notes_and_file %}
             {% with note=tuple|get_note %} <!--from utils.py since django templates doesn't support indexing into a tuple-->
@@ -36,8 +37,9 @@
             {% endwith %}
         {% endfor %}
     {% else %}
-        <p>No notes found matching your criteria.</p>
+        <p style = "color:black">No notes found matching your criteria.</p>
     {% endif %}
+    </div>
 </div>
 <br>  
 {% endblock %}

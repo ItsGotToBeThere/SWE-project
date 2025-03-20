@@ -6,6 +6,7 @@ https://www.youtube.com/watch?v=nCJtL_-kDGU
 .dark {
   --background-color: rgb(25, 25, 25);
   --text-color: rgb(255, 255, 255, .75);
+  --seperator-color: #949494;
   --navbar-footer-color: black;
   --navbar-footer-text-color: white;
 
@@ -14,6 +15,7 @@ https://www.youtube.com/watch?v=nCJtL_-kDGU
 .light{
   --background-color: #f1faee;
   --text-color: #457b9d;
+  --seperator-color: #a8dadc;
   --navbar-footer-color: #1d3557;
   --navbar-footer-text-color: white;
 }
@@ -51,7 +53,7 @@ a{
 
 footer{
   position:sticky;
-  top:100vh;
+  top:100%;
   justify-content: center;
 }
 

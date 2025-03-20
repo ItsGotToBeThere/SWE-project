@@ -10,34 +10,33 @@
 <div class = 'profile-container'>
     {% if user.is_authenticated %}
 
-    <div class = "banner-container"><img class = "banner" src = "{{ user.profile.get_banner_url }}" alt = "Banner"></div>
-    <div class = "profile-picture-container" ><img class = "profile-picture rounded-circle" src = "{{ user.profile.get_profile_pic_url }}" alt = "Profile Picture"></div>
+    <div class = "banner" style = "background-image: url('{{ user.profile.get_banner_url }}');"></div>
+        <div class = "profile-picture-container"><img class = "profile-picture" role = "link" src = "{{ user.profile.get_profile_pic_url }}" alt = "Profile Picture"></div>
     <div class = "social-stats">
         <div class = "role">{{ user.profile.get_role }}</div>
         <div class = "posts">
-            <div class = "posts-number">74</div>
+            <div class = "posts-count">74</div>
             <div class = "posts-text grey">Notes</div>
         </div>
         <div class = "follows">
             <div class = "follow-count">675</div>
             <div class = "follow-text grey">Followers</div>
         </div>
-        <a class = "edit-button btn btn-dark" href = "{% url 'notes_app:edit_profile' %}">Edit</a>
+        <a class = "edit-btn btn" href = "{% url 'notes_app:edit_profile' %}">Edit</a>
     </div>
     <div class = "info">
         <div class = "name">{{ user.profile.get_preferred_name }}</div>
         <div class = "pronouns grey">{{ user.profile.preferred_pronouns }}</div>
     </div>
     <div class = "bio">{{ user.profile.bio }}</div>
-    <div class = "notes-selection form-check-inline">
-        <input class = "form-check-input" id = "private-check">
-        <label class = "form-check-label" for = "private-check">Private</label>
-        <input class = "form-check-input" id = "public-check">
-        <label class = "form-check-label" for = "public-check">Public</label>
-
-
+    <div role = "radiogroup" class = "notes-selection">
+        <input type = "radio" class = "btn-check" id = "private-check" name = "option" value = "private" autocomplete = "off" checked>
+        <label class = "btn notes-btn" for = "private-check">Private</label>
+        <input type = "radio" class = "btn-check" id = "public-check" name = "option" value = "public"  autocomplete = "off">
+        <label class = "btn notes-btn" for = "public-check">Public</label>
     </div>
-    <div class = "notes scroll-pane">Notes</div>
+         {# will show collections owned by user #}
+    <div class = "collections scroll-pane">Collections</div>
     {% else %}
         <p>You are not signed in.</p>
         <a href="{% provider_login_url 'google' next='/' %}">Google Login</a>

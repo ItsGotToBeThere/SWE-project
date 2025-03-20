@@ -1,62 +1,84 @@
 .profile-container{
     margin: 1% auto auto;
     width:61.25%;
-    height: 70%;
+    height: 80%;
     display:grid;
     grid-template-columns: 25% auto;
-    grid-template-rows: 7.5% 11% 7.5% 7.5% 11% 7.5% auto;
+    grid-template-rows: 7.5% 12.5% 12.5% 7.5% 11% 7.5% auto;
     border: solid var(--text-color);
     border-radius: 10px;
+    overflow:hidden;
 }
 
 .profile-container *{
     /* border: solid black; */
 }
 
-.banner-container{
+.banner{
     grid-column: 1 / 3;
     grid-row: 1 / 3;
+    border-radius:5px;
+
+    height:100%;
+    background-position: center;
+    background-size:cover;
+    background-repeat: no-repeat;
 }
 
-.banner{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
 
 .profile-picture-container{
     grid-column: 1 / 2;
     grid-row: 2 / 4;
+    display:flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .profile-picture{
-    width:100%;
-    height:100%;
-    object-fit:contain;
+    width:15vh;
+    height:15vh;
+    object-fit:cover;
+    border-radius: 50%;
+
 }
 
 .social-stats{
     margin-top:2%;
     grid-column: 2 / 3;
-    grid-row: 3 / 5;
+    grid-row: 3 / 4;
     display:flex;
     justify-content: space-around;
 }
 
-.edit-button{
+.posts-count{
+    text-align:center;
+}
+
+.follow-count{
+    text-align:center;
+}
+
+.edit-btn{
     height:50%;
+    border: solid var(--text-color);
+    padding-top:0;
+    border-radius: 20px;
 }
 
 .info{
-    margin-left:10%;
-    grid-column: 1 / 2;
+    margin-left:5%;
+    grid-column: 1 / 3;
     grid-row: 4 / 5;
     display:flex;
-    flex-direction: column;
+    flex-direction: row;
+}
+
+.name{
+    margin-right:2%;
 }
 
 .bio{
-    margin-left:2.5%;
+    margin-left:5%;
     grid-column: 1 / 3;
     grid-row: 5 / 6;
     justify-content: center;
@@ -66,28 +88,44 @@
 .notes-selection{
     grid-column: 1 / 3;
     grid-row: 6 / 7;
+    margin-left: 5%;
+    margin-right:5%;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-bottom: 1%;
+    border-top: solid var(--seperator-color);
+    border-width: 1px;
 }
 
-.public-button{
+.notes-btn{
+    margin-top:10%;
+    height:90%;
+    border-radius:0;
+}
+
+.btn{
+    margin: 1%;
+    color: var(--text-color);
+}
+
+.btn:hover{
     color: var(--text-color)
 }
 
-.private-button{
-    color: var(--text-color)
+.btn-check:focus+.btn, .btn:focus{
+    box-shadow:none;
 }
 
-.clicked{
-    border-bottom: solid var(--background-color);
+.btn-check:checked + .btn{
+    border-top: solid var(--text-color);
 }
 
 
-.notes{
+.collections{
+    margin:5%;
     grid-column: 1 / 3;
     grid-row: 7 / 8;
-    border: solid black;
     display:flex;
     border-radius: 10px;
 }
