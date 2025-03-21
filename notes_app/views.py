@@ -20,6 +20,7 @@ from django.contrib import messages
 import boto3
 import urllib.request
 from django.core.files.base import ContentFile
+from django.http import HttpResponseForbidden
 
 #PERMISSION RELATED VIEWS
 @method_decorator(librarian_required, name='dispatch')
@@ -260,6 +261,12 @@ def get_notes_and_associated_file(notes):
 def edit_collection(request, collection_id):
     #need to pass notes (all notes + notes in collection), collection information, and then also private users if they exist
     collection = get_object_or_404(Collection, pk=collection_id) #fetch one note object
+    # enforcing permissions
+    if not (request.user.groups.filter(name="Librarians").exists() or request.user == collection.created_by):
+        messages.error(request, "You do not have permission to edit this collection.")
+        return redirect("notes_app:view_collections") 
+
+
     collection_notes = [obj.note for obj in CollectionItem.objects.filter(collection_id=collection_id)]
     private_collection_patrons = [obj.patron for obj in PrivateCollectionPatron.objects.filter(collection_id=collection_id)]
     users = [user for user in User.objects.all() if Group.objects.get(name="Patrons") in user.groups.all()]
@@ -335,8 +342,12 @@ def edit_collection(request, collection_id):
 
 def delete_collection(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id) #fetch one note object
+    # enforing permission
+    if not(request.user.groups.filter(name="Librarians").exists() or request.user==collection.created_by):
+        messages.error(request, "You do not have permission to delete this collection.")
+        return redirect("notes_app:view_collections") 
+    
     collection.delete()
-
     messages.success(request, "Successfully deleted collection!")
     return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": Collection.objects.all()})
 
