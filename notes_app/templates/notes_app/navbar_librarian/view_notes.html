@@ -16,10 +16,10 @@
             {% with file=tuple|get_file %}
             <div class="card">
                 <div class="row">
-                    <div class="col-md-4 d-flex justify-content-center">
-                        <img src="{{ file.file.url }}" class="img-fluid">
+                    <div class="col-md-2">
+                        <img src="{{ file.file.url }}" class="img-fluid" style="max-width: 220px; max-height: 230px; min-width: 220px; min-height: 230px;">
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-10">
                         <div class="card-body">
                         <h4 style = "color:#808080">{{ note.title }}</h4>
                         <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>

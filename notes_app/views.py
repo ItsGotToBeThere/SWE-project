@@ -204,7 +204,7 @@ def view_collections(request):
     return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": collections, "collections_filter": collections_filter, "notes_filter": notes_filter})
 
 
-#Both Librarian + Patron
+#DISPLAYING AVAILABLE COLLECTIONS / NOTES VIEWS LIBRARIAN + PATRON
 def view_full_note(request, note_id):
     note = get_object_or_404(Note, pk=note_id) #fetch one note object
     files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
@@ -421,7 +421,9 @@ def add_notes(request):
                 notefile.note = note
                 notefile.file = file
                 notefile.save()
-        messages.success(request, 'Note created successfully!')
+            messages.success(request, 'Note created successfully!')
+        else:
+            messages.error(request, 'Note with that title already exists, please try again.')
     return render(request, 'notes_app/navbar_librarian/add_notes.html', {'form': NoteForm()})
 
 def create_collection(request):
@@ -464,7 +466,8 @@ def create_collection(request):
                             patron.save()
 
             messages.success(request, 'Collection created successfully!')
-
+        else:
+            messages.error(request, 'Collection with that title already exists, please try again.')
     return render(request, 'notes_app/navbar_librarian/create_collection.html', {'form': CollectionForm(), 'notes': notes, 'users': users })
 
 
