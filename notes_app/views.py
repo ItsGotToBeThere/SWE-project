@@ -160,12 +160,27 @@ def view_requests(request):
 
 
 #DISPLAYING AVAILABLE COLLECTIONS / NOTES VIEWS PATRON 
+def filter_collections_and_notes(filtered_notes, filtered_collections):
+    filtered_notes_associated_collections = set()
+
+    # compare collection ids since it's easier to work with
+    filtered_collections_ids = set(filtered_collections.values_list('id', flat=True))
+
+    for note in filtered_notes:
+        collections = Collection.objects.filter(collectionitem__note_id=note.id)
+        for collection in collections:
+            filtered_notes_associated_collections.add(collection.id)
+
+    common_collection_ids = filtered_collections_ids & filtered_notes_associated_collections
+    return Collection.objects.filter(id__in=common_collection_ids)
+
 def patron_view_collections(request):
     collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
-    collections = collections_filter.qs
+    notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
+    collections = filter_collections_and_notes(notes_filter.qs, collections_filter.qs)
     user_collections = collections.filter(created_by=request.user)
     collections = collections.exclude(created_by=request.user)
-    return render(request, "notes_app/navbar_patron/view_collections.html", {"collections": collections, "user_collections": user_collections, "collections_filter": collections_filter})
+    return render(request, "notes_app/navbar_patron/view_collections.html", {"collections": collections, "user_collections": user_collections, "collections_filter": collections_filter, "notes_filter": notes_filter})
 
 def available_notes(request):
     notes = NotesFilter(request.GET, queryset=Note.objects.all())
@@ -182,23 +197,9 @@ def view_notes(request):
 def view_collections(request):
     collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
     notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
-
-    filtered_notes = notes_filter.qs
-    filtered_collections = collections_filter.qs
-    filtered_notes_associated_collections = set()
-
-    # compare collection ids since it's easier to work with
-    filtered_collections_ids = set(filtered_collections.values_list('id', flat=True))
-
-    for note in filtered_notes:
-        collections = Collection.objects.filter(collectionitem__note_id=note.id)
-        for collection in collections:
-            filtered_notes_associated_collections.add(collection.id)
-
-    common_collection_ids = filtered_collections_ids & filtered_notes_associated_collections
-    collections = Collection.objects.filter(id__in=common_collection_ids)
-
+    collections = filter_collections_and_notes(notes_filter.qs, collections_filter.qs)
     return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": collections, "collections_filter": collections_filter, "notes_filter": notes_filter})
+
 
 #Both Librarian + Patron
 def view_full_note(request, note_id):
