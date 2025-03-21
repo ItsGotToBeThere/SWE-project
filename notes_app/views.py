@@ -181,8 +181,24 @@ def view_notes(request):
 
 def view_collections(request):
     collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
-    collections = collections_filter.qs
-    return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": collections, "collections_filter": collections_filter})
+    notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
+
+    filtered_notes = notes_filter.qs
+    filtered_collections = collections_filter.qs
+    filtered_notes_associated_collections = set()
+
+    # compare collection ids since it's easier to work with
+    filtered_collections_ids = set(filtered_collections.values_list('id', flat=True))
+
+    for note in filtered_notes:
+        collections = Collection.objects.filter(collectionitem__note_id=note.id)
+        for collection in collections:
+            filtered_notes_associated_collections.add(collection.id)
+
+    common_collection_ids = filtered_collections_ids & filtered_notes_associated_collections
+    collections = Collection.objects.filter(id__in=common_collection_ids)
+
+    return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": collections, "collections_filter": collections_filter, "notes_filter": notes_filter})
 
 #Both Librarian + Patron
 def view_full_note(request, note_id):
@@ -261,12 +277,6 @@ def create_patron_collection(request):
 def edit_collection(request, collection_id):
     #need to pass notes (all notes + notes in collection), collection information, and then also private users if they exist
     collection = get_object_or_404(Collection, pk=collection_id) #fetch one note object
-    # enforcing permissions
-    if not (request.user.groups.filter(name="Librarians").exists() or request.user == collection.created_by):
-        messages.error(request, "You do not have permission to edit this collection.")
-        return redirect("notes_app:view_collections") 
-
-
     collection_notes = [obj.note for obj in CollectionItem.objects.filter(collection_id=collection_id)]
     private_collection_patrons = [obj.patron for obj in PrivateCollectionPatron.objects.filter(collection_id=collection_id)]
     users = [user for user in User.objects.all() if Group.objects.get(name="Patrons") in user.groups.all()]

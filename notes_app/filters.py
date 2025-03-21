@@ -19,11 +19,7 @@ class NotesFilter(django_filters.FilterSet):
         self.filters['professor__icontains'].label = 'Professor Name'
 
 class CollectionsFilter(django_filters.FilterSet):
-    class Meta:
-        model = Collection
-        fields = {
-            'title': ['icontains'], #icontains does a case-insensitive contains check
-        }
+    title = django_filters.CharFilter(field_name='title', lookup_expr='icontains', label='Collection Title')
     
     VISIBILITY_CHOICES = (
         ('private', 'Private'),
@@ -31,7 +27,3 @@ class CollectionsFilter(django_filters.FilterSet):
     )
     
     visibility = django_filters.ChoiceFilter(choices=VISIBILITY_CHOICES)
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.filters['title__icontains'].label = 'Collection Title'
