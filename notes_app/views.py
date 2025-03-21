@@ -13,7 +13,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron
 from .filters import NotesFilter, CollectionsFilter
-from .forms import NoteForm, ProfileForm, CollectionForm
+from .forms import NoteForm, ProfileForm, CollectionForm, PatronCollectionForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -169,6 +169,20 @@ def available_notes(request):
     notes = NotesFilter(request.GET, queryset=Note.objects.all())
     notes_and_file = get_notes_and_associated_file(notes.qs)
     return render(request, "notes_app/navbar_patron/available_notes.html", {"notes_and_file": notes_and_file, "notes_filter": notes})
+
+@login_required
+def create_patron_collection(request):
+    if request.method == 'POST':
+        form = PatronCollectionForm(request.POST)
+        if form.is_valid():
+            collection = form.save(commit=False)
+            collection.creator = request.user
+            collection.is_public = True
+            collection.save()
+            return redirect('collection_detail', pk=collection.pk)
+    else:
+        form = PatronCollectionForm()
+    return render(request, 'notes_app/navbar_patron/create_patron_collection.html', {'form': form})
 
 #Librarian
 def view_notes(request):
