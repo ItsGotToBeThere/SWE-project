@@ -18,3 +18,9 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         exclude = ['user']
         error_css_class = 'error'
+
+
+class PatronCollectionForm(forms.ModelForm):
+    class Meta:
+        model = Collection
+        fields = ['title', 'description']  

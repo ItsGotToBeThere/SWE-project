@@ -13,13 +13,14 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron
 from .filters import NotesFilter, CollectionsFilter
-from .forms import NoteForm, ProfileForm, CollectionForm
+from .forms import NoteForm, ProfileForm, CollectionForm, PatronCollectionForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import boto3
 import urllib.request
 from django.core.files.base import ContentFile
+from django.http import HttpResponseForbidden
 
 #PERMISSION RELATED VIEWS
 @method_decorator(librarian_required, name='dispatch')
@@ -170,6 +171,32 @@ def available_notes(request):
     notes_and_file = get_notes_and_associated_file(notes.qs)
     return render(request, "notes_app/navbar_patron/available_notes.html", {"notes_and_file": notes_and_file, "notes_filter": notes})
 
+@login_required
+def create_patron_collection(request):
+    # Fetch only public notes
+    notes = Note.objects.filter(visibility="public")
+
+    if request.method == 'POST':
+        form = PatronCollectionForm(request.POST)
+        if form.is_valid():
+            collection = form.save(commit=False)
+            collection.created_by = request.user  # FIX: Assign the creator correctly
+            collection.is_public = True  # Ensure the collection is public
+            collection.save()
+
+            # Save selected notes to the collection
+            note_ids = request.POST.getlist('collection_notes')
+            selected_notes = Note.objects.filter(id__in=note_ids)
+            for note in selected_notes:
+                CollectionItem.objects.create(note=note, collection=collection)
+
+            messages.success(request, "Collection created successfully!")
+            return redirect('notes_app:patron_view_collections')
+    else:
+        form = PatronCollectionForm()
+
+    return render(request, 'notes_app/navbar_patron/create_patron_collection.html', {'form': form, 'notes': notes})
+
 #Librarian
 def view_notes(request):
     notes = NotesFilter(request.GET, queryset=Note.objects.all())
@@ -234,6 +261,12 @@ def get_notes_and_associated_file(notes):
 def edit_collection(request, collection_id):
     #need to pass notes (all notes + notes in collection), collection information, and then also private users if they exist
     collection = get_object_or_404(Collection, pk=collection_id) #fetch one note object
+    # enforcing permissions
+    if not (request.user.groups.filter(name="Librarians").exists() or request.user == collection.created_by):
+        messages.error(request, "You do not have permission to edit this collection.")
+        return redirect("notes_app:view_collections") 
+
+
     collection_notes = [obj.note for obj in CollectionItem.objects.filter(collection_id=collection_id)]
     private_collection_patrons = [obj.patron for obj in PrivateCollectionPatron.objects.filter(collection_id=collection_id)]
     users = [user for user in User.objects.all() if Group.objects.get(name="Patrons") in user.groups.all()]
@@ -309,8 +342,12 @@ def edit_collection(request, collection_id):
 
 def delete_collection(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id) #fetch one note object
+    # enforing permission
+    if not(request.user.groups.filter(name="Librarians").exists() or request.user==collection.created_by):
+        messages.error(request, "You do not have permission to delete this collection.")
+        return redirect("notes_app:view_collections") 
+    
     collection.delete()
-
     messages.success(request, "Successfully deleted collection!")
     return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": Collection.objects.all()})
 
