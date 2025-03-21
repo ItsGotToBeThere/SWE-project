@@ -9,8 +9,8 @@
     </form>
     <br>
     <div class="card"> 
-        {% if collections %}
-            {% for collection in collections %}
+        {% if user_collections %}
+            {% for collection in user_collections %}
                 <div class="card">
                     <div class="row">
                         <div class="card-body">
@@ -23,7 +23,21 @@
                     </div>
                 </div>   
             {% endfor %}
-        {% else %}
+        {% endif %}
+        {% if collections %}
+            {% for collection in collections %}
+                <div class="card">
+                    <div class="row">
+                        <div class="card-body">
+                            <h4 style = "color:#808080">{{ collection.title }}</h4>
+                            <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
+                            <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View Full Collection</a>
+                        </div>
+                    </div>
+                </div>   
+            {% endfor %}
+        {% endif %}
+        {% if not collections and not user_collections %}
             <p style = "color:#808080">No collections found matching your criteria.</p>
         {% endif %}
     </div>
