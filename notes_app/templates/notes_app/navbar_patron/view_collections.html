@@ -14,7 +14,7 @@
             {% for collection in user_collections %}
                 <div class="card">
                     <div class="row">
-                        <div class="card-body">
+                        <div class="card-body" style="padding-left: 30px;">
                             <h4 style = "color:#808080">{{ collection.title }}</h4>
                             <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
                             <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit Collection</a>
@@ -25,11 +25,11 @@
                 </div>   
             {% endfor %}
         {% endif %}
-        {% if collections %}
-            {% for collection in collections %}
+        {% if public_collections %}
+            {% for collection in public_collections %}
                 <div class="card">
                     <div class="row">
-                        <div class="card-body">
+                        <div class="card-body" style="padding-left: 30px;">
                             <h4 style = "color:#808080">{{ collection.title }}</h4>
                             <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
                             <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View Full Collection</a>
@@ -38,7 +38,20 @@
                 </div>   
             {% endfor %}
         {% endif %}
-        {% if not collections and not user_collections %}
+        {% if private_collections %}
+            {% for collection in private_collections %}
+                <div class="card">
+                    <div class="row">
+                        <div class="card-body" style="padding-left: 30px;">
+                            <h4 style = "color:#808080">{{ collection.title }}</h4>
+                            <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
+                            <a href="#" class="btn btn-secondary">Request to View Full Collection</a>
+                        </div>
+                    </div>
+                </div>   
+            {% endfor %}
+        {% endif %}
+        {% if not public_collections and not user_collections and not private_collections%}
             <p style = "color:#808080">No collections found matching your criteria.</p>
         {% endif %}
     </div>

@@ -178,9 +178,12 @@ def patron_view_collections(request):
     collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
     notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
     collections = filter_collections_and_notes(notes_filter.qs, collections_filter.qs)
+
     user_collections = collections.filter(created_by=request.user)
-    collections = collections.exclude(created_by=request.user)
-    return render(request, "notes_app/navbar_patron/view_collections.html", {"collections": collections, "user_collections": user_collections, "collections_filter": collections_filter, "notes_filter": notes_filter})
+    private_collections = collections.filter(visibility="private")
+    public_collections = collections.exclude(created_by=request.user)
+    public_collections = public_collections.exclude(visibility="private")
+    return render(request, "notes_app/navbar_patron/view_collections.html", {"public_collections": public_collections, "user_collections": user_collections, "private_collections": private_collections, "collections_filter": collections_filter, "notes_filter": notes_filter})
 
 def available_notes(request):
     notes = NotesFilter(request.GET, queryset=Note.objects.all())
