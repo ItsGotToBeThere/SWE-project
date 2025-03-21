@@ -172,17 +172,29 @@ def available_notes(request):
 
 @login_required
 def create_patron_collection(request):
+    # Fetch only public notes
+    notes = Note.objects.filter(visibility="public")
+
     if request.method == 'POST':
         form = PatronCollectionForm(request.POST)
         if form.is_valid():
             collection = form.save(commit=False)
-            collection.creator = request.user
-            collection.is_public = True
+            collection.created_by = request.user  # FIX: Assign the creator correctly
+            collection.is_public = True  # Ensure the collection is public
             collection.save()
-            return redirect('collection_detail', pk=collection.pk)
+
+            # Save selected notes to the collection
+            note_ids = request.POST.getlist('collection_notes')
+            selected_notes = Note.objects.filter(id__in=note_ids)
+            for note in selected_notes:
+                CollectionItem.objects.create(note=note, collection=collection)
+
+            messages.success(request, "Collection created successfully!")
+            return redirect('notes_app:patron_view_collections')
     else:
         form = PatronCollectionForm()
-    return render(request, 'notes_app/navbar_patron/create_patron_collection.html', {'form': form})
+
+    return render(request, 'notes_app/navbar_patron/create_patron_collection.html', {'form': form, 'notes': notes})
 
 #Librarian
 def view_notes(request):
