@@ -476,7 +476,19 @@ def index(request):
     return render(request, "notes_app/home.html")
 
 def profile(request):
-    return render(request, "notes_app/profile/profile.html")
+    collections = Collection.objects.filter(
+     Q(created_by=request.user) | Q(privatecollectionpatron__patron=request.user)
+    )
+    return render(request, "notes_app/profile/profile_collections.html",{'content': collections,})
+
+def profile_notes(request):
+    notes = []
+    if request.user.groups.filter(name="Patrons").exists():
+        notes = Note.objects.filter(patronrequest__patron=request.user)
+    elif request.user.groups.filter(name="Librarians").exists():
+        notes = Note.objects.filter(created_by=request.user)
+    return render(request, "notes_app/profile/profile_notes.html",{'content': notes,})
+
 
 def logout_view(request):
     if request.user.is_authenticated:

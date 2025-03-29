@@ -6,7 +6,7 @@
 {% block title %}Profile{% endblock %}
 {% block content %}
 <link rel = "stylesheet" href = "{% static 'notes_app/css/profile.css' %}">
-
+<div class = "container mt-4">
 <div class = 'profile-container'>
     {% if user.is_authenticated %}
 
@@ -30,16 +30,18 @@
     </div>
     <div class = "bio">{{ user.profile.bio }}</div>
     <div role = "radiogroup" class = "notes-selection">
-        <input type = "radio" class = "btn-check" id = "private-check" name = "option" value = "private" autocomplete = "off" checked>
-        <label class = "btn notes-btn" for = "private-check">Private</label>
-        <input type = "radio" class = "btn-check" id = "public-check" name = "option" value = "public"  autocomplete = "off">
-        <label class = "btn notes-btn" for = "public-check">Public</label>
+        <a class = "btn notes-btn" id = "collections-check" href = "{% url 'notes_app:profile' %}">Collections</a>
+        <a class = "btn notes-btn" id = "notes-check" href = "{% url 'notes_app:profile_notes' %}">Notes</a>
     </div>
          {# will show collections owned by user #}
-    <div class = "collections scroll-pane">Collections</div>
+    <div class = "collections scroll-pane">
+        {% block scroll %}
+        {% endblock %}
+    </div>
     {% else %}
         <p>You are not signed in.</p>
         <a href="{% provider_login_url 'google' next='/' %}">Google Login</a>
     {% endif %}
+</div>
 </div>
 {% endblock %}

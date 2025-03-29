@@ -1,4 +1,5 @@
 {% load static %}
+{% load socialaccount %}
 
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
@@ -21,7 +22,13 @@
                  <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">
-                        <img src = "{% static 'notes_app/images/default_profile.png' %}"  alt="profile_picture"
+                        <img class = "navbar-picture" src = "
+                                    {% if user.is_authenticated   %}
+                                    {{ user.profile.get_profile_pic_url }}
+                                    {% else %}
+                                    {% static 'notes_app/images/default_profile.png' %}
+                                    {% endif %}
+                                    "  alt="profile_picture"
                         width = "30"
                         height= "30">
                     </a>

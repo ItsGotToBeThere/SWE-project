@@ -8,6 +8,7 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("set-theme/", views.set_theme, name="set_theme"),
     path("profile/", views.profile, name="profile"),
+    path("profile/notes", views.profile_notes, name="profile_notes"),
     path("profile/edit/", views.EditProfileView.as_view(), name="edit_profile"),
     path("accounts/logout/", views.logout_view, name="account_logout"),
     path("logout/", views.logout_view, name="logout_view"),

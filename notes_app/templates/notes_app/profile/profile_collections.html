@@ -1,0 +1,37 @@
+{% extends 'notes_app/profile/profile.html' %}
+
+{% block scroll %}
+
+    <style>
+    #collections-check{
+        border-top: solid var(--text-color);
+    }
+    </style>
+
+    {% for collection in content %}
+        {% if forloop.first or forloop.counter0|divisibleby:2 %}
+            <div class="card-group row">
+        {% endif %}
+
+        <div class="col-md-6">
+            <div class = "card">
+                <div class = "row">
+                <div class = "col-md-10">
+                <div class="card-body" style="padding-left: 30px;">
+                    <h4 style = "color:#808080">{{ collection.title }}</h4>
+                    <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
+                    <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit Collection</a>
+                    <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View Full Collection</a>
+                    <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete Collection</a>
+                </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        {% if forloop.counter|divisibleby:2 or forloop.last %}
+            </div>
+        {% endif %}
+
+    {% endfor %}
+{% endblock %}

@@ -51,10 +51,16 @@ a{
   color:var(--navbar-footer-text-color);
 }
 
+.navbar-picture{
+  border-radius:50%;
+  object-fit:cover;
+}
+
 footer{
-  position:sticky;
-  top:100%;
+  position:relative;
+  bottom:0;
   justify-content: center;
+  height:50px;
 }
 
 .switch input{
