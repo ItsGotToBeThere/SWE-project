@@ -62,6 +62,8 @@
                 <p><strong>Semester:</strong> {{ note.semester }}</p>
                 <p><strong>Date:</strong> {{ note.created_at }}</p>
                 <p><strong>Collections:</strong> {% for collection in note.collections.all %}{{ collection.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+                <p style = "color:#808080"><strong>Rating:</strong>{{ note.get_average_rating }}</p>
+                <a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review Note</a>
                 <a href="{{ note.s3_url }}" class="btn btn-secondary" target="_blank">View Note</a>
                 
                 <!-- Request Form -->

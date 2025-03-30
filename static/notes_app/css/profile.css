@@ -27,6 +27,7 @@ html, body{
     grid-row: 1 / 3;
     border-radius:5px;
 
+    min-height:15vh;
     height:100%;
     background-position: center;
     background-size:cover;
@@ -40,6 +41,7 @@ html, body{
     display:flex;
     align-items: center;
     justify-content: center;
+    margin-bottom:5%;
 }
 
 .profile-picture{
@@ -87,7 +89,7 @@ html, body{
 }
 
 .bio{
-    margin-left:5%;
+    margin: 2% 2% 2% 5%;
     grid-column: 1 / 3;
     grid-row: 5 / 6;
     justify-content: center;
@@ -128,7 +130,6 @@ html, body{
 
 
 .collections{
-    margin:5%;
     height:auto;
     grid-column: 1 / 3;
     grid-row: 7 / 8;

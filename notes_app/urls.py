@@ -24,6 +24,7 @@ urlpatterns = [
     path("patron-view-collections/", views.patron_view_collections, name="patron_view_collections"),
     path("borrowed-notes/", views.borrowed_notes, name="borrowed_notes"),
     path("create-patron-collection/", views.create_patron_collection, name="create_patron_collection"),
+    path("review-note/<int:note_id>", views.review_note, name="review_note"),
 
     #librarian specific urls
 

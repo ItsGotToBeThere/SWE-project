@@ -12,6 +12,13 @@
         <p><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
         <p><strong>Location: </strong> Virtual </p>
         <p><strong>Visibility: </strong> {{ note.visibility }} </p>
+        <div class = "card col-md-6"><strong>Reviews: </strong>
+            {% for review in note.get_reviews %}
+                <p style = "color:black">{{ review.rating }}</p>
+                <p style="color:black">{{ review.comment }}</p>
+                <p style="color:black">-{{ review.patron }}</p>
+            {% endfor %}
+        </div>
         <p>
             <p><strong>Files:</strong></p> 
             {% for file in files %}

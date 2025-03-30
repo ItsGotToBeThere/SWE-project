@@ -1,5 +1,5 @@
 from django import forms
-from .models import Note, Profile, Collection
+from .models import Note, Profile, Collection, NoteReview
 
 class NoteForm(forms.ModelForm):
     class Meta:
@@ -11,13 +11,15 @@ class CollectionForm(forms.ModelForm):
         model = Collection
         fields = ['title', 'description', 'visibility']
 
-
+class NoteReviewForm(forms.ModelForm):
+    class Meta:
+        model = NoteReview
+        fields = ['rating','comment']
 
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         exclude = ['user']
-        error_css_class = 'error'
 
 
 class PatronCollectionForm(forms.ModelForm):

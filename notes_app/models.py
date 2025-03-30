@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
 from django.templatetags.static import static
@@ -34,6 +35,21 @@ class Note(models.Model):
     visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default="public") #private = in private collection
     is_requested = models.BooleanField(default=False)
 
+    def get_reviews(self):
+        return NoteReview.objects.filter(note=self)
+
+    def get_average_rating(self):
+        reviews = NoteReview.objects.filter(note=self)
+        c_total = 0
+        c_rating = 0
+        for review in reviews:
+            c_total+=1
+            c_rating+=review.rating
+
+        if c_total: return c_rating/c_total
+        else: return 0
+
+
     def __str__(self):
         return self.title
 
@@ -63,6 +79,11 @@ class PatronRequest(models.Model):
     def __str__(self):
         return f"{self.patron.username} - {self.note.title} - {self.status}"  
 
+class NoteReview(models.Model):
+    patron = models.ForeignKey(User, on_delete=models.CASCADE)
+    note = models.ForeignKey(Note, on_delete=models.CASCADE)
+    rating = models.FloatField(null=True,validators=[MinValueValidator(0), MaxValueValidator(10)])
+    comment = models.TextField(blank=True)
 
 PRONOUN_CHOICES = (('he/him',"He/Him"), ('she/her',"She/Her"), ('they/them',"They/Them"), ('other',"Other"))
 
