@@ -11,9 +11,9 @@ from django.contrib.auth.models import User
 from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
-from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron
+from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron, NoteReview
 from .filters import NotesFilter, CollectionsFilter
-from .forms import NoteForm, ProfileForm, CollectionForm, PatronCollectionForm
+from .forms import NoteForm, ProfileForm, CollectionForm, PatronCollectionForm, NoteReviewForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -277,6 +277,29 @@ def create_patron_collection(request):
 
     return render(request, 'notes_app/navbar_patron/create_patron_collection.html', {'form': form, 'notes': notes})
 
+def review_note(request, note_id):
+    note = get_object_or_404(Note, pk=note_id)
+    review, created = NoteReview.objects.get_or_create(note=note, patron=request.user)
+
+    if request.method == 'POST':
+        form = NoteReviewForm(request.POST, instance = review)
+        if form.is_valid():
+            if created:
+                noteReview=form.save(commit=False)
+                noteReview.note = note
+                noteReview.patron = request.user
+                noteReview.save()
+            else:
+                review.rating = form.cleaned_data['rating']
+                review.comment = form.cleaned_data['comment']
+                review.save()
+
+            messages.success(request, "Note reviewed successfully!")
+            return redirect("notes_app:available_notes")
+    else:
+        form = NoteReviewForm(instance = review)
+    return render(request, 'notes_app/navbar_patron/review_notes.html',{'form':form,'note': note})
+
 
 def edit_collection(request, collection_id):
     #need to pass notes (all notes + notes in collection), collection information, and then also private users if they exist
@@ -476,17 +499,22 @@ def index(request):
     return render(request, "notes_app/home.html")
 
 def profile(request):
-    collections = Collection.objects.filter(
-     Q(created_by=request.user) | Q(privatecollectionpatron__patron=request.user)
-    )
+    if request.user.is_authenticated:
+        collections = Collection.objects.filter(
+         Q(created_by=request.user) | Q(privatecollectionpatron__patron=request.user)
+        )
+    else:
+        collections = []
+
     return render(request, "notes_app/profile/profile_collections.html",{'content': collections,})
 
 def profile_notes(request):
     notes = []
-    if request.user.groups.filter(name="Patrons").exists():
-        notes = Note.objects.filter(patronrequest__patron=request.user)
-    elif request.user.groups.filter(name="Librarians").exists():
-        notes = Note.objects.filter(created_by=request.user)
+    if request.user.is_authenticated:
+        if request.user.groups.filter(name="Patrons").exists():
+            notes = Note.objects.filter(patronrequest__patron=request.user)
+        elif request.user.groups.filter(name="Librarians").exists():
+            notes = Note.objects.filter(created_by=request.user)
     return render(request, "notes_app/profile/profile_notes.html",{'content': notes,})
 
 

@@ -30,6 +30,7 @@
                     <p style = "color:#808080"><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
                     <p style = "color:#808080"><strong>Creation Date:</strong> {{ note.created_at }}</p>
                     <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
+                    <a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review Note</a>
                     <a href="{% url 'notes_app:view_full_note' note.id %}" class="btn btn-secondary">View Full Note</a>
                     <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
                     </div>
