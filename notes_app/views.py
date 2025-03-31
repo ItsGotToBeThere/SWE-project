@@ -479,11 +479,12 @@ def create_collection(request):
                     notes_in_collection.append(note)
 
             for note in notes_in_collection:
-                collection_item = CollectionItem(note=note, collection=collection)
-                collection_item.save()
                 if collection.visibility == 'private':
+                    CollectionItem.objects.filter(note=note).delete() #remove from all public collections
                     note.visibility = 'private'
                     note.save() 
+                collection_item = CollectionItem(note=note, collection=collection)
+                collection_item.save()
             if collection.visibility == 'private':
                 private_collection_patrons_with_access = request.POST.getlist('access_users')
                 for access_patron in private_collection_patrons_with_access:
