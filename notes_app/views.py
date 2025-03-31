@@ -180,10 +180,17 @@ def patron_view_collections(request):
     collections = filter_collections_and_notes(notes_filter.qs, collections_filter.qs)
 
     user_collections = collections.filter(created_by=request.user)
-    private_collections = collections.filter(visibility="private")
+    if PrivateCollectionPatron.objects.filter(patron=request.user).exists():
+        private_collections_with_access = private_collections_with_access = collections.filter(visibility="private", privatecollectionpatron__patron=request.user)
+    else:
+        private_collections_with_access = []
+
+    private_collections_without_access = collections.filter(visibility="private") 
+    private_collections_without_access = private_collections_without_access.filter(~Q(privatecollectionpatron__patron=request.user)) #make sure is not part of private collection patron (no access)
+    
     public_collections = collections.exclude(created_by=request.user)
     public_collections = public_collections.exclude(visibility="private")
-    return render(request, "notes_app/navbar_patron/view_collections.html", {"public_collections": public_collections, "user_collections": user_collections, "private_collections": private_collections, "collections_filter": collections_filter, "notes_filter": notes_filter})
+    return render(request, "notes_app/navbar_patron/view_collections.html", {"public_collections": public_collections, "user_collections": user_collections, "private_collections_with_access":private_collections_with_access, "private_collections_without_access": private_collections_without_access, "collections_filter": collections_filter, "notes_filter": notes_filter})
 
 def available_notes(request):
     queryset = Note.objects.filter(visibility='public')
