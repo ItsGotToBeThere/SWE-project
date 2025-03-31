@@ -376,9 +376,13 @@ def edit_collection(request, collection_id):
     return render(request, "notes_app/edit_collection.html", context={'form':form, 'collection':collection, 'users': users, 'notes': notes, 'collection_notes':collection_notes, 'private_collection_patrons': private_collection_patrons})
 
 def delete_collection(request, collection_id):
-    collection = get_object_or_404(Collection, pk=collection_id) #fetch one note object
+    collection = get_object_or_404(Collection, pk=collection_id) 
+    if collection.visibility == 'private':
+        notes = [object.note for object in CollectionItem.objects.filter(collection=collection)]
+        for note in notes:
+            note.visibility = 'public'
+            note.save()  
     collection.delete()
-    messages.success(request, "Successfully deleted collection!")
     if request.user.groups.filter(name="Librarians").exists(): 
         return redirect("notes_app:view_collections") 
     else:
