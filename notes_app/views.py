@@ -209,7 +209,12 @@ def view_collections(request):
 def view_full_note(request, note_id):
     note = get_object_or_404(Note, pk=note_id) #fetch one note object
     files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
-    return render(request, "notes_app/view_full_note.html", context={'note': note, 'files': files})
+    note_collections = CollectionItem.objects.filter(note=note)
+    if request.user.groups.filter(name="Librarians").exists():
+        user_type = 'Librarian'
+    else:
+        user_type = 'Patron'
+    return render(request, "notes_app/view_full_note.html", context={'note': note, 'files': files, 'note_collections': note_collections, 'user_type':user_type})
 
 def view_full_collection(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id) 

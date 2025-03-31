@@ -3,6 +3,7 @@
     <div class="container mt-4">
         {% include 'notes_app/messages.html' %}
         <h1>{{collection.title}}</h1>
+        <p><strong>Creator: </strong>{{collection.created_by.email}}</p>
         <p><strong>Description: </strong>{{collection.description}}</p>
         <p><strong>Visibility: </strong>{{collection.visibility}}</p>
         {% if collection.visibility == 'private' %}

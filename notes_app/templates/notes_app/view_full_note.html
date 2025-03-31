@@ -29,6 +29,20 @@
                 <br>
             {% endfor %}
         </p>
+        <p>
+            <p><strong>Collection(s) Note Is In: </strong></p> 
+            <ul>
+                {% for object in note_collections %}
+                    {% if user_type == 'Librarian' %}
+                        <a href="{% url 'notes_app:view_full_collection' object.collection.id %}" target="_blank">
+                            <li><u>{{ object.collection.title }}</u></li>
+                        </a>
+                    {% else %}
+                        <li>{{ object.collection.title }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </p>
         <a href="{% url 'notes_app:view_notes' %}" class="btn btn-secondary">Back</a>
         <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
         <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
