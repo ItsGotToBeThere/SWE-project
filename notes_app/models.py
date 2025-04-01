@@ -75,6 +75,8 @@ class PatronRequest(models.Model):
     note = models.ForeignKey(Note, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
     requested_at = models.DateTimeField(auto_now_add=True)
+    fulfilled_at = models.DateTimeField(null=True, blank=True)
+
 
     def __str__(self):
         return f"{self.patron.username} - {self.note.title} - {self.status}"  
@@ -122,3 +124,17 @@ class Profile(models.Model):
             return self.preferred_named
         else:
             return self.user.username
+
+class CollectionAccessRequest(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("denied", "Denied"),
+    ]
+    patron = models.ForeignKey(User, on_delete=models.CASCADE)
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    requested_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.patron.username} → {self.collection.title} ({self.status})"
