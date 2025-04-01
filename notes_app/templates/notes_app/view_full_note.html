@@ -12,7 +12,7 @@
         <p><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
         <p><strong>Location: </strong> Virtual </p>
         <p><strong>Visibility: </strong> {{ note.visibility }} </p>
-        <div class = "card col-md-6"><strong>Reviews: </strong>
+        <div class = "card col-md-6"><strong style = "color:black">Reviews: </strong>
             {% for review in note.get_reviews %}
                 <p style = "color:black">{{ review.rating }}</p>
                 <p style="color:black">{{ review.comment }}</p>
@@ -24,18 +24,18 @@
             {% for file in files %}
                 <!--_blank opens the link in a new tab-->
                 <a href="{{ file.file.url }}" target="_blank">
-                    <u>{{ file.file.url }}</u>
+                    <u style = "color:var(--text-color)">{{ file.file.url }}</u>
                 </a>
                 <br>
             {% endfor %}
         </p>
         <p>
             <p><strong>Collection(s) Note Is In: </strong></p> 
-            <ul>
+            <ul style = "list-style-type:none; padding-left:0;">
                 {% for object in note_collections %}
                     {% if user_type == 'Librarian' %}
                         <a href="{% url 'notes_app:view_full_collection' object.collection.id %}" target="_blank">
-                            <li><u>{{ object.collection.title }}</u></li>
+                            <li><u style = "color:var(--text-color)">{{ object.collection.title }}</u></li>
                         </a>
                     {% else %}
                         <li>{{ object.collection.title }}</li>

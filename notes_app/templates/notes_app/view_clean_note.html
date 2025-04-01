@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id = "carouselExampleIndicators" class="carousel slide">
+  <div class="carousel-indicators">
+    {% for file in files %}
+        {% with i=forloop.counter %}
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ i|add:-1|slugify }}"
+                aria-label="Slide {{ i|slugify }}"
+                {% if forloop.first %}
+                    class = "active" aria-current = "true"
+                {% endif %}
+        ></button>
+        {% endwith %}
+    {% endfor %}
+  </div>
+  <div class="carousel-inner">
+      {% for file in files %}
+          <div class = "carousel-item {% if forloop.first %}active{% endif %}">
+          <embed src = "{{ file.file.url }}" width = "1000" height = "600" class = "d-block w-100">
+          </div>
+      {% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+{% endblock %}
