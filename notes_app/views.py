@@ -71,27 +71,32 @@ def manage_borrowed(request):
     return render(request, "notes_app/navbar_librarian/manage_borrowed.html")
 
 @login_required
-@librarian_required
+@user_passes_test(lambda u: u.groups.filter(name="Librarians").exists())
 def view_requests(request):
-    requests = CollectionAccessRequest.objects.filter(status="pending")
+    requests = CollectionAccessRequest.objects.filter(status="pending")  # Only pending
 
     if request.method == "POST":
         request_id = request.POST.get("request_id")
         action = request.POST.get("action")
-        access_request = get_object_or_404(CollectionAccessRequest, id=request_id)
+        req = get_object_or_404(CollectionAccessRequest, id=request_id)
 
         if action == "approve":
-            access_request.status = "approved"
-            PrivateCollectionPatron.objects.create(patron=access_request.patron, collection=access_request.collection)
-            messages.success(request, f"Access granted to {access_request.patron.username}.")
+            req.status = "approved"
+            PrivateCollectionPatron.objects.get_or_create(
+                patron=req.patron,
+                collection=req.collection
+            )
         elif action == "deny":
-            access_request.status = "denied"
-            messages.info(request, f"Access denied for {access_request.patron.username}.")
+            req.status = "denied"
 
-        access_request.save()
-        return redirect("notes_app:view_requests")
+        req.save()
+        return redirect("notes_app:view_requests") 
 
-    return render(request, "notes_app/navbar_librarian/view_requests.html", {"requests": requests})
+    return render(request, "notes_app/navbar_librarian/view_requests.html", {
+        "requests": requests
+    })
+
+
 @login_required
 def request_notes(request):
     """View to display private notes available for request."""
@@ -156,8 +161,8 @@ def borrowed_notes(request):
 
     return render(request, "notes_app/navbar_patron/borrowed_notes.html", {"notes": notes, "collections": collections})
 
-def view_requests(request):
-    return render(request, "notes_app/navbar_librarian/view_requests.html")
+# def view_requests(request):
+#     return render(request, "notes_app/navbar_librarian/view_requests.html")
 
 
 #DISPLAYING AVAILABLE COLLECTIONS / NOTES VIEWS PATRON 
