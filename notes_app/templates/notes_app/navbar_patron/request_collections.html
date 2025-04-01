@@ -5,23 +5,27 @@
 
     {% if private_collections_without_access %}
         {% for collection in private_collections_without_access %}
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">{{ collection.title }}</h5>
+            <div class="card my-3">
+                <div class="card-body">
+                    <h5>{{ collection.title }}</h5>
 
-                {% if collection.id in requested_collection_ids %}
-                    <button class="btn btn-secondary" disabled>Access Requested</button>
-                {% else %}
-                    <form method="post" action="{% url 'notes_app:request_collection' collection.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">Request Access</button>
-                    </form>
-                {% endif %}
+                    {% if collection.id in pending_collection_ids %}
+                        <button class="btn btn-secondary" disabled>Access Requested</button>
+
+                    {% elif collection.id in denied_collection_ids %}
+                        <button class="btn btn-danger" disabled>Access Denied</button>
+
+                    {% else %}
+                        <form method="post" action="{% url 'notes_app:request_collection' collection.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Request Access</button>
+                        </form>
+                    {% endif %}
+                </div>
             </div>
-        </div>
         {% endfor %}
     {% else %}
-        <p>No private collections found.</p>
+        <p class="text-muted">No private collections found.</p>
     {% endif %}
 </div>
 {% endblock %}

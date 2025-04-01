@@ -160,24 +160,36 @@ def filter_collections_and_notes(filtered_notes, filtered_collections):
 
     common_collection_ids = filtered_collections_ids & filtered_notes_associated_collections
     return Collection.objects.filter(id__in=common_collection_ids)
+from django.db.models import Q
 
+from django.db.models import Q
+
+@login_required
 def patron_view_collections(request):
     collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
     notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
     collections = filter_collections_and_notes(notes_filter.qs, collections_filter.qs)
 
-    user_collections = collections.filter(created_by=request.user)
-    if PrivateCollectionPatron.objects.filter(patron=request.user).exists():
-        private_collections_with_access = private_collections_with_access = collections.filter(visibility="private", privatecollectionpatron__patron=request.user)
-    else:
-        private_collections_with_access = []
+    # Collections the patron created (they can edit/delete these)
+    user_collections = collections.filter(created_by=request.user, visibility="public")
 
-    private_collections_without_access = collections.filter(visibility="private") 
-    private_collections_without_access = private_collections_without_access.filter(~Q(privatecollectionpatron__patron=request.user)) #make sure is not part of private collection patron (no access)
-    
-    public_collections = collections.exclude(created_by=request.user)
-    public_collections = public_collections.exclude(visibility="private")
-    return render(request, "notes_app/navbar_patron/view_collections.html", {"public_collections": public_collections, "user_collections": user_collections, "private_collections_with_access":private_collections_with_access, "private_collections_without_access": private_collections_without_access, "collections_filter": collections_filter, "notes_filter": notes_filter})
+    # All public collections (excluding ones they created, already shown above)
+    public_collections = collections.filter(visibility="public").exclude(created_by=request.user)
+
+    # Private collections they have been granted access to (read-only view)
+    private_collections_with_access = collections.filter(
+        visibility="private",
+        privatecollectionpatron__patron=request.user
+    )
+
+    return render(request, "notes_app/navbar_patron/view_collections.html", {
+        "collections_filter": collections_filter,
+        "notes_filter": notes_filter,
+        "user_collections": user_collections,
+        "public_collections": public_collections,
+        "private_collections_with_access": private_collections_with_access,
+    })
+
 
 def available_notes(request):
     queryset = Note.objects.filter(visibility='public')
@@ -197,12 +209,18 @@ def request_collections(request):
     all_private = Collection.objects.filter(visibility="private")
     approved_ids = PrivateCollectionPatron.objects.filter(patron=user).values_list("collection_id", flat=True)
     all_private = all_private.exclude(id__in=approved_ids)
-    requested_ids = CollectionAccessRequest.objects.filter(patron=user).values_list("collection_id", flat=True)
+
+    existing_requests = CollectionAccessRequest.objects.filter(patron=user)
+    requested_ids = existing_requests.values_list("collection_id", flat=True)
+    denied_ids = existing_requests.filter(status="denied").values_list("collection_id", flat=True)
+    pending_ids = existing_requests.filter(status="pending").values_list("collection_id", flat=True)
 
     return render(request, "notes_app/navbar_patron/request_collections.html", {
         "private_collections_without_access": all_private,
-        "requested_collection_ids": list(requested_ids),
+        "pending_collection_ids": set(pending_ids),
+        "denied_collection_ids": set(denied_ids),
     })
+
 
 
 

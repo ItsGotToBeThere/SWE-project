@@ -4,70 +4,58 @@
 <div class="container mt-4">
     <h1>Filter Collections</h1>
     <form method="get">
-        {{ collections_filter.form | crispy }}
-        {{ notes_filter.form | crispy }}
+        {{ collections_filter.form|crispy }}
+        {{ notes_filter.form|crispy }}
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <br>
-    <div class="card"> 
-        {% if user_collections %}
-            {% for collection in user_collections %}
-                <div class="card">
-                    <div class="row">
-                        <div class="card-body" style="padding-left: 30px;">
-                            <h4 style = "color:#808080">{{ collection.title }}</h4>
-                            <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
-                            <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit Collection</a>
-                            <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View Full Collection</a>
-                            <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete Collection</a>
-                        </div>
-                    </div>
-                </div>   
-            {% endfor %}
-        {% endif %}
-        {% if public_collections %}
-            {% for collection in public_collections %}
-                <div class="card">
-                    <div class="row">
-                        <div class="card-body" style="padding-left: 30px;">
-                            <h4 style = "color:#808080">{{ collection.title }}</h4>
-                            <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
-                            <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View Full Collection</a>
-                        </div>
-                    </div>
-                </div>   
-            {% endfor %}
-        {% endif %}
-        {% if private_collections_with_access %}
-            {% for collection in private_collections_with_access %}
-                <div class="card">
-                    <div class="row">
-                        <div class="card-body" style="padding-left: 30px;">
-                            <h4 style = "color:#808080">{{ collection.title }}</h4>
-                            <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
-                            <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View Full Collection</a>
-                        </div>
-                    </div>
-                </div>   
-            {% endfor %}
-        {% endif %}
-        {% if private_collections_without_access %}
-            {% for collection in private_collections_without_access %}
-                <div class="card">
-                    <div class="row">
-                        <div class="card-body" style="padding-left: 30px;">
-                            <h4 style = "color:#808080">{{ collection.title }}</h4>
-                            <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
-                            <a href="#" class="btn btn-secondary">Request to View Full Collection</a>
-                        </div>
-                    </div>
-                </div>   
-            {% endfor %}
-        {% endif %}
-        {% if not public_collections and not user_collections and not private_collections%}
-            <p style = "color:#808080">No collections found matching your criteria.</p>
-        {% endif %}
-    </div>
+
+    <!-- Collections created by the patron (can edit/delete) -->
+    {% if user_collections %}
+        <h4>Your Public Collections</h4>
+        {% for collection in user_collections %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h4>{{ collection.title }}</h4>
+                    <p><strong>Visibility:</strong> {{ collection.visibility }}</p>
+                    <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit</a>
+                    <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View</a>
+                    <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Public collections created by others (view-only) -->
+    {% if public_collections %}
+        <h4>Other Public Collections</h4>
+        {% for collection in public_collections %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h4>{{ collection.title }}</h4>
+                    <p><strong>Visibility:</strong> Public</p>
+                    <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Private collections patron has access to (view-only) -->
+    {% if private_collections_with_access %}
+        <h4>Private Collections You've Been Granted Access To</h4>
+        {% for collection in private_collections_with_access %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h4>{{ collection.title }}</h4>
+                    <p><strong>Visibility:</strong> Private</p>
+                    <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if not user_collections and not public_collections and not private_collections_with_access %}
+        <p class="text-muted">No collections available.</p>
+    {% endif %}
 </div>
-<br>
 {% endblock %}
