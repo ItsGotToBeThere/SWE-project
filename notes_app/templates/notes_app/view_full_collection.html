@@ -26,7 +26,11 @@
         </p>
         {% for group in user.groups.all %}
             {% if group.name == "Librarians" or user.id == collection.created_by.id %}
-                <a href="{% url 'notes_app:view_collections' %}" class="btn btn-secondary">Back</a>
+                {% if group.name == "Librarians" %}
+                    <a href="{% url 'notes_app:view_collections' %}" class="btn btn-secondary">Back</a>
+                {% else %}
+                    <a href="{% url 'notes_app:patron_view_collections' %}" class="btn btn-secondary">Back</a>
+                {% endif %}
                 <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit Collection</a>
                 <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete Collection</a>
             {% else %}

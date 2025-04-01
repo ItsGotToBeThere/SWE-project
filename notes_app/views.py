@@ -385,8 +385,13 @@ def edit_collection(request, collection_id):
         messages.success(request, 'Collection edited successfully!')
     else: #GET request
         form = CollectionForm(instance=collection)
+    
+    if request.user.groups.filter(name="Librarians").exists():
+        user_type = 'Librarian'
+    else:
+        user_type = 'Patron'
 
-    return render(request, "notes_app/edit_collection.html", context={'form':form, 'collection':collection, 'users': users, 'notes': notes, 'collection_notes':collection_notes, 'private_collection_patrons': private_collection_patrons})
+    return render(request, "notes_app/edit_collection.html", context={'user_type': user_type, 'form':form, 'collection':collection, 'users': users, 'notes': notes, 'collection_notes':collection_notes, 'private_collection_patrons': private_collection_patrons})
 
 def delete_collection(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id) 
