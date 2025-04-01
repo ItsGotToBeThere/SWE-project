@@ -5,15 +5,20 @@
 
     {% if private_collections_without_access %}
         {% for collection in private_collections_without_access %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5>{{ collection.title }}</h5>
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ collection.title }}</h5>
+
+                {% if collection.id in requested_collection_ids %}
+                    <button class="btn btn-secondary" disabled>Access Requested</button>
+                {% else %}
                     <form method="post" action="{% url 'notes_app:request_collection' collection.id %}">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-primary">Request Access</button>
+                        <button type="submit" class="btn btn-primary">Request Access</button>
                     </form>
-                </div>
+                {% endif %}
             </div>
+        </div>
         {% endfor %}
     {% else %}
         <p>No private collections found.</p>

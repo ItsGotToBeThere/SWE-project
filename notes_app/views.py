@@ -71,26 +71,27 @@ def manage_borrowed(request):
     return render(request, "notes_app/navbar_librarian/manage_borrowed.html")
 
 @login_required
+@librarian_required
 def view_requests(request):
-    """View to list patron requests for approval."""
-    requests = PatronRequest.objects.filter(status="pending") 
+    requests = CollectionAccessRequest.objects.filter(status="pending")
 
     if request.method == "POST":
         request_id = request.POST.get("request_id")
         action = request.POST.get("action")
-        patron_request = get_object_or_404(PatronRequest, id=request_id)
+        access_request = get_object_or_404(CollectionAccessRequest, id=request_id)
 
         if action == "approve":
-            patron_request.status = "approved"
-            patron_request.note.is_requested = False  
+            access_request.status = "approved"
+            PrivateCollectionPatron.objects.create(patron=access_request.patron, collection=access_request.collection)
+            messages.success(request, f"Access granted to {access_request.patron.username}.")
         elif action == "deny":
-            patron_request.status = "denied"
+            access_request.status = "denied"
+            messages.info(request, f"Access denied for {access_request.patron.username}.")
 
-        patron_request.save()
-        return redirect("notes_app:view_requests") 
+        access_request.save()
+        return redirect("notes_app:view_requests")
 
-    return render(request, "notes_app/view_requests.html", {"requests": requests})
-
+    return render(request, "notes_app/navbar_librarian/view_requests.html", {"requests": requests})
 @login_required
 def request_notes(request):
     """View to display private notes available for request."""
@@ -207,16 +208,16 @@ def request_collection(request, collection_id):
 @login_required
 def request_collections(request):
     user = request.user
+    all_private = Collection.objects.filter(visibility="private")
+    approved_ids = PrivateCollectionPatron.objects.filter(patron=user).values_list("collection_id", flat=True)
+    all_private = all_private.exclude(id__in=approved_ids)
+    requested_ids = CollectionAccessRequest.objects.filter(patron=user).values_list("collection_id", flat=True)
 
-    private_collections_without_access = Collection.objects.filter(
-        visibility="private"
-    ).exclude(privatecollectionpatron__patron=user)
+    return render(request, "notes_app/navbar_patron/request_collections.html", {
+        "private_collections_without_access": all_private,
+        "requested_collection_ids": list(requested_ids),
+    })
 
-    context = {
-        "private_collections_without_access": private_collections_without_access
-    }
-
-    return render(request, "notes_app/navbar_patron/request_collections.html", context)
 
 
 #DISPLAYING AVAILABLE COLLECTIONS / NOTES VIEWS LIBRARIAN
