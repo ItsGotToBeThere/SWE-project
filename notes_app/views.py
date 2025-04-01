@@ -198,6 +198,26 @@ def available_notes(request):
     notes_and_file = get_notes_and_associated_file(notes.qs)
     return render(request, "notes_app/navbar_patron/available_notes.html", {"notes_and_file": notes_and_file, "notes_filter": notes})
 
+@login_required
+def request_collection(request):
+    collection = get_object_or_404(Collection, pk=collection_id)
+    CollectionAccessRequest.objects.get_or_create(patron=request.user, collection=collection)
+    messages.success(request, "Access request sent to librarians.")
+    return redirect("notes_app:request_collections")
+@login_required
+def request_collections(request):
+    user = request.user
+
+    private_collections_without_access = Collection.objects.filter(
+        visibility="private"
+    ).exclude(privatecollectionpatron__patron=user)
+
+    context = {
+        "private_collections_without_access": private_collections_without_access
+    }
+
+    return render(request, "notes_app/navbar_patron/request_collections.html", context)
+
 
 #DISPLAYING AVAILABLE COLLECTIONS / NOTES VIEWS LIBRARIAN
 def view_notes(request):

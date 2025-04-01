@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Private Collections (Request Access)</h1>
+
+    {% if private_collections_without_access %}
+        {% for collection in private_collections_without_access %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>{{ collection.title }}</h5>
+                    <form method="post" action="{% url 'notes_app:request_collection' collection.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary">Request Access</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No private collections found.</p>
+    {% endif %}
+</div>
+{% endblock %}
