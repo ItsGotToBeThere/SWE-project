@@ -552,23 +552,34 @@ def index(request):
     return render(request, "notes_app/home.html")
 
 def profile(request):
+    notes = []
     if request.user.is_authenticated:
         collections = Collection.objects.filter(
          Q(created_by=request.user) | Q(privatecollectionpatron__patron=request.user)
         )
-    else:
-        collections = []
-
-    return render(request, "notes_app/profile/profile_collections.html",{'content': collections,})
-
-def profile_notes(request):
-    notes = []
-    if request.user.is_authenticated:
         if request.user.groups.filter(name="Patrons").exists():
             notes = Note.objects.filter(patronrequest__patron=request.user)
         elif request.user.groups.filter(name="Librarians").exists():
             notes = Note.objects.filter(created_by=request.user)
-    return render(request, "notes_app/profile/profile_notes.html",{'content': notes,})
+    else:
+        collections = []
+
+    return render(request, "notes_app/profile/profile_collections.html",{'collections': collections,'notes':notes})
+
+def profile_notes(request):
+    notes = []
+    if request.user.is_authenticated:
+        collections = Collection.objects.filter(
+         Q(created_by=request.user) | Q(privatecollectionpatron__patron=request.user)
+        )
+        if request.user.groups.filter(name="Patrons").exists():
+            notes = Note.objects.filter(patronrequest__patron=request.user)
+        elif request.user.groups.filter(name="Librarians").exists():
+            notes = Note.objects.filter(created_by=request.user)
+    else:
+        collections = []
+
+    return render(request, "notes_app/profile/profile_notes.html",{'collections': collections,'notes':notes})
 
 
 def logout_view(request):
