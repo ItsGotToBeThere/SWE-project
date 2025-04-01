@@ -33,8 +33,8 @@ urlpatterns = [
     #note related
     path("add-notes/", views.add_notes, name="add_notes"),
     path("view-notes/", views.view_notes, name="view_notes"),
-    path("view_full_note/<int:note_id>/", views.view_full_note, name="view_full_note"),
-    path("view_clean_note/<int:note_id>", views.view_clean_note, name="view_clean_note"),
+    path("view_note_details/<int:note_id>/", views.view_note_details, name="view_note_details"),
+    path("note/<int:note_id>", views.view_clean_note, name="view_clean_note"),
     path("edit_note/<int:note_id>/", views.edit_note, name="edit_note"),
     path("delete_note/<int:note_id>/", views.delete_note, name="delete_note"),
     
