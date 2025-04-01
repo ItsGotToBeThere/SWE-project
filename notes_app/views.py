@@ -133,37 +133,18 @@ def request_notes(request):
         "collections": collections
     })
 
+from django.contrib.auth.decorators import login_required
+from .models import PrivateCollectionPatron
 
-def borrowed_notes(request):
-    user = request.user
-    notes = Note.objects.filter(
-        Q(patronrequest__patron=user,patronrequest__status="approved") | Q(visibility="public")
-    )
-    collections = Collection.objects.filter(
-        Q(privatecollectionpatron__patron=user) | Q(visibility="public")
-    )
-    title = request.GET.get("title")
-    semester = request.GET.get("semester")
-    professor = request.GET.get("professor")
-    visibility = request.GET.get("visibility")
-    collection_id = request.GET.get("collection")
+@login_required
+def borrowed_collections(request):
+    patron = request.user
+    borrowed = PrivateCollectionPatron.objects.filter(patron=patron).select_related('collection')
+    collections = [entry.collection for entry in borrowed]
 
-    if title:
-        notes = notes.filter(title__icontains=title)
-    if semester:
-        notes = notes.filter(semester__icontains=semester)
-    if visibility:
-        notes = notes.filter(visibility=visibility)
-    if professor:
-        notes = notes.filter(professor__icontains=professor)
-    if collection_id:
-        notes = notes.filter(collectionitem__collection_id__exact=collection_id)
-
-    return render(request, "notes_app/navbar_patron/borrowed_notes.html", {"notes": notes, "collections": collections})
-
-# def view_requests(request):
-#     return render(request, "notes_app/navbar_librarian/view_requests.html")
-
+    return render(request, "notes_app/navbar_patron/borrowed_collections.html", {
+        "borrowed_collections": collections
+    })
 
 #DISPLAYING AVAILABLE COLLECTIONS / NOTES VIEWS PATRON 
 def filter_collections_and_notes(filtered_notes, filtered_collections):

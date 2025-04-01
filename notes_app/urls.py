@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import available_notes, request_notes, borrowed_notes
+from .views import available_notes, request_notes, borrowed_collections
 
 app_name = "notes_app"
 
@@ -24,7 +24,7 @@ urlpatterns = [
     path("request-collection/<int:collection_id>/", views.request_collection, name="request_collection"),
 
     path("patron-view-collections/", views.patron_view_collections, name="patron_view_collections"),
-    path("borrowed-notes/", views.borrowed_notes, name="borrowed_notes"),
+    path("borrowed-collections/", views.borrowed_collections, name="borrowed_collections"),
     path("create-patron-collection/", views.create_patron_collection, name="create_patron_collection"),
     path("review-note/<int:note_id>", views.review_note, name="review_note"),
 

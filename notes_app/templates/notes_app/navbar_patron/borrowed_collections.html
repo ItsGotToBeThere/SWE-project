@@ -1,88 +1,29 @@
 {% extends 'base.html' %}
-{% block title %} Borrowed Notes {% endblock %}
-
+{% load static %}
 {% block content %}
-<style>
-    .search-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-    .search-container input,
-    .search-container select {
-        flex: 1;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-    .notes-list {
-        margin-top: 20px;
-    }
-    .note-item {
-        border: 1px solid #ddd;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        background: #f9f9f9;
-    }
-    .back-btn-container {
-        text-align: center;
-        margin-top: 20px;
-    }
-</style>
 
-<h2>Borrowed Notes</h2>
+<div class="container mt-4">
+    <h1>My Borrowed Private Collections</h1>
 
-<!-- Search Form -->
-<form method="GET" action="{% url 'notes_app:borrowed_notes' %}">
-    <div class="search-container">
-        <input type="text" name="title" placeholder="Search by Title" value="{{ request.GET.title }}">
-        <input type="text" name="subject" placeholder="Search by Subject" value="{{ request.GET.subject }}">
-        <input type="text" name="semester" placeholder="Search by Semester" value="{{ request.GET.semester }}">
-        <input type="date" name="date" value="{{ request.GET.date }}">
-        <select name="visibility">
-            <option value="">Any Visibility</option>
-            <option value="public" {% if request.GET.visibility == 'public' %}selected{% endif %}>Public</option>
-            <option value="private" {% if request.GET.visibility == 'private' %}selected{% endif %}>Private</option>
-        </select>
-        <select name="collection">
-            <option value="">Any Collection</option>
-            {% for collection in collections %}
-                <option value="{{ collection.id }}" {% if request.GET.collection == collection.id|stringformat:"s" %}selected{% endif %}>
-                    {{ collection.name }}
-                </option>
-            {% endfor %}
-        </select>
-        <button type="submit" class="btn btn-primary">Search</button>
-    </div>
-</form>
-
-<!-- List of Borrowed Notes -->
-<div class="notes-list">
-    {% if notes %}
-        {% for note in notes %}
-            <div class="note-item">
-                <h4 style = "color:#808080">{{ note.title }}</h4>
-                <p style = "color:#808080"><strong>Subject:</strong> {{ note.subject }}</p>
-                <p style = "color:#808080"><strong>Semester:</strong> {{ note.semester }}</p>
-                <p style = "color:#808080"><strong>Date:</strong> {{ note.date }}</p>
-                <p style = "color:#808080"><strong>Visibility:</strong> {{ note.visibility|title }}</p>
-                <p style = "color:#808080"><strong>Collections:</strong> {% for collection in note.collections.all %}{{ collection.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-                <p style = "color:#808080"><strong>Rating:</strong>{{ note.get_average_rating }}</p>
-                <a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review Note</a>
-                <a href="{{ note.s3_url }}" class="btn btn-secondary" target="_blank">View Note</a>
-
+    {% if borrowed_collections %}
+        {% for collection in borrowed_collections %}
+            <div class="card my-3">
+                <div class="card-body">
+                    <h4 class="card-title">{{ collection.title }}</h4>
+                    <p class="card-text">
+                        <strong>Description:</strong> {{ collection.description }}<br>
+                        <strong>Created by:</strong> {{ collection.created_by.username }}<br>
+                        <strong>Created on:</strong> {{ collection.created_at|date:"F j, Y, g:i a" }}
+                    </p>
+                    <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">
+                        View Full Collection
+                    </a>
+                </div>
             </div>
         {% endfor %}
     {% else %}
-        <p>No borrowed notes found matching your criteria.</p>
+        <p class="text-muted">You haven’t borrowed any private collections yet.</p>
     {% endif %}
-</div>
-
-<!-- Back to Dashboard Button -->
-<div class="back-btn-container">
-    <a href="{% url 'notes_app:index' %}" class="btn btn-secondary">Home</a>
 </div>
 
 {% endblock %}
