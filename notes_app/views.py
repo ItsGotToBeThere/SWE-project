@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
-from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron, NoteReview
+from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron, NoteReview, CollectionAccessRequest
 from .filters import NotesFilter, CollectionsFilter
 from .forms import NoteForm, ProfileForm, CollectionForm, PatronCollectionForm, NoteReviewForm
 from django.shortcuts import render, get_object_or_404, redirect
@@ -199,7 +199,7 @@ def available_notes(request):
     return render(request, "notes_app/navbar_patron/available_notes.html", {"notes_and_file": notes_and_file, "notes_filter": notes})
 
 @login_required
-def request_collection(request):
+def request_collection(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id)
     CollectionAccessRequest.objects.get_or_create(patron=request.user, collection=collection)
     messages.success(request, "Access request sent to librarians.")
