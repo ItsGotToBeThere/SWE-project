@@ -15,12 +15,12 @@
     <div class = "social-stats">
         <div class = "role">{{ user.profile.get_role }}</div>
         <div class = "posts">
-            <div class = "posts-count">74</div>
-            <div class = "posts-text grey">Notes</div>
+            <div class = "posts-count">{{ collections.count }}</div>
+            <div class = "posts-text grey">Collections</div>
         </div>
         <div class = "follows">
-            <div class = "follow-count">675</div>
-            <div class = "follow-text grey">Followers</div>
+            <div class = "follow-count">{{ notes.count }}</div>
+            <div class = "follow-text grey">Notes</div>
         </div>
         <a class = "edit-btn btn" href = "{% url 'notes_app:edit_profile' %}">Edit</a>
     </div>

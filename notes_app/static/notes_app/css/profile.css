@@ -140,6 +140,10 @@ html, body{
     overflow:visible;
 }
 
+.card-body a{
+    color:white;
+}
+
 .grey{
     opacity: 75%
 }

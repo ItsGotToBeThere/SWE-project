@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import available_notes, request_notes, borrowed_notes
+from .views import available_notes, request_notes, borrowed_collections
 
 app_name = "notes_app"
 
@@ -20,9 +20,11 @@ urlpatterns = [
 
     #patron specific urls
     path("available-notes/", views.available_notes, name="available_notes"),
-    path("request-notes/", views.request_notes, name="request_notes"),
+    path("request-collections/", views.request_collections, name="request_collections"),
+    path("request-collection/<int:collection_id>/", views.request_collection, name="request_collection"),
+
     path("patron-view-collections/", views.patron_view_collections, name="patron_view_collections"),
-    path("borrowed-notes/", views.borrowed_notes, name="borrowed_notes"),
+    path("borrowed-collections/", views.borrowed_collections, name="borrowed_collections"),
     path("create-patron-collection/", views.create_patron_collection, name="create_patron_collection"),
     path("review-note/<int:note_id>", views.review_note, name="review_note"),
     path("request-note/<int:note_id>", views.request_note, name="request_note"),
@@ -32,7 +34,8 @@ urlpatterns = [
     #note related
     path("add-notes/", views.add_notes, name="add_notes"),
     path("view-notes/", views.view_notes, name="view_notes"),
-    path("view_full_note/<int:note_id>/", views.view_full_note, name="view_full_note"),
+    path("view_note_details/<int:note_id>/", views.view_note_details, name="view_note_details"),
+    path("note/<int:note_id>", views.view_clean_note, name="view_clean_note"),
     path("edit_note/<int:note_id>/", views.edit_note, name="edit_note"),
     path("delete_note/<int:note_id>/", views.delete_note, name="delete_note"),
     
