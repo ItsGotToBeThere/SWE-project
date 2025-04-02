@@ -13,7 +13,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron, NoteReview
 from .filters import NotesFilter, CollectionsFilter
-from .forms import NoteForm, ProfileForm, CollectionForm, PatronCollectionForm, NoteReviewForm
+from .forms import NoteForm, ProfileForm, CollectionForm, PatronCollectionForm, NoteReviewForm, RequestNoteForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -21,8 +21,61 @@ import boto3
 import urllib.request
 from django.core.files.base import ContentFile
 from django.http import HttpResponseForbidden
+from django.core.mail import send_mail
+from django.conf import settings
 
 #PERMISSION RELATED VIEWS
+def send_email(patron_email, object_title, object_type):
+    # Send email notification
+    subject = f'New {object_type} Borrowing Request: {object_title}'
+    plain_message = f"""
+    Hello,
+
+    A request has been made for {object_title} by {patron_email}
+
+    Please login and review this request under 'Manage Requests'.
+
+    Thank you,
+    CavNotes
+    """
+
+    #necessary to prevent email from going to spam
+    html_message = f"""
+    <html>
+    <body>
+        <p>Hello,</p>
+        <p>A request has been made for <strong>{object_title}</strong> by {patron_email}</p>
+        <p>Please login and <a href="https://notes-sharing-app-d8b5cb736270.herokuapp.com/">review this request</a> under 'Manage Requests'.</p>
+        <p>Thank you,<br>CavNotes</p>
+    </body>
+    </html>
+        """
+    
+    for user in User.objects.all():
+        if Group.objects.get(name="Librarians") in user.groups.all():
+            send_mail(
+                subject,
+                plain_message,
+                settings.DEFAULT_FROM_EMAIL, #all emails are from cavnote3240@gmail.com
+                [user.email],
+                fail_silently=False,
+                html_message=html_message
+            )
+
+def request_note(request, note_id):
+    if request.method == 'POST':
+        form = RequestNoteForm(request.POST)
+        if form.is_valid():
+            note_request = form.save(commit=False)
+            note_request.requester = request.user  
+            note_request.note = get_object_or_404(Note, id=note_id)
+            note_request.save()
+            send_email(request.user.email, note_request.note.title, 'Note')
+            messages.success(request, "Request successfully created!")
+    form = RequestNoteForm()
+
+    return render(request, 'notes_app/navbar_patron/request_note.html', {'form': form})
+
 @method_decorator(librarian_required, name='dispatch')
 class PromotePatronView(View):
     pass
@@ -415,7 +468,6 @@ def delete_note(request, note_id):
 
     collections = Collection.objects.all()
     notes = Note.objects.all()
-    messages.success(request, "Successfully deleted note!")
     return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes": notes, "collections": collections})
 
 

@@ -38,20 +38,29 @@ class Note(models.Model):
     def get_reviews(self):
         return NoteReview.objects.filter(note=self)
 
-    def get_average_rating(self):
-        reviews = NoteReview.objects.filter(note=self)
-        c_total = 0
-        c_rating = 0
-        for review in reviews:
-            c_total+=1
-            c_rating+=review.rating
+    # def get_average_rating(self):
+    #     reviews = NoteReview.objects.filter(note=self)
+    #     c_total = 0
+    #     c_rating = 0
+    #     for review in reviews:
+    #         c_total+=1
+    #         c_rating+=review.rating
 
-        if c_total: return c_rating/c_total
-        else: return 0
+    #     if c_total: return c_rating/c_total
+    #     else: return 0
 
 
     def __str__(self):
         return self.title
+
+class RequestNote(models.Model):
+    requester = models.ForeignKey(User, on_delete=models.CASCADE)
+    note = models.ForeignKey(Note, on_delete=models.CASCADE)
+    return_date = models.DateTimeField(validators=[MinValueValidator(timezone.now)])
+    additional_notes = models.TextField(blank=True)
+    approved_at = models.DateTimeField(null=True, blank=True)
+    returned_at = models.DateTimeField(null=True, blank=True)
+    request_handled = models.BooleanField(default=False)
 
 class NoteFile(models.Model): #allows multiple file instances to be associated with one note
     note = models.ForeignKey(Note, on_delete=models.CASCADE)

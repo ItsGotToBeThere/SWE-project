@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% load crispy_forms_tags %}
+    <div class="container mt-4" style = "height:auto;">
+        {% include 'notes_app/messages.html' %}
+        <h1>Request Note</h1>
+        <p>**Return date must be after today's date</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form | crispy}}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <br>
+    </div>
+    <br>
+{% endblock %}

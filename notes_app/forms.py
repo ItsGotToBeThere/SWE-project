@@ -1,5 +1,5 @@
 from django import forms
-from .models import Note, Profile, Collection, NoteReview
+from .models import Note, Profile, Collection, NoteReview, RequestNote
 
 class NoteForm(forms.ModelForm):
     class Meta:
@@ -26,3 +26,11 @@ class PatronCollectionForm(forms.ModelForm):
     class Meta:
         model = Collection
         fields = ['title', 'description']  
+
+class RequestNoteForm(forms.ModelForm):
+    class Meta:
+        model = RequestNote
+        fields = ['return_date', 'additional_notes']
+        widgets = {
+            'return_date': forms.TextInput(attrs={'type': 'date'}),
+        }
