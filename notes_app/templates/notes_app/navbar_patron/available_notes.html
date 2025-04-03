@@ -21,11 +21,11 @@
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
-                        <a href="{% url 'notes_app:view_clean_note' note.id %}"><h4 style = "color:#808080">{{ note.title }}</h4></a>
+                        <a href="{% url 'notes_app:view_clean_note' note.id %}"><h4 style = "color:#808080;text-decoration:underline;">{{ note.title }}</h4></a>
                         <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>
                         <p style = "color:#808080"><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
                         <p style = "color:#808080"><strong>Creation Date:</strong> {{ note.created_at }}</p>
-                        <p style = "color:#808080"><strong>Rating: </strong>{{ note.get_average_rating }}</p>
+                        <p style = "color:#808080"><strong>Rating: </strong>{{ note.get_average_rating }}{% if note.get_reviews.count > 0 %}/10{% endif %}</p>
                         <p style = "color:#808080"><strong>Visibility: </strong>{{ note.visibility }}</p>
                         <a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review Note</a>
                         <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View Details</a>

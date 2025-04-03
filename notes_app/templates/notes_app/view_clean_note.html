@@ -3,6 +3,7 @@
 {% block content %}
 <div id = "carouselExampleIndicators" class="carousel slide">
   <div class="carousel-indicators">
+  {% if files.count > 1 %}
     {% for file in files %}
         {% with i=forloop.counter %}
         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ i|add:-1|slugify }}"
@@ -13,6 +14,7 @@
         ></button>
         {% endwith %}
     {% endfor %}
+  {% endif %}
   </div>
   <div class="carousel-inner">
       {% for file in files %}
