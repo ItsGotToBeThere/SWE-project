@@ -330,7 +330,8 @@ def view_note_details(request, note_id):
         user_type = 'Librarian'
     else:
         user_type = 'Patron'
-    return render(request, "notes_app/view_note_details.html", context={'note': note, 'files': files, 'note_collections': note_collections, 'user_type':user_type})
+    patron_can_view_note_files = RequestNote.objects.filter(requester = request.user, return_date__gt=timezone.now(), borrowed=True, fulfilled_at__lt=timezone.now()) #template checks to see if this has length greater than 0
+    return render(request, "notes_app/view_note_details.html", context={'note': note, 'files': files, 'note_collections': note_collections, 'user_type':user_type, 'patron_can_view_note_files':patron_can_view_note_files})
 
 def view_clean_note(request, note_id):
     note = get_object_or_404(Note, pk=note_id) #fetch one note object

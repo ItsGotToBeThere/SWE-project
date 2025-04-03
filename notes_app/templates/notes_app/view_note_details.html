@@ -19,16 +19,18 @@
                 <p style="color:black">-{{ review.patron }}</p>
             {% endfor %}
         </div>
-        <p>
-            <p><strong>Files:</strong></p> 
-            {% for file in files %}
-                <!--_blank opens the link in a new tab-->
-                <a href="{{ file.file.url }}" target="_blank">
-                    <u style = "color:var(--text-color)">{{ file.file.url }}</u>
-                </a>
-                <br>
-            {% endfor %}
-        </p>
+        {% if user_type == 'Librarian' or patron_can_view_note_files %}
+            <p>
+                <p><strong>Files:</strong></p> 
+                {% for file in files %}
+                    <!--_blank opens the link in a new tab-->
+                    <a href="{{ file.file.url }}" target="_blank">
+                        <u style = "color:var(--text-color)">{{ file.file.url }}</u>
+                    </a>
+                    <br>
+                {% endfor %}
+            </p>
+        {% endif %}
         <p>
             <p><strong>Collection(s) Note Is In: </strong></p> 
             <ul style = "list-style-type:none; padding-left:0;">
