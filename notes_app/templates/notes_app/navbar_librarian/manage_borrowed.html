@@ -1,8 +1,63 @@
 {% extends 'base.html' %}
-{% block title %} Manage Borrowed Notes {% endblock %}
-
 {% block content %}
-<h2>Manage Borrowed Notes</h2>
-<p>List of borrowed notes to manage.</p>
-<a class = "btn btn-secondary" href="{% url 'notes_app:librarian_dashboard' %}">Back to Dashboard</a>
+{% load crispy_forms_tags %}
+<div class="container mt-4">
+    <h4 style = "color:#808080">In Progress Note Requests:</h4>
+    {% for request_note in in_progress_requests %}
+    <div class="card">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card-body">
+                    <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
+                    <p style = "color:#808080"><strong>Requester:</strong> {{ request_note.requester.email }}</p>
+                    <p style = "color:#808080"><strong>Additional Request Comments:</strong> {{ request_note.additional_notes }}</p>
+                    <p style = "color:#808080"><strong>Requested Return Date: </strong> {{ request_note.return_date }}</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="request_id" value="{{ request_note.id }}">
+                        <button name="action" value="approve" class="btn btn-success">Approve</button>
+                        <button name="action" value="deny" class="btn btn-danger">Deny</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endfor %}             
+    <br>
+    <h4 style = "color:#808080">Borrowed Notes: </h4>
+    {% for request_note in active_borrows %}
+    <div class="card">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card-body">
+                    <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
+                    <p style = "color:#808080"><strong>Requester:</strong> {{ request_note.requester.email }}</p>
+                    <p style = "color:#808080"><strong>Return Date: </strong> {{ request_note.return_date }}</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endfor %}    
+    <br>
+    <h4 style = "color:#808080">Past Note Requests / Borrows: </h4>
+    {% for request_note in past_requests %}
+    <div class="card">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card-body">
+                    <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
+                    <p style = "color:#808080"><strong>Requester:</strong> {{ request_note.requester.email }}</p>
+                    <p style = "color:#808080"><strong>Date Fulfilled: </strong> {{ request_note.fulfilled_at }}</p>
+                    {% if request_note.borrowed %}
+                        <p style = "color:#808080"><strong>Librarian Action: </strong> Approved Request </p>
+                    {% else %}
+                        <p style = "color:#808080"><strong>Librarian Action: </strong> Denied Request </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endfor %}    
+</div>
+<br>  
 {% endblock %}

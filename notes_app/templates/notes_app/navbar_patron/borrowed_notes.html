@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="container mt-4">
+    <h4 style = "color:#808080">In Progress Note Requests:</h4>
+    {% for request_note in in_progress_requests %}
+    <div class="card">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card-body">
+                <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
+                <p style = "color:#808080"><strong>Return Date: </strong> {{ request_note.return_date }}</p>
+                <p style = "color:#808080"><strong>Additional Notes:</strong> {{ request_note.additional_notes }}</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endfor %}             
+    <br>
+    <h4 style = "color:#808080">Borrowed Notes: </h4>
+    {% for request_note in active_borrows %}
+    <div class="card">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card-body">
+                <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
+                <p style = "color:#808080"><strong>Return Date: </strong> {{ request_note.return_date }}</p>
+                <p style = "color:#808080"><strong>Additional Notes:</strong> {{ request_note.additional_notes }}</p>
+                <a href="{% url 'notes_app:review_note' request_note.note.id %}" class="btn btn-secondary">Review Note</a>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endfor %}    
+    <h4 style = "color:#808080">Past Note Requests / Borrows: </h4>
+    {% for request_note in past_requests %}
+    <div class="card">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card-body">
+                <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
+                <p style = "color:#808080"><strong>Return Date: </strong> {{ request_note.return_date }}</p>
+                <p style = "color:#808080"><strong>Additional Notes:</strong> {{ request_note.additional_notes }}</p>
+                <a href="{% url 'notes_app:review_note' request_note.note.id %}" class="btn btn-secondary">Review Note</a>
+                </div>
+            </div>
+        </div>
+    </div> 
+    {% endfor %}    
+</div>
+<br>  
+{% endblock %}

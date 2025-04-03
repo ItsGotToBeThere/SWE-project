@@ -11,11 +11,10 @@ from django.contrib.auth.models import User
 from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
-from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron, NoteReview, CollectionAccessRequest
+from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron, NoteReview, CollectionAccessRequest, RequestNote
 from .filters import NotesFilter, CollectionsFilter
 from .forms import NoteForm, ProfileForm, CollectionForm, PatronCollectionForm, NoteReviewForm, RequestNoteForm
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import boto3
 import urllib.request
@@ -23,45 +22,9 @@ from django.core.files.base import ContentFile
 from django.http import HttpResponseForbidden
 from django.core.mail import send_mail
 from django.conf import settings
+from django.utils import timezone
 
 #PERMISSION RELATED VIEWS
-def send_email(patron_email, object_title, object_type):
-    # Send email notification
-    subject = f'New {object_type} Borrowing Request: {object_title}'
-    plain_message = f"""
-    Hello,
-
-    A request has been made for {object_title} by {patron_email}
-
-    Please login and review this request under 'Manage Requests'.
-
-    Thank you,
-    CavNotes
-    """
-
-    #necessary to prevent email from going to spam
-    html_message = f"""
-    <html>
-    <body>
-        <p>Hello,</p>
-        <p>A request has been made for <strong>{object_title}</strong> by {patron_email}</p>
-        <p>Please login and <a href="https://notes-sharing-app-d8b5cb736270.herokuapp.com/">review this request</a> under 'Manage Requests'.</p>
-        <p>Thank you,<br>CavNotes</p>
-    </body>
-    </html>
-        """
-    
-    for user in User.objects.all():
-        if Group.objects.get(name="Librarians") in user.groups.all():
-            send_mail(
-                subject,
-                plain_message,
-                settings.DEFAULT_FROM_EMAIL, #all emails are from cavnote3240@gmail.com
-                [user.email],
-                fail_silently=False,
-                html_message=html_message
-            )
-
 def request_note(request, note_id):
     if request.method == 'POST':
         form = RequestNoteForm(request.POST)
@@ -70,11 +33,113 @@ def request_note(request, note_id):
             note_request.requester = request.user  
             note_request.note = get_object_or_404(Note, id=note_id)
             note_request.save()
-            send_email(request.user.email, note_request.note.title, 'Note')
+            
+            # Send email notification
+            subject = f'New Note Borrowing Request: {note_request.note.title}'
+            plain_message = f"""
+            Hello,
+
+            A request has been made for {note_request.note.title} by {request.user.email}
+
+            Please login and review this request under 'Manage Requests'.
+
+            Thank you,
+            CavNotes
+            """
+
+            #necessary to prevent email from going to spam
+            html_message = f"""
+            <html>
+            <body>
+                <p>Hello,</p>
+                <p>A request has been made for <strong>{note_request.note.title}</strong> by {request.user.email}</p>
+                <p>Please login and <a href="https://notes-sharing-app-d8b5cb736270.herokuapp.com/">review this request</a> under 'Manage Requests'.</p>
+                <p>Thank you,<br>CavNotes</p>
+            </body>
+            </html>
+                """
+            
+            for user in User.objects.all():
+                if Group.objects.get(name="Librarians") in user.groups.all():
+                    send_mail(
+                        subject,
+                        plain_message,
+                        settings.DEFAULT_FROM_EMAIL, #all emails are from cavnote3240@gmail.com
+                        [user.email],
+                        fail_silently=False,
+                        html_message=html_message
+                    )
             messages.success(request, "Request successfully created!")
     form = RequestNoteForm()
 
     return render(request, 'notes_app/navbar_patron/request_note.html', {'form': form})
+
+#display patrons requests for notes, provide an interface for librarians to handle requests
+def manage_borrowed(request):
+    if request.method == "POST":
+        note_request_id = request.POST.get("request_id") #fetch based on button name field
+        action = request.POST.get("action") #get the action variable, which gets set by either the approve or deny button
+        note_request = get_object_or_404(RequestNote, id=note_request_id)
+        if action == "approve":
+            note_request.borrowed = True
+            note_request.fulfilled_at = timezone.now()
+
+            # Send email notification
+            subject = f'Note Request Handled For: {note_request.note.title}'
+            plain_message = f"""
+            Hello,
+
+            Your request to borrow {note_request.note.title} has been approved by librarian {request.user.email}.
+            Please login and find the full note under 'Borrow Notes'. 
+
+            Thank you,
+            CavNotes
+            """
+
+            #necessary to prevent email from going to spam
+            html_message = f"""
+            <html>
+            <body>
+                <p>Hello,</p>
+                <p>Your request to borrow {note_request.note.title} has been approved by librarian {request.user.email}
+                <p>Please <a href="https://notes-sharing-app-d8b5cb736270.herokuapp.com/">login</a> and find the full note under 'Borrowed Notes'. </p>
+                <p>Thank you,<br>CavNotes</p>
+            </body>
+            </html>
+                """
+
+        elif action == "deny":
+            note_request.borrowed = False
+            note_request.fulfilled_at = timezone.now()
+
+            # Send email notification
+            subject = f'Note Request Handled For: {note_request.note.title}'
+            plain_message = f"""
+            Hello,
+
+            Your request to borrow {note_request.note.title} has been denied by librarian {request.user.email}.
+
+            Thank you,
+            CavNotes
+            """
+
+            #necessary to prevent email from going to spam
+            html_message = f"""
+            <html>
+            <body>
+                <p>Hello,</p>
+                <p>Your request to borrow {note_request.note.title} has been denied by librarian {request.user.email}
+                <p>Thank you,<br>CavNotes</p>
+            </body>
+            </html>
+                """
+        send_mail(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [note_request.requester.email], fail_silently=False, html_message=html_message)
+        note_request.save()
+    in_progress_requests = RequestNote.objects.filter(fulfilled_at__isnull=True, return_date__gt=timezone.now(), borrowed=False)
+    active_borrows = RequestNote.objects.filter(return_date__gt=timezone.now(), borrowed=True, fulfilled_at__lt=timezone.now())
+    past_requests = RequestNote.objects.filter(fulfilled_at__isnull=False, fulfilled_at__lt=timezone.now()).exclude(return_date__gt=timezone.now(), borrowed = True)
+
+    return render(request, "notes_app/navbar_librarian/manage_borrowed.html", {"in_progress_requests": in_progress_requests, "active_borrows": active_borrows, "past_requests":past_requests})
 
 @method_decorator(librarian_required, name='dispatch')
 class PromotePatronView(View):
@@ -120,8 +185,7 @@ class PromotePatronView(View):
     #         messages.success(request, f"{patron_profile.user.username} has been elevated to Elevated Patron.")
 
     #     return redirect("notes_app:librarian_dashboard")  # Redirect back to librarian dashboard
-def manage_borrowed(request):
-    return render(request, "notes_app/navbar_librarian/manage_borrowed.html")
+
 
 @login_required
 @user_passes_test(lambda u: u.groups.filter(name="Librarians").exists())
@@ -151,45 +215,6 @@ def view_requests(request):
 
 
 @login_required
-def request_notes(request):
-    """View to display private notes available for request."""
-    notes = Note.objects.filter(is_requested=False, visibility="private") # only private notes
-    collections = Collection.objects.filter(is_requested=False, visibility="private")
-    title_query = request.GET.get('title', '')
-    semester_query = request.GET.get('semester', '')
-    professor_query = request.GET.get('professor', '')
-    collection_id = request.GET.get('collection', '')
-
-    if title_query:
-        notes = notes.filter(title__icontains=title_query)
-        collections = collections.filter(title__icontains=title_query)
-    if semester_query:
-        notes = notes.filter(semester__icontains=semester_query)
-    if professor_query:
-        notes = notes.filter(professor__icontains=professor_query)
-    if collection_id:
-        notes = notes.filter(collectionitem__collection_id__exact=collection_id)
-
-    if request.method == "POST":
-        user = request.user
-        note_id = request.POST.get("note_id")
-        note = get_object_or_404(Note, id=note_id)
-        note.is_requested = True
-        patron_request = PatronRequest.objects.create(patron=user, note=note)
-        patron_request.save()
-        note.save()
-
-        return redirect("notes_app:request_notes")  
-
-    return render(request, "notes_app/navbar_patron/request_notes.html", {
-        "notes": notes,
-        "collections": collections
-    })
-
-from django.contrib.auth.decorators import login_required
-from .models import PrivateCollectionPatron
-
-@login_required
 def borrowed_collections(request):
     patron = request.user
     borrowed = PrivateCollectionPatron.objects.filter(patron=patron).select_related('collection')
@@ -198,6 +223,12 @@ def borrowed_collections(request):
     return render(request, "notes_app/navbar_patron/borrowed_collections.html", {
         "borrowed_collections": collections
     })
+
+def borrowed_notes(request):
+    in_progress_requests = RequestNote.objects.filter(requester=request.user, fulfilled_at__isnull=True, return_date__gt=timezone.now(), borrowed=False)
+    active_borrows = RequestNote.objects.filter(requester=request.user, return_date__gt=timezone.now(), borrowed=True, fulfilled_at__lt=timezone.now())
+    past_requests = RequestNote.objects.filter(requester=request.user, fulfilled_at__isnull=False, fulfilled_at__lt=timezone.now()).exclude(return_date__gt=timezone.now(), borrowed = True)
+    return render(request, "notes_app/navbar_patron/borrowed_notes.html", {"in_progress_requests": in_progress_requests, "active_borrows": active_borrows, "past_requests":past_requests})
 
 #DISPLAYING AVAILABLE COLLECTIONS / NOTES VIEWS PATRON 
 def filter_collections_and_notes(filtered_notes, filtered_collections):

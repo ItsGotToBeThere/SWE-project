@@ -58,9 +58,8 @@ class RequestNote(models.Model):
     note = models.ForeignKey(Note, on_delete=models.CASCADE)
     return_date = models.DateTimeField(validators=[MinValueValidator(timezone.now)])
     additional_notes = models.TextField(blank=True)
-    approved_at = models.DateTimeField(null=True, blank=True)
-    returned_at = models.DateTimeField(null=True, blank=True)
-    request_handled = models.BooleanField(default=False)
+    borrowed = models.BooleanField(default=False)
+    fulfilled_at = models.DateTimeField(null=True, blank=True) #stored as None (null) when not set
 
 class NoteFile(models.Model): #allows multiple file instances to be associated with one note
     note = models.ForeignKey(Note, on_delete=models.CASCADE)

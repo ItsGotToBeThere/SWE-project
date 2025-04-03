@@ -1,7 +1,5 @@
 from django.urls import path
 from . import views
-from .views import available_notes, request_notes, borrowed_collections
-
 app_name = "notes_app"
 
 urlpatterns = [
@@ -25,6 +23,7 @@ urlpatterns = [
 
     path("patron-view-collections/", views.patron_view_collections, name="patron_view_collections"),
     path("borrowed-collections/", views.borrowed_collections, name="borrowed_collections"),
+    path("borrowed-notes/", views.borrowed_notes, name="borrowed_notes"),
     path("create-patron-collection/", views.create_patron_collection, name="create_patron_collection"),
     path("review-note/<int:note_id>", views.review_note, name="review_note"),
     path("request-note/<int:note_id>", views.request_note, name="request_note"),
@@ -45,8 +44,8 @@ urlpatterns = [
     path("view_full_collection/<int:collection_id>/", views.view_full_collection, name="view_full_collection"),
     path("edit_collection/<int:collection_id>/", views.edit_collection, name="edit_collection"),
     path("delete_collection/<int:collection_id>/", views.delete_collection, name="delete_collection"),
+    path("manage-borrowed/", views.manage_borrowed, name="manage_borrowed"),
 
     #permissions related
-    path("manage-borrowed/", views.manage_borrowed, name="manage_borrowed"),
     path("view-requests/", views.view_requests, name="view_requests"),
 ]
