@@ -277,9 +277,9 @@ def patron_view_collections(request):
 
 def available_notes(request):
     queryset = Note.objects.filter(visibility='public')
-    notes = NotesFilter(request.GET, queryset=queryset)
-    notes_and_file = get_notes_and_associated_file(notes.qs)
-    return render(request, "notes_app/navbar_patron/available_notes.html", {"notes_and_file": notes_and_file, "notes_filter": notes})
+    notes_filter = NotesFilter(request.GET, queryset=queryset)
+    notes = notes_filter.qs
+    return render(request, "notes_app/navbar_patron/available_notes.html", {"notes": notes, "notes_filter": notes_filter})
 
 @login_required
 def request_collection(request, collection_id):
@@ -310,9 +310,9 @@ def request_collections(request):
 
 #DISPLAYING AVAILABLE COLLECTIONS / NOTES VIEWS LIBRARIAN
 def view_notes(request):
-    notes = NotesFilter(request.GET, queryset=Note.objects.all())
-    notes_and_file = get_notes_and_associated_file(notes.qs)
-    return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes_and_file": notes_and_file, "notes_filter": notes})
+    notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
+    notes = notes_filter.qs
+    return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes_filter": notes_filter, 'notes': notes})
 
 def view_collections(request):
     collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
@@ -357,27 +357,6 @@ def view_full_collection(request, collection_id):
     for item in collection_items:
         collection_notes.append(item.note)
     return render(request, "notes_app/view_full_collection.html", context={'collection': collection, 'private_collection_patrons': private_collection_patrons, 'librarians': librarians, 'collection_notes': collection_notes})
-
-
-#Helper function
-def get_notes_and_associated_file(notes):
-    notes_and_file = [] #creates a list of tuples (Note, NoteFile)
-    for note in notes:
-        files = NoteFile.objects.filter(note_id=note.id) #fetch an array of notefile objects
-        
-        #get default display icon and use it to make a notefile object
-        response = urllib.request.urlopen('https://notes-sharing-app.s3.us-east-1.amazonaws.com/notes/default_image.png')
-        file_obj = ContentFile(response.read(), name='notes/default_image.png')
-        file_display_image = NoteFile(note=note,file=file_obj)
-        
-        #if any files associated with the note are images, use that instead of the defualt icon
-        for file in files:
-            if '.jpg' in str(file.file) or '.jpeg' in str(file.file) or '.png' in str(file.file):
-                print('reached')
-                file_display_image = file
-                break
-        notes_and_file.append((note, file_display_image))
-    return notes_and_file
 
 #EDITING / MODIFICATION RELATED VIEWS LIBRARIAN + PATRON
 @login_required

@@ -8,16 +8,13 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <br>
-    {% load utils %}
     <div class = "card">
-    {% if notes_and_file %}
-        {% for tuple in notes_and_file %}
-            {% with note=tuple|get_note %} <!--from utils.py since django templates doesn't support indexing into a tuple-->
-            {% with file=tuple|get_file %}
+    {% if notes %}
+        {% for note in notes %}
             <div class="card">
                 <div class="row">
                     <div class="col-md-4 d-flex justify-content-center">
-                        <img src="{{ file.file.url }}" class="img-fluid">
+                        <img src="{{ note.get_display_image.file.url }}" class="img-fluid">
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
@@ -37,8 +34,6 @@
                 </div>
             </div>              
             <br>
-            {% endwith %}
-            {% endwith %}
         {% endfor %}
     {% else %}
         <p style = "color:#808080">No notes found matching your criteria.</p>

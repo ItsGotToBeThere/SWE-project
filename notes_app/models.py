@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django.templatetags.static import static
 from django.utils import timezone
 from storages.backends.s3boto3 import S3Boto3Storage
+import urllib
+from django.core.files.base import ContentFile
+
 class Collection(models.Model):
     title = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True)
@@ -41,6 +44,21 @@ class Note(models.Model):
             return True
         else:
             return False
+    
+    def get_display_image(self):
+        files = NoteFile.objects.filter(note_id=self.id) #fetch an array of notefile objects
+        
+        #get default display icon and use it to make a notefile object
+        response = urllib.request.urlopen('https://notes-sharing-app.s3.us-east-1.amazonaws.com/notes/default_image.png')
+        file_obj = ContentFile(response.read(), name='notes/default_image.png')
+        display_image = NoteFile(note=self,file=file_obj)
+        
+        #if any files associated with the note are images, use that instead of the defualt icon
+        for file in files:
+            if '.jpg' in str(file.file) or '.jpeg' in str(file.file) or '.png' in str(file.file):
+                display_image = file
+                break
+        return display_image
 
     # def get_average_rating(self):
     #     reviews = NoteReview.objects.filter(note=self)
