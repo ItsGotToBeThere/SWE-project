@@ -9,7 +9,7 @@
         <p><strong>Semester: </strong>{{note.semester}}</p>
         <p><strong>Creation Date: </strong>{{note.created_at}}</p>
         <p><strong>Description: </strong>{{note.description}}</p>
-        <p><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
+        <p><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
         <p><strong>Location: </strong> Virtual </p>
         <p><strong>Visibility: </strong> {{ note.visibility }} </p>
         <div class = "card col-md-6"><strong style = "color:black">Reviews: </strong>

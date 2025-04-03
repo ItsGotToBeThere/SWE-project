@@ -14,7 +14,6 @@ class Collection(models.Model):
     visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default="public") 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)  # User refers to the auth_user table
     created_at = models.DateTimeField(auto_now_add=True)
-    is_requested = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
@@ -33,10 +32,15 @@ class Note(models.Model):
         ("private", "Private"),
     ]
     visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default="public") #private = in private collection
-    is_requested = models.BooleanField(default=False)
 
     def get_reviews(self):
         return NoteReview.objects.filter(note=self)
+    
+    def is_borrowed(self):
+        if RequestNote.objects.filter(note=self, return_date__gt=timezone.now(), borrowed=True, fulfilled_at__lt=timezone.now()):
+            return True
+        else:
+            return False
 
     # def get_average_rating(self):
     #     reviews = NoteReview.objects.filter(note=self)

@@ -27,7 +27,7 @@
                     <div class="card-body">
                     <h4 style = "color:#808080">{{ note.title }}</h4>
                     <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>
-                    <p style = "color:#808080"><strong>Status: </strong>{% if note.is_requested %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
+                    <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
                     <p style = "color:#808080"><strong>Creation Date:</strong> {{ note.created_at }}</p>
                     <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
                     <a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review Note</a>
