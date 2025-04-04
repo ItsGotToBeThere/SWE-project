@@ -307,6 +307,32 @@ def request_collections(request):
 
 
 
+@login_required
+def request_collection(request, collection_id):
+    collection = get_object_or_404(Collection, pk=collection_id)
+    CollectionAccessRequest.objects.get_or_create(patron=request.user, collection=collection)
+    messages.success(request, "Access request sent to librarians.")
+    return redirect("notes_app:request_collections")
+@login_required
+def request_collections(request):
+    user = request.user
+    all_private = Collection.objects.filter(visibility="private")
+    approved_ids = PrivateCollectionPatron.objects.filter(patron=user).values_list("collection_id", flat=True)
+    all_private = all_private.exclude(id__in=approved_ids)
+
+    existing_requests = CollectionAccessRequest.objects.filter(patron=user)
+    requested_ids = existing_requests.values_list("collection_id", flat=True)
+    denied_ids = existing_requests.filter(status="denied").values_list("collection_id", flat=True)
+    pending_ids = existing_requests.filter(status="pending").values_list("collection_id", flat=True)
+
+    return render(request, "notes_app/navbar_patron/request_collections.html", {
+        "private_collections_without_access": all_private,
+        "pending_collection_ids": set(pending_ids),
+        "denied_collection_ids": set(denied_ids),
+    })
+
+
+
 
 #DISPLAYING AVAILABLE COLLECTIONS / NOTES VIEWS LIBRARIAN
 def view_notes(request):

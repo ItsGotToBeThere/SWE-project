@@ -27,11 +27,13 @@
                 <p style = "color:#808080"><strong>Return Date: </strong> {{ request_note.return_date }}</p>
                 <p style = "color:#808080"><strong>Additional Notes:</strong> {{ request_note.additional_notes }}</p>
                 <a href="{% url 'notes_app:review_note' request_note.note.id %}" class="btn btn-secondary">Review Note</a>
+                <a href="{% url 'notes_app:view_note_details' request_note.note.id %}" class="btn btn-secondary">View Full Note</a>
                 </div>
             </div>
         </div>
     </div> 
-    {% endfor %}    
+    {% endfor %}  
+    <br>  
     <h4 style = "color:#808080">Past Note Requests / Borrows: </h4>
     {% for request_note in past_requests %}
     <div class="card">

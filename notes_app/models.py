@@ -68,8 +68,8 @@ class Note(models.Model):
     #         c_total+=1
     #         c_rating+=review.rating
 
-    #     if c_total: return c_rating/c_total
-    #     else: return 0
+        if c_total: return c_rating/c_total
+        else: return None
 
 
     def __str__(self):
@@ -114,7 +114,7 @@ class PatronRequest(models.Model):
 class NoteReview(models.Model):
     patron = models.ForeignKey(User, on_delete=models.CASCADE)
     note = models.ForeignKey(Note, on_delete=models.CASCADE)
-    rating = models.FloatField(null=True,validators=[MinValueValidator(0), MaxValueValidator(10)])
+    rating = models.FloatField(null=False,default=10,validators=[MinValueValidator(0), MaxValueValidator(10)])
     comment = models.TextField(blank=True)
 
 PRONOUN_CHOICES = (('he/him',"He/Him"), ('she/her',"She/Her"), ('they/them',"They/Them"), ('other',"Other"))
@@ -147,7 +147,7 @@ class Profile(models.Model):
         if self.user.groups.all().exists():
             return str(self.user.groups.all()[0])[:-1]
         else:
-            return "patron"
+            return "Patron"
 
     def get_preferred_name(self):
         if self.preferred_named:
