@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 {% load crispy_forms_tags %}
 <div class="container mt-4">
@@ -22,7 +23,23 @@
                         <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>
                         <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
                         <p style = "color:#808080"><strong>Creation Date:</strong> {{ note.created_at }}</p>
-                        <p style = "color:#808080"><strong>Rating: </strong>{{ note.get_average_rating }}{% if note.get_reviews.count > 0 %}/10{% endif %}</p>
+                        <div class="star-rating">
+                        <strong style = "color:#808080">Rating:</strong>
+                        {% if note.get_average_rating %}
+                            {% with note.get_average_rating as rating %}
+                            {% with ''|center:5 as range %}
+                                {% for _ in range %}
+                                    {% if forloop.counter <= rating %}
+                                        <img src="{% static 'notes_app/images/star.svg' %}" width = 25 height = 25 style="background-color:#FFD700;padding-bottom:1px;border-radius:10px;border:1px solid black">
+                                    {% else %}
+                                        <img src="{% static 'notes_app/images/star.svg' %}" width = 25 height = 25 style = "padding-bottom:1px;border-radius:10px;border:1px solid black">
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}<b style = "color:#808080">{{ rating }}</b>
+                            {% endwith %}
+                        {% else %}<b style = "color:#808080">None</b>
+                        {% endif %}
+                        </div>
                         <p style = "color:#808080"><strong>Visibility: </strong>{{ note.visibility }}</p>
                         <a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review Note</a>
                         <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View Details</a>

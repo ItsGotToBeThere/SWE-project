@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.templatetags.static import static
 from django.utils import timezone
 from storages.backends.s3boto3 import S3Boto3Storage
+from django.db.models import Avg
 import urllib
 from django.core.files.base import ContentFile
 
@@ -60,16 +61,9 @@ class Note(models.Model):
                 break
         return display_image
 
-    # def get_average_rating(self):
-    #     reviews = NoteReview.objects.filter(note=self)
-    #     c_total = 0
-    #     c_rating = 0
-    #     for review in reviews:
-    #         c_total+=1
-    #         c_rating+=review.rating
-
-        if c_total: return c_rating/c_total
-        else: return None
+    def get_average_rating(self):
+        avg_rating = NoteReview.objects.filter(note=self).aggregate(Avg("rating"))["rating__avg"] or None
+        return avg_rating / 2 if avg_rating is not None else None
 
 
     def __str__(self):
