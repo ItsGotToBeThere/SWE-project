@@ -11,6 +11,7 @@
 <div class="container mt-4">
     {% include 'notes_app/messages.html' %}
     <h1>Create A Collection</h1>
+    <p>All notes added to a private collection will be removed from public collections and be hidden from patron note browsing.</p>
     <form id="collectionForm" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form | crispy}}

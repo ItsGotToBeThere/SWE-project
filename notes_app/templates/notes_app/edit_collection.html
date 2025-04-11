@@ -41,11 +41,6 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <br>
-    {% if user_type == "Librarian" %}
-        <a href="{% url 'notes_app:view_collections' %}" class="btn btn-secondary">View Collections</a>
-    {% else %}
-        <a href="{% url 'notes_app:patron_view_collections' %}" class="btn btn-secondary">View Collections</a>
-    {% endif %}
 </div>
 <br>
 

@@ -18,7 +18,7 @@
         <p>
             <p><strong>Notes In Collection:</strong></p> 
             {% for note in collection_notes %}
-                <a href="{% url 'notes_app:view_full_note' note.id %}" target="_blank">
+                <a href="{% url 'notes_app:view_note_details' note.id %}" target="_blank">
                     <u style = "color:var(--text-color)">{{ note.title }}</u>
                 </a>
                 <br>
@@ -26,15 +26,8 @@
         </p>
         {% for group in user.groups.all %}
             {% if group.name == "Librarians" or user.id == collection.created_by.id %}
-                {% if group.name == "Librarians" %}
-                    <a href="{% url 'notes_app:view_collections' %}" class="btn btn-secondary">Back</a>
-                {% else %}
-                    <a href="{% url 'notes_app:patron_view_collections' %}" class="btn btn-secondary">Back</a>
-                {% endif %}
-                <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit Collection</a>
-                <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete Collection</a>
-            {% else %}
-                <a href="{% url 'notes_app:patron_view_collections' %}" class="btn btn-secondary">Back</a>
+                <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit</a>
+                <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete</a>
             {% endif %}
         {% endfor %}
     </div>

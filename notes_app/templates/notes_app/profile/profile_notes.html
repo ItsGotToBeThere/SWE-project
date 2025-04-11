@@ -16,27 +16,23 @@
         {% if forloop.first or forloop.counter0|divisibleby:2 %}
             <div class="card-group row">
         {% endif %}
-
-        <div class = "col-md-6">
         <div class="card">
             <div class="row">
                 <div class="col-md-2">
-                    <img src="{{ file.file.url }}" class="img-fluid" style="max-width: 220px; max-height: 230px; min-width: 220px; min-height: 230px;">
+                    <img src="{{ note.get_display_image.file.url }}" class="img-fluid" style="max-width: 220px; max-height: 230px; min-width: 220px; min-height: 230px;">
                 </div>
                 <div class="col-md-10">
                     <div class="card-body">
                     <h4 style = "color:#808080;text-decoration: underline;">{{ note.title }}</h4>
                     <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>
                     <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
-                    <p style = "color:#808080"><strong>Creation Date:</strong> {{ note.created_at }}</p>
-                    <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View Details</a>
-                    {% if user.profile.get_role == "Patron" %}<a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review Note</a>{% endif %}
-                    {% if user.profile.get_role == "Librarian" %}<a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
-                    <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>{% endif %}
+                    <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View</a>
+                    {% if user.profile.get_role == "Patron" %}<a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review</a>{% endif %}
+                    {% if user.profile.get_role == "Librarian" %}<a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit</a>
+                    <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete</a>{% endif %}
                     </div>
                 </div>
             </div>
-        </div>
         </div>
         {% if forloop.counter|divisibleby:2 or forloop.last %}
             </div>
