@@ -11,7 +11,10 @@ class CollectionForm(forms.ModelForm):
         model = Collection
         fields = ['title', 'description', 'visibility']
 
+
 class NoteReviewForm(forms.ModelForm):
+    RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
+    rating = forms.ChoiceField(choices=RATING_CHOICES, widget=forms.RadioSelect, label='Rating')
     class Meta:
         model = NoteReview
         fields = ['rating','comment']

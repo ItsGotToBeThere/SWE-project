@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 {% load crispy_forms_tags %}
 <div class="container mt-4">
     <h1>Filter Notes</h1>
@@ -22,7 +23,23 @@
                         <p style = "color:#808080"><strong>Course Name: </strong> {{ note.course_name }}</p>
                         <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
                         <p style = "color:#808080"><strong>Creation Date: </strong> {{ note.created_at }}</p>
-                        <p style = "color:#808080"><strong>Rating: </strong>{{ note.get_average_rating }}{% if note.get_reviews.count > 0 %}/10{% endif %}</p>
+                         <div class="star-rating">
+                        <strong style = "color:#808080">Rating:</strong>
+                        {% if note.get_average_rating %}
+                            {% with note.get_average_rating as rating %}
+                            {% with ''|center:5 as range %}
+                                {% for _ in range %}
+                                    {% if forloop.counter <= rating %}
+                                        <label class = "bi bi-star-fill" style = "color:#ffc107"></label>
+                                    {% else %}
+                                        <label class = "bi bi-star-fill"></label>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}<b style = "color:#808080">{{ rating }}</b>
+                            {% endwith %}
+                        {% else %}<b style = "color:#808080">None</b>
+                        {% endif %}
+                        </div>
                         <p style = "color:#808080"><strong>Visibility: </strong>{{ note.visibility }}</p>
                         <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
                         <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View Details</a>
@@ -38,5 +55,20 @@
     {% endif %}
     </div>
 </div>
+<style>
+    .star-rating {
+        direction: rtl;
+        display: inline-block;
+    }
+
+    .star-rating label {
+        color: #ddd;
+        font-size: 16px;
+        padding: 0 2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+</style>
 <br>  
 {% endblock %}
