@@ -20,7 +20,7 @@
                     <p><strong>Visibility:</strong> {{ collection.visibility }}</p>
                     <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit</a>
                     <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View</a>
-                    <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-danger">Delete</a>
+                    <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete</a>
                 </div>
             </div>
         {% endfor %}

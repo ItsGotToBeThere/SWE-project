@@ -9,25 +9,26 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <br>
-    <div class="card"> 
-        {% if collections %}
-            {% for collection in collections %}
-                <div class="card">
-                    <div class="row">
-                        <div class="card-body" style="padding-left: 30px;">
-                            <h4 style = "color:#808080">{{ collection.title }}</h4>
-                            <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
-                            <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit Collection</a>
-                            <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View Full Collection</a>
-                            <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete Collection</a>
-                        </div>
+    {% if collections %}
+        {% for collection in collections %}
+            <div class="card">
+                <div class="row">
+                    <div class="card-body" style="padding-left: 30px;">
+                        <h4 style = "color:#808080">{{ collection.title }}</h4>
+                        <p style = "color:#808080"><strong>Creator:</strong>{{collection.created_by.email}}</p>
+                        <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
+                        <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit</a>
+                        <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View</a>
+                        <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete</a>
                     </div>
-                </div>   
-            {% endfor %}
-        {% else %}
-            <p style = "color:#808080" >No collections found matching your criteria.</p>
-        {% endif %}
-    </div>
+                </div>
+            </div>   
+            <br>
+        {% endfor %}
+    {% else %}
+        <p style = "color:#808080" >No collections found matching your criteria.</p>
+    {% endif %}
+    
 </div>
 <br>
 {% endblock %}

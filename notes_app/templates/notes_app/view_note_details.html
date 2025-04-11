@@ -5,6 +5,7 @@
         <h1>{{note.title}}</h1>
         <p><strong>ID: </strong>{{note.id}}</p>
         <p><strong>Course Name: </strong>{{note.course_name}}</p>
+        <p><strong>Average Rating: </strong>{{note.get_average_rating}}</p>
         <p><strong>Professor: </strong>{{note.professor}}</p>
         <p><strong>Semester: </strong>{{note.semester}}</p>
         <p><strong>Creation Date: </strong>{{note.created_at}}</p>
@@ -35,20 +36,15 @@
             <p><strong>Collection(s) Note Is In: </strong></p> 
             <ul style = "list-style-type:none; padding-left:0;">
                 {% for object in note_collections %}
-                    {% if user_type == 'Librarian' %}
-                        <a href="{% url 'notes_app:view_full_collection' object.collection.id %}" target="_blank">
-                            <li><u style = "color:var(--text-color)">{{ object.collection.title }}</u></li>
-                        </a>
-                    {% else %}
-                        <li>{{ object.collection.title }}</li>
-                    {% endif %}
+                    <a href="{% url 'notes_app:view_full_collection' object.collection.id %}" target="_blank">
+                        <li><u style = "color:var(--text-color)">{{ object.collection.title }}</u></li>
+                    </a>
                 {% endfor %}
             </ul>
         </p>
         {% if user_type == 'Librarian' %}
-                <a href="{% url 'notes_app:view_notes' %}" class="btn btn-secondary">Back</a>
-                <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
-                <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
+            <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit</a>
+            <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete</a>
         {% endif %}
     </div>
     <br>

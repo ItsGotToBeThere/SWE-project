@@ -9,23 +9,22 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <br>
-    <div class = "card">
     {% if notes %}
         {% for note in notes %}
             <div class="card">
                 <div class="row">
-                    <div class="col-md-4 d-flex justify-content-center">
-                        <img src="{{ note.get_display_image.file.url }}" class="img-fluid">
+                    <div class="col-md-2">
+                        <img src="{{ note.get_display_image.file.url }}" class="img-fluid" style="max-width: 220px; max-height: 235px; min-width: 220px; min-height: 235px;">
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-10">
                         <div class="card-body">
                         <a href="{% url 'notes_app:view_clean_note' note.id %}"><h4 style = "color:#808080;text-decoration:underline;">{{ note.title }}</h4></a>
                         <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>
                         <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
-                        <p style = "color:#808080"><strong>Creation Date:</strong> {{ note.created_at }}</p>
                         <div class="star-rating">
-                        <strong style = "color:#808080">Rating:</strong>
+                        
                         {% if note.get_average_rating %}
+                            <strong style = "color:#808080">Rating:</strong>
                             {% with note.get_average_rating as rating %}
                             {% with ''|center:5 as range %}
                                 {% for _ in range %}
@@ -35,16 +34,18 @@
                                         <img src="{% static 'notes_app/images/star.svg' %}" width = 25 height = 25 style = "padding-bottom:1px;border-radius:10px;border:1px solid black">
                                     {% endif %}
                                 {% endfor %}
-                            {% endwith %}<b style = "color:#808080">{{ rating }}</b>
                             {% endwith %}
-                        {% else %}<b style = "color:#808080">None</b>
+                            <!-- <b style = "color:#808080">{{ rating }}</b> -->
+                            {% endwith %}
+                        {% else %}
+                            <strong style="color:#808080">Rating: <span style="font-weight:normal; color:#808080">N/A</span></strong>
                         {% endif %}
                         </div>
-                        <p style = "color:#808080"><strong>Visibility: </strong>{{ note.visibility }}</p>
-                        <a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review Note</a>
-                        <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View Details</a>
+                        <br>
+                        <a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review</a>
+                        <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View</a>
                         {% if not note.is_borrowed %}
-                            <a href="{% url 'notes_app:request_note' note.id %}" class="btn btn-secondary">Request Note</a>
+                            <a href="{% url 'notes_app:request_note' note.id %}" class="btn btn-secondary">Request</a>
                         {% endif %}
                         </div>
                     </div>
@@ -55,7 +56,6 @@
     {% else %}
         <p style = "color:#808080">No notes found matching your criteria.</p>
     {% endif %}
-    </div>
 </div>
 <br>  
 {% endblock %}

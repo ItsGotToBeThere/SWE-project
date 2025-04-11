@@ -63,7 +63,7 @@ class Note(models.Model):
 
     def get_average_rating(self):
         avg_rating = NoteReview.objects.filter(note=self).aggregate(Avg("rating"))["rating__avg"] or None
-        return avg_rating / 2 if avg_rating is not None else None
+        return avg_rating / 2 if avg_rating is not None else 'N/A'
 
 
     def __str__(self):

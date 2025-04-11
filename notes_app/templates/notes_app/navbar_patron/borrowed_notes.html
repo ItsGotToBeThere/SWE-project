@@ -11,11 +11,11 @@
                     <div class="card-body">
                     <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
                     <p style = "color:#808080"><strong>Return Date: </strong> {{ request_note.return_date }}</p>
-                    <p style = "color:#808080"><strong>Additional Notes:</strong> {{ request_note.additional_notes }}</p>
                     </div>
                 </div>
             </div>
         </div> 
+        <br>
         {% endfor %}      
     {% endif %}       
     <br>
@@ -28,13 +28,13 @@
                     <div class="card-body">
                     <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
                     <p style = "color:#808080"><strong>Return Date: </strong> {{ request_note.return_date }}</p>
-                    <p style = "color:#808080"><strong>Additional Notes:</strong> {{ request_note.additional_notes }}</p>
-                    <a href="{% url 'notes_app:review_note' request_note.note.id %}" class="btn btn-secondary">Review Note</a>
-                    <a href="{% url 'notes_app:view_note_details' request_note.note.id %}" class="btn btn-secondary">View Full Note</a>
+                    <a href="{% url 'notes_app:review_note' request_note.note.id %}" class="btn btn-secondary">Review</a>
+                    <a href="{% url 'notes_app:view_note_details' request_note.note.id %}" class="btn btn-secondary">View</a>
                     </div>
                 </div>
             </div>
         </div> 
+        <br>
         {% endfor %}  
     {% endif %}   
     <br>  
@@ -47,12 +47,18 @@
                     <div class="card-body">
                     <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
                     <p style = "color:#808080"><strong>Return Date: </strong> {{ request_note.return_date }}</p>
-                    <p style = "color:#808080"><strong>Additional Notes:</strong> {{ request_note.additional_notes }}</p>
-                    <a href="{% url 'notes_app:review_note' request_note.note.id %}" class="btn btn-secondary">Review Note</a>
+                    {% if request_note.borrowed %}
+                        <p style = "color:#808080"><strong>Librarian Action: </strong> Approved Request </p>
+                        <a href="{% url 'notes_app:review_note' request_note.note.id %}" class="btn btn-secondary">Review</a>
+                    {% else %}
+                        <p style = "color:#808080"><strong>Librarian Action: </strong> Denied Request </p>
+                    {% endif %}
+                    
                     </div>
                 </div>
             </div>
         </div> 
+        <br>
         {% endfor %}  
     {% endif %}     
 </div>
