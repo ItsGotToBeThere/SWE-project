@@ -70,6 +70,8 @@ def request_note(request, note_id):
                         html_message=html_message
                     )
             messages.success(request, "Request successfully created!")
+        else:
+            messages.error(request, "Request failed, please choose a valid date!")
     form = RequestNoteForm()
 
     return render(request, 'notes_app/navbar_patron/request_note.html', {'form': form})

@@ -18,7 +18,7 @@
         <p>
             <p><strong>Notes In Collection:</strong></p> 
             {% for note in collection_notes %}
-                <a href="{% url 'notes_app:view_full_note' note.id %}" target="_blank">
+                <a href="{% url 'notes_app:view_note_details' note.id %}" target="_blank">
                     <u style = "color:var(--text-color)">{{ note.title }}</u>
                 </a>
                 <br>
