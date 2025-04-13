@@ -62,8 +62,7 @@ class Note(models.Model):
         return display_image
 
     def get_average_rating(self):
-        avg_rating = NoteReview.objects.filter(note=self).aggregate(Avg("rating"))["rating__avg"] or None
-        return avg_rating / 2 if avg_rating is not None else 'N/A'
+        return NoteReview.objects.filter(note=self).aggregate(Avg("rating"))["rating__avg"] or None
 
 
     def __str__(self):
@@ -108,7 +107,7 @@ class PatronRequest(models.Model):
 class NoteReview(models.Model):
     patron = models.ForeignKey(User, on_delete=models.CASCADE)
     note = models.ForeignKey(Note, on_delete=models.CASCADE)
-    rating = models.FloatField(null=False,default=10,validators=[MinValueValidator(0), MaxValueValidator(10)])
+    rating = models.FloatField(null=False,default=5,validators=[MinValueValidator(0), MaxValueValidator(5)])
     comment = models.TextField(blank=True)
 
 PRONOUN_CHOICES = (('he/him',"He/Him"), ('she/her',"She/Her"), ('they/them',"They/Them"), ('other',"Other"))

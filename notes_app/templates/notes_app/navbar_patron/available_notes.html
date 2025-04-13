@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 {% load crispy_forms_tags %}
 <div class="container mt-4">
     <h1>Filter Notes</h1>
@@ -29,9 +29,9 @@
                             {% with ''|center:5 as range %}
                                 {% for _ in range %}
                                     {% if forloop.counter <= rating %}
-                                        <img src="{% static 'notes_app/images/star.svg' %}" width = 25 height = 25 style="background-color:#FFD700;padding-bottom:1px;border-radius:10px;border:1px solid black">
+                                        <label class = "bi bi-star-fill" style = "color:#ffc107"></label>
                                     {% else %}
-                                        <img src="{% static 'notes_app/images/star.svg' %}" width = 25 height = 25 style = "padding-bottom:1px;border-radius:10px;border:1px solid black">
+                                        <label class = "bi bi-star-fill"></label>
                                     {% endif %}
                                 {% endfor %}
                             {% endwith %}
@@ -57,5 +57,20 @@
         <p style = "color:#808080">No notes found matching your criteria.</p>
     {% endif %}
 </div>
-<br>  
+<style>
+    .star-rating {
+        direction: rtl;
+        display: inline-block;
+    }
+
+    .star-rating label {
+        color: #ddd;
+        font-size: 16px;
+        padding: 0 2px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+</style>
+<br>
 {% endblock %}
