@@ -42,6 +42,7 @@
                         {% endif %}
                         </div>
                         <br>
+                        <br>
                         <a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review</a>
                         <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View</a>
                         {% if not note.is_borrowed %}
@@ -59,7 +60,6 @@
 </div>
 <style>
     .star-rating {
-        direction: rtl;
         display: inline-block;
     }
 

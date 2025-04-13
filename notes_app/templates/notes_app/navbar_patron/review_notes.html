@@ -3,7 +3,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     {% load crispy_forms_tags %}
     <div class = "container mt-4">
-   <form method="post">
+    {% include 'notes_app/messages.html' %}
+    <form method="post">
     {% csrf_token %}
     <div class="mb-3">
         <label for="id_rating" class="form-label">Rating</label>
