@@ -35,7 +35,6 @@
                                     {% endif %}
                                 {% endfor %}
                             {% endwith %}
-                            <!-- <b style = "color:#808080">{{ rating }}</b> -->
                             {% endwith %}
                         {% else %}
                             <strong style="color:#808080">Rating: <span style="font-weight:normal; color:#808080">N/A</span></strong>
@@ -43,11 +42,7 @@
                         </div>
                         <br>
                         <br>
-                        <a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review</a>
-                        <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View</a>
-                        {% if not note.is_borrowed %}
-                            <a href="{% url 'notes_app:request_note' note.id %}" class="btn btn-secondary">Request</a>
-                        {% endif %}
+                        <a href="{% url 'notes_app:anonymous_view_note' note.id %}" class="btn btn-secondary">View</a>
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mt-4">
+        {% include 'notes_app/messages.html' %}
+        <h1>{{note.title}}</h1>
+        <p><strong>ID: </strong>{{note.id}}</p>
+        <p><strong>Course Name: </strong>{{note.course_name}}</p>
+        <p><strong>Average Rating: </strong>{{note.get_average_rating}}</p>
+        <p><strong>Professor: </strong>{{note.professor}}</p>
+        <p><strong>Semester: </strong>{{note.semester}}</p>
+        <p><strong>Creation Date: </strong>{{note.created_at}}</p>
+        <p><strong>Description: </strong>{{note.description}}</p>
+        <p><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
+        <p><strong>Location: </strong> Virtual </p>
+        <p><strong>Visibility: </strong> {{ note.visibility }} </p>
+        <div class = "card col-md-6"><strong style = "color:black">Reviews: </strong>
+            {% for review in note.get_reviews %}
+                <p style = "color:black">{{ review.rating }}</p>
+                <p style="color:black">{{ review.comment }}</p>
+                <p style="color:black">-{{ review.patron }}</p>
+            {% endfor %}
+        </div>
+        <p>
+            <p><strong>Collection(s) Note Is In: </strong></p> 
+            <ul style = "list-style-type:none; padding-left:0;">
+                {% for object in note_collections %}
+                    <a href="{% url 'notes_app:view_full_collection' object.collection.id %}" target="_blank">
+                        <li><u style = "color:var(--text-color)">{{ object.collection.title }}</u></li>
+                    </a>
+                {% endfor %}
+            </ul>
+        </p>
+    </div>
+    <br>
+{% endblock %}

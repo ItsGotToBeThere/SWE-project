@@ -49,4 +49,8 @@ urlpatterns = [
 
     #permissions related
     path("view-requests/", views.view_requests, name="view_requests"),
+
+    #anonymous user
+    path("browse-notes/", views.browse_notes, name="browse_notes"),
+    path("anonymous_view_note/<int:note_id>/", views.anonymous_view_note, name="anonymous_view_note"),
 ]

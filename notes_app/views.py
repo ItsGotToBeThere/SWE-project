@@ -283,6 +283,12 @@ def available_notes(request):
     notes = notes_filter.qs
     return render(request, "notes_app/navbar_patron/available_notes.html", {"notes": notes, "notes_filter": notes_filter})
 
+def browse_notes(request):
+    queryset = Note.objects.filter(visibility='public')
+    notes_filter = NotesFilter(request.GET, queryset=queryset)
+    notes = notes_filter.qs
+    return render(request, "notes_app/anonymous_browse_notes.html", {"notes": notes, "notes_filter": notes_filter})
+
 @login_required
 def request_collection(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id)
@@ -360,6 +366,12 @@ def view_note_details(request, note_id):
         user_type = 'Patron'
     patron_can_view_note_files = RequestNote.objects.filter(requester = request.user, return_date__gt=timezone.now(), borrowed=True, fulfilled_at__lt=timezone.now()) #template checks to see if this has length greater than 0
     return render(request, "notes_app/view_note_details.html", context={'note': note, 'files': files, 'note_collections': note_collections, 'user_type':user_type, 'patron_can_view_note_files':patron_can_view_note_files})
+
+def anonymous_view_note(request, note_id):
+    note = get_object_or_404(Note, pk=note_id) #fetch one note object
+    files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
+    note_collections = CollectionItem.objects.filter(note=note)
+    return render(request, "notes_app/anonymous_view_note.html", context={'note': note, 'files': files, 'note_collections': note_collections})
 
 def view_clean_note(request, note_id):
     note = get_object_or_404(Note, pk=note_id) #fetch one note object
