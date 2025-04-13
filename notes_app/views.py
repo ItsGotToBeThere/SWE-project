@@ -702,7 +702,8 @@ def librarian_dashboard(request):
     context = {
         'patrons': patrons,
     }
-    return render(request, "notes_app/librarian_dashboard.html")
+    return render(request, "notes_app/navbar_librarian/list_patrons.html", context)
+
 
 def set_theme(request):
     theme = request.GET.get("theme","dark") #default dark
@@ -725,4 +726,25 @@ class EditProfileView(generic.UpdateView):
     def get_success_url(self):
         return reverse("notes_app:profile")
 
+@login_required
+@librarian_required
+def list_patrons(request):
+    patrons_group = Group.objects.get(name="Patrons")
+    patrons = patrons_group.user_set.all()
+
+    if request.method == "POST":
+        patron_id = request.POST.get("patron_id")
+        patron = get_object_or_404(User, id=patron_id)
+        librarians_group, _ = Group.objects.get_or_create(name="Librarians")
+
+        if librarians_group not in patron.groups.all():
+            patron.groups.add(librarians_group)
+            patron.groups.remove(patrons_group)
+            messages.success(request, f"{patron.username} has been promoted to Librarian.")
+        else:
+            messages.info(request, f"{patron.username} is already a Librarian.")
+
+        return redirect("notes_app:list_patrons")
+
+    return render(request, "notes_app/navbar_librarian/list_patrons.html", {"patrons": patrons})
 
