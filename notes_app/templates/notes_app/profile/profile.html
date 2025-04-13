@@ -30,9 +30,9 @@
     </div>
     <div class = "details">
         <div class = "given-name">{{ user.username}}</div>
-        <div class = "email">{{ user.email }}</div>
-        <div class = "date-joined grey">{{ user.profile.date_joined }}</div>
+        <div class = "email grey">({{ user.email }})</div>
     </div>
+    <div class = "date-joined grey">Joined {{ user.profile.date_joined }}</div>
     <div class = "bio">{{ user.profile.bio }}</div>
     <div role = "radiogroup" class = "notes-selection">
         <a class = "btn notes-btn" id = "collections-check" href = "{% url 'notes_app:profile' %}">Collections</a>
