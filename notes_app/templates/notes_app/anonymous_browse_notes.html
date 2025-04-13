@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="container mt-4">
+    <h1>Filter Notes</h1>
+    <form method="get">
+        {{ notes_filter.form | crispy }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <br>
+    {% if notes %}
+        {% for note in notes %}
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-2">
+                        <img src="{{ note.get_display_image.file.url }}" class="img-fluid" style="max-width: 220px; max-height: 235px; min-width: 220px; min-height: 235px;">
+                    </div>
+                    <div class="col-md-10">
+                        <div class="card-body">
+                        <h4 style = "color:#808080;text-decoration:underline;">{{ note.title }}</h4>
+                        <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>
+                        <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
+                        <div class="star-rating">
+                        
+                        {% if note.get_average_rating %}
+                            <strong style = "color:#808080">Rating:</strong>
+                            {% with note.get_average_rating as rating %}
+                            {% with ''|center:5 as range %}
+                                {% for _ in range %}
+                                    {% if forloop.counter <= rating %}
+                                        <img src="{% static 'notes_app/images/star.svg' %}" width = 25 height = 25 style="background-color:#FFD700;padding-bottom:1px;border-radius:10px;border:1px solid black">
+                                    {% else %}
+                                        <img src="{% static 'notes_app/images/star.svg' %}" width = 25 height = 25 style = "padding-bottom:1px;border-radius:10px;border:1px solid black">
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}
+                            <!-- <b style = "color:#808080">{{ rating }}</b> -->
+                            {% endwith %}
+                        {% else %}
+                            <strong style="color:#808080">Rating: <span style="font-weight:normal; color:#808080">N/A</span></strong>
+                        {% endif %}
+                        </div>
+                        <br>
+                        <a href="{% url 'notes_app:anonymous_view_note' note.id %}" class="btn btn-secondary">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>              
+            <br>
+        {% endfor %}
+    {% else %}
+        <p style = "color:#808080">No notes found matching your criteria.</p>
+    {% endif %}
+</div>
+<br>  
+{% endblock %}
