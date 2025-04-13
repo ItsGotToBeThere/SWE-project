@@ -18,12 +18,12 @@
         {% endif %}
         <div class="card">
             <div class="row">
-                <div class="col-md-2">
-                    <img src="{{ note.get_display_image.file.url }}" class="img-fluid" style="max-width: 220px; max-height: 230px; min-width: 220px; min-height: 230px;">
+                <div class="col-md-2 d-flex align-items-center">
+                    <img src="{{ note.get_display_image.file.url }}" class="img-fluid" style="max-width: 100px; max-height: 110px; min-width: 100px; min-height: 110px;">
                 </div>
                 <div class="col-md-10">
                     <div class="card-body">
-                    <h4 style = "color:#808080;text-decoration: underline;">{{ note.title }}</h4>
+                    <a href="{% url 'notes_app:view_clean_note' note.id %}"><h4 style = "color:#808080;text-decoration:underline;">{{ note.title }}</h4></a>
                     <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>
                     <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
                     <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View</a>
