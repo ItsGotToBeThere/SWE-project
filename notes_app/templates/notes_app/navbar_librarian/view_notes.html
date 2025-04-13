@@ -9,7 +9,6 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <br>
-    <div class = "card">
     {% if notes %}
         {% for note in notes %}
             <div class="card">
@@ -21,8 +20,6 @@
                         <div class="card-body">
                         <a href="{% url 'notes_app:view_clean_note' note.id %}"><h4 style = "color:#808080;text-decoration: underline;">{{ note.title }}</h4></a>
                         <p style = "color:#808080"><strong>Course Name: </strong> {{ note.course_name }}</p>
-                        <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
-                        <p style = "color:#808080"><strong>Creation Date: </strong> {{ note.created_at }}</p>
                          <div class="star-rating">
                         <strong style = "color:#808080">Rating:</strong>
                         {% if note.get_average_rating %}
@@ -35,16 +32,17 @@
                                         <label class = "bi bi-star-fill"></label>
                                     {% endif %}
                                 {% endfor %}
-                            {% endwith %}<b style = "color:#808080">{{ rating }}</b>
+                            {% endwith %}
                             {% endwith %}
                         {% else %}<b style = "color:#808080">None</b>
                         {% endif %}
-                        </div>
-                        <p style = "color:#808080"><strong>Visibility: </strong>{{ note.visibility }}</p>
-                        <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit Note</a>
-                        <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View Details</a>
-                        <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete Note</a>
-                        </div>
+                        <br>
+                        <br>
+                        <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit</a>
+                        <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View</a>
+                        <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete</a>
+                    </div>    
+                    </div>
                     </div>
                 </div>
             </div>              
@@ -57,7 +55,6 @@
 </div>
 <style>
     .star-rating {
-        direction: rtl;
         display: inline-block;
     }
 

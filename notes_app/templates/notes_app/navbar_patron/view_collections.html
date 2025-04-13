@@ -12,12 +12,12 @@
 
     <!-- Collections created by the patron (can edit/delete) -->
     {% if user_collections %}
-        <h4>Your Public Collections</h4>
+        <h4 style = "color:#808080">Your Public Collections</h4>
         {% for collection in user_collections %}
             <div class="card mb-3">
                 <div class="card-body">
-                    <h4>{{ collection.title }}</h4>
-                    <p><strong>Visibility:</strong> {{ collection.visibility }}</p>
+                    <h4 style = "color:#808080">{{ collection.title }}</h4>
+                    <p style = "color:#808080"><strong>Visibility:</strong> {{ collection.visibility }}</p>
                     <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit</a>
                     <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View</a>
                     <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete</a>
@@ -28,12 +28,12 @@
 
     <!-- Public collections created by others (view-only) -->
     {% if public_collections %}
-        <h4>Other Public Collections</h4>
+        <h4 style = "color:#808080">Other Public Collections</h4>
         {% for collection in public_collections %}
             <div class="card mb-3">
                 <div class="card-body">
-                    <h4>{{ collection.title }}</h4>
-                    <p><strong>Visibility:</strong> Public</p>
+                    <h4 style = "color:#808080">{{ collection.title }}</h4>
+                    <p style = "color:#808080"><strong>Visibility:</strong> Public</p>
                     <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View</a>
                 </div>
             </div>
@@ -42,12 +42,12 @@
 
     <!-- Private collections patron has access to (view-only) -->
     {% if private_collections_with_access %}
-        <h4>Private Collections You've Been Granted Access To</h4>
+        <h4 style = "color:#808080">Private Collections You've Been Granted Access To</h4>
         {% for collection in private_collections_with_access %}
             <div class="card mb-3">
                 <div class="card-body">
-                    <h4>{{ collection.title }}</h4>
-                    <p><strong>Visibility:</strong> Private</p>
+                    <h4 style = "color:#808080">{{ collection.title }}</h4>
+                    <p style = "color:#808080"><strong>Visibility:</strong> Private</p>
                     <a href="{% url 'notes_app:view_full_collection' collection.id %}" class="btn btn-secondary">View</a>
                 </div>
             </div>
