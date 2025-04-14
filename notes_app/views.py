@@ -283,12 +283,6 @@ def available_notes(request):
     notes = notes_filter.qs
     return render(request, "notes_app/navbar_patron/available_notes.html", {"notes": notes, "notes_filter": notes_filter})
 
-def browse_notes(request):
-    queryset = Note.objects.filter(visibility='public')
-    notes_filter = NotesFilter(request.GET, queryset=queryset)
-    notes = notes_filter.qs
-    return render(request, "notes_app/anonymous_browse_notes.html", {"notes": notes, "notes_filter": notes_filter})
-
 @login_required
 def request_collection(request, collection_id):
     collection = get_object_or_404(Collection, pk=collection_id)
@@ -759,4 +753,28 @@ def list_patrons(request):
         return redirect("notes_app:list_patrons")
 
     return render(request, "notes_app/navbar_librarian/list_patrons.html", {"patrons": patrons})
+
+def anonymous_browse_notes(request):
+    # Notes in public collections or not in any collection at all
+    public_collections = Collection.objects.filter(visibility="public")
+    notes = Note.objects.filter(
+        Q(collectionitem__collection__in=public_collections) | ~Q(id__in=CollectionItem.objects.values('note'))
+    ).filter(visibility="public").distinct()  # Remove duplicates if note is in multiple collections
+
+    notes_filter = NotesFilter(request.GET, queryset=notes)
+    return render(request, "notes_app/anonymous_browse_notes.html", {
+        "notes": notes_filter.qs,
+        "notes_filter": notes_filter,
+    })
+
+def anonymous_view_note(request, note_id):
+    note = get_object_or_404(Note, pk=note_id, visibility="public")
+    private_collections = Collection.objects.filter(visibility="private")
+    in_private = CollectionItem.objects.filter(note=note, collection__in=private_collections).exists()
+    if in_private:
+        return redirect("notes_app:anonymous_browse_notes")
+    files = NoteFile.objects.filter(note=note)
+    return render(request, "notes_app/anonymous_view_note.html", {"note": note, "files": files})
+
+
 

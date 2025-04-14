@@ -3,10 +3,10 @@
 {% load socialaccount %}
 
 {% block content %}
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:browse_notes' %}">Browse Notes</a></li>
+
 {% endblock %}
 
 {% block log %}
     <li class = "dropdown-item nav-item"><a href="{% provider_login_url 'google' next='/' %}"> Patron / Librarian Login</a></li>
-    <li class = "dropdown-item nav-item"><a href="#" onclick="window.location.reload(true); return false;"> Anonymous User Login</a></li>
+    <li class = "dropdown-item"><a href = "{% url 'notes_app:anonymous_browse_notes' %}">Browse as Anonymous User</a></li>
 {% endblock %}
