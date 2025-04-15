@@ -34,41 +34,41 @@ def request_note(request, note_id):
             note_request.note = get_object_or_404(Note, id=note_id)
             note_request.save()
             
-            # Send email notification
-            subject = f'New Note Borrowing Request: {note_request.note.title}'
-            plain_message = f"""
-            Hello,
+            # # Send email notification
+            # subject = f'New Note Borrowing Request: {note_request.note.title}'
+            # plain_message = f"""
+            # Hello,
 
-            A request has been made for {note_request.note.title} by {request.user.email}
+            # A request has been made for {note_request.note.title} by {request.user.email}
 
-            Please login and review this request under 'Manage Requests'.
+            # Please login and review this request under 'Manage Requests'.
 
-            Thank you,
-            CavNotes
-            """
+            # Thank you,
+            # CavNotes
+            # """
 
-            #necessary to prevent email from going to spam
-            html_message = f"""
-            <html>
-            <body>
-                <p>Hello,</p>
-                <p>A request has been made for <strong>{note_request.note.title}</strong> by {request.user.email}</p>
-                <p>Please login and <a href="https://notes-sharing-app-d8b5cb736270.herokuapp.com/">review this request</a> under 'Manage Requests'.</p>
-                <p>Thank you,<br>CavNotes</p>
-            </body>
-            </html>
-                """
+            # #necessary to prevent email from going to spam
+            # html_message = f"""
+            # <html>
+            # <body>
+            #     <p>Hello,</p>
+            #     <p>A request has been made for <strong>{note_request.note.title}</strong> by {request.user.email}</p>
+            #     <p>Please login and <a href="https://notes-sharing-app-d8b5cb736270.herokuapp.com/">review this request</a> under 'Manage Requests'.</p>
+            #     <p>Thank you,<br>CavNotes</p>
+            # </body>
+            # </html>
+            #     """
             
-            for user in User.objects.all():
-                if Group.objects.get(name="Librarians") in user.groups.all():
-                    send_mail(
-                        subject,
-                        plain_message,
-                        settings.DEFAULT_FROM_EMAIL, #all emails are from cavnote3240@gmail.com
-                        [user.email],
-                        fail_silently=False,
-                        html_message=html_message
-                    )
+            # for user in User.objects.all():
+            #     if Group.objects.get(name="Librarians") in user.groups.all():
+            #         send_mail(
+            #             subject,
+            #             plain_message,
+            #             settings.DEFAULT_FROM_EMAIL, #all emails are from cavnote3240@gmail.com
+            #             [user.email],
+            #             fail_silently=False,
+            #             html_message=html_message
+            #         )
             messages.success(request, "Request successfully created!")
         else:
             messages.error(request, "Request failed, please choose a valid date!")
@@ -86,56 +86,56 @@ def manage_borrowed(request):
             note_request.borrowed = True
             note_request.fulfilled_at = timezone.now()
 
-            # Send email notification
-            subject = f'Note Request Handled For: {note_request.note.title}'
-            plain_message = f"""
-            Hello,
+        #     # Send email notification
+        #     subject = f'Note Request Handled For: {note_request.note.title}'
+        #     plain_message = f"""
+        #     Hello,
 
-            Your request to borrow {note_request.note.title} has been approved by librarian {request.user.email}.
-            Please login and find the full note under 'Borrow Notes'. 
+        #     Your request to borrow {note_request.note.title} has been approved by librarian {request.user.email}.
+        #     Please login and find the full note under 'Borrow Notes'. 
 
-            Thank you,
-            CavNotes
-            """
+        #     Thank you,
+        #     CavNotes
+        #     """
 
-            #necessary to prevent email from going to spam
-            html_message = f"""
-            <html>
-            <body>
-                <p>Hello,</p>
-                <p>Your request to borrow {note_request.note.title} has been approved by librarian {request.user.email}
-                <p>Please <a href="https://notes-sharing-app-d8b5cb736270.herokuapp.com/">login</a> and find the full note under 'Borrowed Notes'. </p>
-                <p>Thank you,<br>CavNotes</p>
-            </body>
-            </html>
-                """
+        #     #necessary to prevent email from going to spam
+        #     html_message = f"""
+        #     <html>
+        #     <body>
+        #         <p>Hello,</p>
+        #         <p>Your request to borrow {note_request.note.title} has been approved by librarian {request.user.email}
+        #         <p>Please <a href="https://notes-sharing-app-d8b5cb736270.herokuapp.com/">login</a> and find the full note under 'Borrowed Notes'. </p>
+        #         <p>Thank you,<br>CavNotes</p>
+        #     </body>
+        #     </html>
+        #         """
 
-        elif action == "deny":
-            note_request.borrowed = False
-            note_request.fulfilled_at = timezone.now()
+        # elif action == "deny":
+        #     note_request.borrowed = False
+        #     note_request.fulfilled_at = timezone.now()
 
-            # Send email notification
-            subject = f'Note Request Handled For: {note_request.note.title}'
-            plain_message = f"""
-            Hello,
+        #     # Send email notification
+        #     subject = f'Note Request Handled For: {note_request.note.title}'
+        #     plain_message = f"""
+        #     Hello,
 
-            Your request to borrow {note_request.note.title} has been denied by librarian {request.user.email}.
+        #     Your request to borrow {note_request.note.title} has been denied by librarian {request.user.email}.
 
-            Thank you,
-            CavNotes
-            """
+        #     Thank you,
+        #     CavNotes
+        #     """
 
-            #necessary to prevent email from going to spam
-            html_message = f"""
-            <html>
-            <body>
-                <p>Hello,</p>
-                <p>Your request to borrow {note_request.note.title} has been denied by librarian {request.user.email}
-                <p>Thank you,<br>CavNotes</p>
-            </body>
-            </html>
-                """
-        send_mail(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [note_request.requester.email], fail_silently=False, html_message=html_message)
+        #     #necessary to prevent email from going to spam
+        #     html_message = f"""
+        #     <html>
+        #     <body>
+        #         <p>Hello,</p>
+        #         <p>Your request to borrow {note_request.note.title} has been denied by librarian {request.user.email}
+        #         <p>Thank you,<br>CavNotes</p>
+        #     </body>
+        #     </html>
+        #         """
+        # send_mail(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [note_request.requester.email], fail_silently=False, html_message=html_message)
         note_request.save()
     in_progress_requests = RequestNote.objects.filter(fulfilled_at__isnull=True, return_date__gt=timezone.now(), borrowed=False)
     active_borrows = RequestNote.objects.filter(return_date__gt=timezone.now(), borrowed=True, fulfilled_at__lt=timezone.now())
