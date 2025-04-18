@@ -33,42 +33,6 @@ def request_note(request, note_id):
             note_request.requester = request.user  
             note_request.note = get_object_or_404(Note, id=note_id)
             note_request.save()
-            
-            # # Send email notification
-            # subject = f'New Note Borrowing Request: {note_request.note.title}'
-            # plain_message = f"""
-            # Hello,
-
-            # A request has been made for {note_request.note.title} by {request.user.email}
-
-            # Please login and review this request under 'Manage Requests'.
-
-            # Thank you,
-            # CavNotes
-            # """
-
-            # #necessary to prevent email from going to spam
-            # html_message = f"""
-            # <html>
-            # <body>
-            #     <p>Hello,</p>
-            #     <p>A request has been made for <strong>{note_request.note.title}</strong> by {request.user.email}</p>
-            #     <p>Please login and <a href="https://notes-sharing-app-d8b5cb736270.herokuapp.com/">review this request</a> under 'Manage Requests'.</p>
-            #     <p>Thank you,<br>CavNotes</p>
-            # </body>
-            # </html>
-            #     """
-            
-            # for user in User.objects.all():
-            #     if Group.objects.get(name="Librarians") in user.groups.all():
-            #         send_mail(
-            #             subject,
-            #             plain_message,
-            #             settings.DEFAULT_FROM_EMAIL, #all emails are from cavnote3240@gmail.com
-            #             [user.email],
-            #             fail_silently=False,
-            #             html_message=html_message
-            #         )
             messages.success(request, "Request successfully created!")
         else:
             messages.error(request, "Request failed, please choose a valid date!")
@@ -85,62 +49,14 @@ def manage_borrowed(request):
         if action == "approve":
             note_request.borrowed = True
             note_request.fulfilled_at = timezone.now()
-
-        #     # Send email notification
-        #     subject = f'Note Request Handled For: {note_request.note.title}'
-        #     plain_message = f"""
-        #     Hello,
-
-        #     Your request to borrow {note_request.note.title} has been approved by librarian {request.user.email}.
-        #     Please login and find the full note under 'Borrow Notes'. 
-
-        #     Thank you,
-        #     CavNotes
-        #     """
-
-        #     #necessary to prevent email from going to spam
-        #     html_message = f"""
-        #     <html>
-        #     <body>
-        #         <p>Hello,</p>
-        #         <p>Your request to borrow {note_request.note.title} has been approved by librarian {request.user.email}
-        #         <p>Please <a href="https://notes-sharing-app-d8b5cb736270.herokuapp.com/">login</a> and find the full note under 'Borrowed Notes'. </p>
-        #         <p>Thank you,<br>CavNotes</p>
-        #     </body>
-        #     </html>
-        #         """
-
-        # elif action == "deny":
-        #     note_request.borrowed = False
-        #     note_request.fulfilled_at = timezone.now()
-
-        #     # Send email notification
-        #     subject = f'Note Request Handled For: {note_request.note.title}'
-        #     plain_message = f"""
-        #     Hello,
-
-        #     Your request to borrow {note_request.note.title} has been denied by librarian {request.user.email}.
-
-        #     Thank you,
-        #     CavNotes
-        #     """
-
-        #     #necessary to prevent email from going to spam
-        #     html_message = f"""
-        #     <html>
-        #     <body>
-        #         <p>Hello,</p>
-        #         <p>Your request to borrow {note_request.note.title} has been denied by librarian {request.user.email}
-        #         <p>Thank you,<br>CavNotes</p>
-        #     </body>
-        #     </html>
-        #         """
-        # send_mail(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [note_request.requester.email], fail_silently=False, html_message=html_message)
+        elif action == "deny":
+            note_request.borrowed = False
+            note_request.fulfilled_at = timezone.now()
         note_request.save()
     in_progress_requests = RequestNote.objects.filter(fulfilled_at__isnull=True, return_date__gt=timezone.now(), borrowed=False)
     active_borrows = RequestNote.objects.filter(return_date__gt=timezone.now(), borrowed=True, fulfilled_at__lt=timezone.now())
     past_requests = RequestNote.objects.filter(fulfilled_at__isnull=False, fulfilled_at__lt=timezone.now()).exclude(return_date__gt=timezone.now(), borrowed = True)
-
+    RequestNote.objects.update(is_viewed=True)
     return render(request, "notes_app/navbar_librarian/manage_borrowed.html", {"in_progress_requests": in_progress_requests, "active_borrows": active_borrows, "past_requests":past_requests})
 
 @method_decorator(librarian_required, name='dispatch')
@@ -646,7 +562,8 @@ def create_collection(request):
 
 #OTHER VIEWS
 def index(request):
-    return render(request, "notes_app/home.html")
+    notification_count = RequestNote.objects.filter(is_viewed=False).count()
+    return render(request, "notes_app/home.html", {'notification_count':notification_count})
 
 def profile(request):
     notes = []

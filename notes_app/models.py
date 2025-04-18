@@ -75,6 +75,7 @@ class RequestNote(models.Model):
     additional_notes = models.TextField(blank=True)
     borrowed = models.BooleanField(default=False)
     fulfilled_at = models.DateTimeField(null=True, blank=True) #stored as None (null) when not set
+    is_viewed = models.BooleanField(default = False)
 
 class NoteFile(models.Model): #allows multiple file instances to be associated with one note
     note = models.ForeignKey(Note, on_delete=models.CASCADE)
