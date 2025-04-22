@@ -18,7 +18,7 @@
                     </div>
                     <div class="col-md-10">
                         <div class="card-body">
-                        <a href="{% url 'notes_app:view_clean_note' note.id %}"><h4 style = "color:#808080;text-decoration:underline;">{{ note.title }}</h4></a>
+                        <h4 style = "color:#808080;">{{ note.title }}</h4>
                         <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>
                         <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
                         <div class="star-rating">
@@ -42,7 +42,7 @@
                         </div>
                         <br>
                         <br>
-                        <a href="{% url 'notes_app:anonymous_view_note' note.id %}" class="btn btn-secondary">View</a>
+                        <a href="{% url 'notes_app:anonymous_view_note' note.id %}" class="btn btn-secondary">Details</a>
                         </div>
                     </div>
                 </div>

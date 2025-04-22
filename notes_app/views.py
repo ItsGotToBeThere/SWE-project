@@ -438,7 +438,8 @@ def edit_collection(request, collection_id):
     return render(request, "notes_app/edit_collection.html", context={'user_type': user_type, 'form':form, 'collection':collection, 'users': users, 'notes': notes, 'collection_notes':collection_notes, 'private_collection_patrons': private_collection_patrons})
 
 def delete_collection(request, collection_id):
-    collection = get_object_or_404(Collection, pk=collection_id) 
+    next_url = request.GET.get('next')
+    collection = get_object_or_404(Collection, pk=collection_id)
     if collection.visibility == 'private':
         notes = [object.note for object in CollectionItem.objects.filter(collection=collection)]
         for note in notes:
@@ -446,11 +447,12 @@ def delete_collection(request, collection_id):
             note.save()  
     collection.delete()
     if request.user.groups.filter(name="Librarians").exists(): 
-        return redirect("notes_app:view_collections") 
+        return redirect(next_url)
     else:
-        return redirect("notes_app:patron_view_collections") 
+        return redirect(next_url)
 
 def delete_note(request, note_id):
+    next_url = request.GET.get('next')
     note = get_object_or_404(Note, pk=note_id) #fetch one note object
     files = NoteFile.objects.filter(note_id=note_id) #fetch an array of notefile objects
     for file in files:
@@ -572,7 +574,10 @@ def profile(request):
          Q(created_by=request.user) | Q(privatecollectionpatron__patron=request.user)
         )
         if request.user.groups.filter(name="Patrons").exists():
-            notes = Note.objects.filter(patronrequest__patron=request.user)
+            notes = Note.objects.filter(
+                Q(requestnote__requester=request.user) & Q(requestnote__borrowed=True) & Q(
+                    requestnote__return_date__gt=timezone.now()) & Q(requestnote__fulfilled_at__lt=timezone.now())
+            )
         elif request.user.groups.filter(name="Librarians").exists():
             notes = Note.objects.filter(created_by=request.user)
     else:
@@ -587,7 +592,9 @@ def profile_notes(request):
          Q(created_by=request.user) | Q(privatecollectionpatron__patron=request.user)
         )
         if request.user.groups.filter(name="Patrons").exists():
-            notes = Note.objects.filter(patronrequest__patron=request.user)
+            notes = Note.objects.filter(
+                Q(requestnote__requester=request.user) & Q(requestnote__borrowed=True) & Q(requestnote__return_date__gt=timezone.now()) & Q(requestnote__fulfilled_at__lt=timezone.now())
+            )
         elif request.user.groups.filter(name="Librarians").exists():
             notes = Note.objects.filter(created_by=request.user)
     else:

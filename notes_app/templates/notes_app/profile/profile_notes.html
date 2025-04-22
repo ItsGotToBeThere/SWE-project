@@ -26,10 +26,10 @@
                     <a href="{% url 'notes_app:view_clean_note' note.id %}"><h4 style = "color:#808080;text-decoration:underline;">{{ note.title }}</h4></a>
                     <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>
                     <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
-                    <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View</a>
+                    <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">Details</a>
                     {% if user.profile.get_role == "Patron" %}<a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review</a>{% endif %}
                     {% if user.profile.get_role == "Librarian" %}<a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit</a>
-                    <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete</a>{% endif %}
+                    <a href="{% url 'notes_app:delete_note' note.id %}?next={{ request.get_full_path }}" class="btn btn-secondary">Delete</a>{% endif %}
                     </div>
                 </div>
             </div>
