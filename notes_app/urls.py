@@ -19,7 +19,6 @@ urlpatterns = [
 
     #patron specific urls
     path("available-notes/", views.available_notes, name="available_notes"),
-    path("request-collections/", views.request_collections, name="request_collections"),
     path("request-collection/<int:collection_id>/", views.request_collection, name="request_collection"),
 
     path("patron-view-collections/", views.patron_view_collections, name="patron_view_collections"),

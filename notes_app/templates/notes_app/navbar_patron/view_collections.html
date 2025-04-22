@@ -2,6 +2,7 @@
 {% block content %}
 {% load crispy_forms_tags %}
 <div class="container mt-4">
+    {% include 'notes_app/messages.html' %}
     <h1>Filter Collections</h1>
     <form method="get">
         {{ collections_filter.form|crispy }}
@@ -53,8 +54,34 @@
             </div>
         {% endfor %}
     {% endif %}
+    
+    {% if private_collections_without_access %}
+        <br>
+        <h4 style = "color:#808080">Private Collections You Don't Have Access To</h4>
+        {% for collection in private_collections_without_access %}
+            <div class="card my-3">
+                <div class="card-body">
+                    <h5 style = "color:#808080">{{ collection.title }}</h5>
 
-    {% if not user_collections and not public_collections and not private_collections_with_access %}
+                    {% if collection.id in pending_collection_ids %}
+                        <button class="btn btn-secondary" disabled>Access Requested</button>
+
+                    {% elif collection.id in denied_collection_ids %}
+                        <button class="btn btn-danger" disabled>Access Denied</button>
+
+                    {% else %}
+                        <form method="post" action="{% url 'notes_app:request_collection' collection.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-secondary">Request Access</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+    {% endif %}
+
+    {% if not user_collections and not public_collections and not private_collections_with_access and not private_collections_without_access%}
         <p class="text-muted">No collections available.</p>
     {% endif %}
 </div>
