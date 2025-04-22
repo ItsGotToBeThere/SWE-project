@@ -8,35 +8,37 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'notes_app:index' %}">Home</a></li>
+            <ul class="navbar-nav me-3 ml-4 d-lg-flex align-items-center">
+                <li class="nav-item"><a class="h4 nav-link active" aria-current="page" href="{% url 'notes_app:index' %}">Cav Notes</a></li>
+            </ul>
+            <ul class="navbar-nav me-auto d-lg-flex align-items-center">
                 {% block content %} {% endblock %}
             </ul>
-            <ul class = "navbar-nav">
-                 <li class = "nav-item">
+            <ul class = "navbar-nav me-2 d-lg-flex align-items-center">
+                 <li class = "nav-item me-2">
                     <label class = "switch">
                         <input type = "checkbox" id = "theme-toggle">
                         <span class = "slider"></span>
                     </label>
                  </li>
+                {% if user.is_authenticated   %}
                  <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">
                         <img class = "navbar-picture" src = "
-                                    {% if user.is_authenticated   %}
                                     {{ user.profile.get_profile_pic_url }}
-                                    {% else %}
-                                    {% static 'notes_app/images/default_profile.png' %}
-                                    {% endif %}
                                     "  alt="profile_picture"
-                        width = "30"
-                        height= "30">
+                        width = "50"
+                        height= "50">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li class = "dropdown-item"><a href = "{% url 'notes_app:profile' %}">View Profile</a></li>
                         {% block log %} {% endblock %}
                     </ul>
                 </li>
+                {% else %}
+                    <li class="nav-item"><a class="btn btn-light" aria-current="page" href="{% provider_login_url 'google' next='/' %}">Login</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

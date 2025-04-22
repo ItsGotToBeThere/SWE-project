@@ -71,7 +71,6 @@ footer{
 }
 
 .switch {
-  top:15%;
   display: block;
   position: relative;
   width: var(--width-of-switch);

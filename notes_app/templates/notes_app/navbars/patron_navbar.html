@@ -3,12 +3,28 @@
 {% load socialaccount %}
 
 {% block content %}
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:available_notes' %}">Available Notes</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:borrowed_notes' %}">Borrowed Notes</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:request_collections' %}">Request Collections</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:borrowed_collections' %}">Borrowed Collections</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:create_patron_collection' %}">Create Collection</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:patron_view_collections' %}">View Collections</a></li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Notes
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <li class="dropdown-item"><a href="{% url 'notes_app:available_notes' %}">Available Notes</a></li>
+            <li class="dropdown-item"><a href="{% url 'notes_app:borrowed_notes' %}">Borrowed Notes</a></li>
+        </ul>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Collections
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <li class="dropdown-item"><a href="{% url 'notes_app:request_collections' %}">Request Collections</a></li>
+            <li class="dropdown-item"><a href="{% url 'notes_app:borrowed_collections' %}">Borrowed Collections</a></li>
+            <li class="dropdown-item"><a href="{% url 'notes_app:create_patron_collection' %}">Create Collection</a></li>
+            <li class="dropdown-item"><a href="{% url 'notes_app:patron_view_collections' %}">View Collections</a></li>
+        </ul>
+    </li>
 {% endblock %}
 
 {% block log %}

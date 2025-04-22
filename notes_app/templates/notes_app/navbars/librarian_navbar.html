@@ -3,22 +3,47 @@
 {% load socialaccount %}
 
 {% block content %}
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:add_notes' %}">Add New Notes</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:view_notes' %}">View Notes</a></li>
-    <li class="nav-item">
-        <a class="nav-link position-relative" href="{% url 'notes_app:manage_borrowed' %}">
-          Manage Borrowed Notes
-          {% if notification_count > 0 %}
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              {{ notification_count }}
-            </span>
-          {% endif %}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Notes
         </a>
-      </li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:create_collection' %}">Create Collections</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:view_collections' %}">View Collections</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:view_requests' %}">Private Collection Requests</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'notes_app:list_patrons' %}">Manage Patron Roles</a></li>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <li class="dropdown-item"><a href="{% url 'notes_app:add_notes' %}">Add New Notes</a></li>
+            <li class="dropdown-item"><a href="{% url 'notes_app:view_notes' %}">View Notes</a></li>
+        </ul>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Collections
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <li class="dropdown-item"><a href="{% url 'notes_app:create_collection' %}">Create Collections</a></li>
+            <li class="dropdown-item"><a href="{% url 'notes_app:view_collections' %}">View Collections</a></li>
+        </ul>
+    </li>
+
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Manage Patrons
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <li class="dropdown-item">
+                <a class="position-relative" href="{% url 'notes_app:manage_borrowed' %}">
+                  Manage Borrowed Notes
+                  {% if notification_count > 0 %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      {{ notification_count }}
+                    </span>
+                  {% endif %}
+                </a>
+          </li>
+          <li class="dropdown-item"><a href="{% url 'notes_app:view_requests' %}">Private Collection Requests</a></li>
+          <li class="dropdown-item"><a href="{% url 'notes_app:list_patrons' %}">Manage Patron Roles</a></li>
+        </ul>
+    </li>
 {% endblock %}
 
 {% block log %}

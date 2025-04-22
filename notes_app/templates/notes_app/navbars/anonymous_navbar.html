@@ -7,6 +7,5 @@
 {% endblock %}
 
 {% block log %}
-    <li class = "dropdown-item nav-item"><a href="{% provider_login_url 'google' next='/' %}"> Patron / Librarian Login</a></li>
-    <li class = "dropdown-item"><a href = "{% url 'notes_app:anonymous_browse_notes' %}">Browse as Anonymous User</a></li>
+    <li class = "dropdown-item nav-item"><a href="{% provider_login_url 'google' next='/' %}">Login</a></li>
 {% endblock %}
