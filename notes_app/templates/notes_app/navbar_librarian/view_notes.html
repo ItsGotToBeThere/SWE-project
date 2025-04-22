@@ -12,11 +12,11 @@
     {% if notes %}
         {% for note in notes %}
             <div class="card">
-                <div class="row">
-                    <div class="col-md-2">
-                        <img src="{{ note.get_display_image.file.url }}" class="img-fluid" style="max-width: 220px; max-height: 230px; min-width: 220px; min-height: 230px;">
+                <div class="row g-0 flex-column flex-md-row">
+                    <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
+                        <img src="{{ note.get_display_image.file.url }}" class="img-fluid" style="max-width: 100%; height: auto;">
                     </div>
-                    <div class="col-md-10">
+                    <div class="col-12 col-md-9">
                         <div class="card-body">
                         <a href="{% url 'notes_app:view_clean_note' note.id %}"><h4 style = "color:#808080;text-decoration: underline;">{{ note.title }}</h4></a>
                         <p style = "color:#808080"><strong>Course Name: </strong> {{ note.course_name }}</p>
