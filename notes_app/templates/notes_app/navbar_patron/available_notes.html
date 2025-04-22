@@ -18,7 +18,7 @@
                     </div>
                     <div class="col-md-10">
                         <div class="card-body">
-                        <a href="{% url 'notes_app:view_clean_note' note.id %}"><h4 style = "color:#808080;text-decoration:underline;">{{ note.title }}</h4></a>
+                        <h4 style = "color:#808080;">{{ note.title }}</h4>
                         <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>
                         <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
                         <div class="star-rating">
@@ -29,7 +29,7 @@
                             {% with ''|center:5 as range %}
                                 {% for _ in range %}
                                     {% if forloop.counter <= rating %}
-                                        <label class = "bi bi-star-fill" style = "color:#ffc107"></label>
+                                        <label class = "bi bi-star-fill" style = "color:#ffc107;"></label>
                                     {% else %}
                                         <label class = "bi bi-star-fill"></label>
                                     {% endif %}
@@ -43,8 +43,7 @@
                         </div>
                         <br>
                         <br>
-                        <a href="{% url 'notes_app:review_note' note.id %}" class="btn btn-secondary">Review</a>
-                        <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View</a>
+                        <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">Details</a>
                         {% if not note.is_borrowed %}
                             <a href="{% url 'notes_app:request_note' note.id %}" class="btn btn-secondary">Request</a>
                         {% endif %}

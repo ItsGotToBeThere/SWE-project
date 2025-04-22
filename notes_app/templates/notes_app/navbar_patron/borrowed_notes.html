@@ -26,10 +26,10 @@
             <div class="row">
                 <div class="col-md-8">
                     <div class="card-body">
-                    <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
+                    <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_clean_note' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
                     <p style = "color:#808080"><strong>Return Date: </strong> {{ request_note.return_date }}</p>
                     <a href="{% url 'notes_app:review_note' request_note.note.id %}" class="btn btn-secondary">Review</a>
-                    <a href="{% url 'notes_app:view_note_details' request_note.note.id %}" class="btn btn-secondary">View</a>
+                    <a href="{% url 'notes_app:view_note_details' request_note.note.id %}" class="btn btn-secondary">Details</a>
                     </div>
                 </div>
             </div>
