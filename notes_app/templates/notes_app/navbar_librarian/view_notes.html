@@ -5,18 +5,20 @@
 <div class="container mt-4">
     <h1>Filter Notes</h1>
     <form method="get">
-        {{ notes_filter.form | crispy }}
+        <input type="text" name="query" placeholder="Search by title, course name, or professor name..." class="form-control mb-2">
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <br>
     {% if notes %}
         {% for note in notes %}
-            <div class="card">
-                <div class="row g-0 flex-column flex-md-row">
-                    <div class="col-12 col-md-3 text-center mb-3 mb-md-0">
-                        <img src="{{ note.get_display_image.file.url }}" class="img-fluid" style="max-width: 100%; height: auto;">
+                <div class="card">
+                    <div class="row g-0 flex-column flex-md-row">
+                    <div class="col-12 col-md-3 text-center">
+                        <img src="{{ note.get_display_image.file.url }}"
+                            class="img-fluid rounded-start"
+                            style="width: 100%; height: auto; object-fit: cover;">
                     </div>
-                    <div class="col-12 col-md-9">
+                    <div class="col p-3">
                         <div class="card-body">
                         <a href="{% url 'notes_app:view_clean_note' note.id %}"><h4 style = "color:#808080;text-decoration: underline;">{{ note.title }}</h4></a>
                         <p style = "color:#808080"><strong>Course Name: </strong> {{ note.course_name }}</p>

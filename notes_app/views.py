@@ -12,7 +12,7 @@ from .decorators import librarian_required, patron_required
 from django.views import View
 from django.utils.decorators import method_decorator
 from .models import Note, Collection, PatronRequest, Profile, NoteFile, CollectionItem, PrivateCollectionPatron, NoteReview, CollectionAccessRequest, RequestNote
-from .filters import NotesFilter, CollectionsFilter
+from .filters import CollectionsFilter, NotesFilter
 from .forms import NoteForm, ProfileForm, CollectionForm, PatronCollectionForm, NoteReviewForm, RequestNoteForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
@@ -185,7 +185,7 @@ def patron_view_collections(request):
     )
 
     user = request.user
-    all_private = Collection.objects.filter(visibility="private")
+    all_private = collections.filter(visibility="private")
     approved_ids = PrivateCollectionPatron.objects.filter(patron=user).values_list("collection_id", flat=True)
     all_private = all_private.exclude(id__in=approved_ids)
 
@@ -207,10 +207,19 @@ def patron_view_collections(request):
 
 
 def available_notes(request):
-    queryset = Note.objects.filter(visibility='public')
-    notes_filter = NotesFilter(request.GET, queryset=queryset)
-    notes = notes_filter.qs
-    return render(request, "notes_app/navbar_patron/available_notes.html", {"notes": notes, "notes_filter": notes_filter})
+    potential_notes = Note.objects.filter(visibility='public')
+    query = request.GET.get('query')
+
+    if query:
+        notes = potential_notes.filter(
+            Q(title__icontains=query) |
+            Q(course_name__icontains=query) |
+            Q(professor__icontains=query)
+        )
+    else:
+        notes = potential_notes
+
+    return render(request, "notes_app/navbar_patron/available_notes.html", {"notes": notes })
 
 @login_required
 def request_collection(request, collection_id):
@@ -222,9 +231,18 @@ def request_collection(request, collection_id):
 
 #DISPLAYING AVAILABLE COLLECTIONS / NOTES VIEWS LIBRARIAN
 def view_notes(request):
-    notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
-    notes = notes_filter.qs
-    return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes_filter": notes_filter, 'notes': notes})
+    potential_notes = Note.objects.all()
+    query = request.GET.get('query')
+
+    if query:
+        notes = potential_notes.filter(
+            Q(title__icontains=query) |
+            Q(course_name__icontains=query) |
+            Q(professor__icontains=query)
+        )
+    else:
+        notes = potential_notes
+    return render(request, "notes_app/navbar_librarian/view_notes.html", {'notes': notes})
 
 def view_collections(request):
     collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
