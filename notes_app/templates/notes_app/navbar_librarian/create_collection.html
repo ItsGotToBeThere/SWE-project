@@ -27,8 +27,8 @@
         </div>
         <br>
         <div class="form-group">
-            <label for="files">Public Notes To Include In Collection*</label>
-            <select class="form-select" multiple aria-label="multiple select" name="collection_notes" id="collection_notes" required>
+            <label for="files">Public Notes To Include In Collection</label>
+            <select class="form-select" multiple aria-label="multiple select" name="collection_notes" id="collection_notes">
                 {% for note in notes %}
                     <option value="{{note.title}}">{{ note.title }}</option>
                 {% endfor %}

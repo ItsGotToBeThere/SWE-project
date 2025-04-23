@@ -7,8 +7,8 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %} 
             {{ form | crispy}} <!--crispy styles django forms using bootstrap-->
-            <p>Upload File(s)*</p>
-            <input type="file" name="files" multiple required>
+            <p>Upload File(s)</p>
+            <input type="file" name="files" multiple>
             <br>
             <br>
             {% if form.errors %}
