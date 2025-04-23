@@ -42,7 +42,7 @@
                         <br>
                         <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit</a>
                         <a href="{% url 'notes_app:view_note_details' note.id %}" class="btn btn-secondary">View</a>
-                        <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete</a>
+                        <a href="{% url 'notes_app:delete_note' note.id %}?next={{ request.get_full_path }}" class="btn btn-secondary">Delete</a>
                     </div>    
                     </div>
                     </div>
