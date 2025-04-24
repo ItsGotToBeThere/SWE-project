@@ -19,8 +19,18 @@ class Collection(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)  # User refers to the auth_user table
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def get_collection_items(self):
+        collection_items = CollectionItem.objects.filter(collection_id=self.id)
+        string =''
+        for item in collection_items:
+            if len(string) != 0:
+                string += ", "
+            string += item.note.title + ' [' + item.note.course_name + ']'
+        return string
+
     def __str__(self):
         return self.title
+    
 
 class Note(models.Model):
     title = models.CharField(max_length=255, unique=True)
