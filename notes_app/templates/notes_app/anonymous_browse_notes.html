@@ -12,14 +12,21 @@
     {% if notes %}
         {% for note in notes %}
             <div class="card">
-                <div class="row">
-                    <div class="col-md-2">
-                        <img src="{{ note.get_display_image.file.url }}" class="img-fluid" style="max-width: 220px; max-height: 235px; min-width: 220px; min-height: 235px;">
-                    </div>
-                    <div class="col-md-10">
+                <div class="row g-0 flex-column flex-md-row">
+                <div class="col-12 col-md-3 text-center">
+                    <img src="{{ note.get_display_image.file.url }}"
+                        class="img-fluid rounded-start"
+                        style="width: 100%; height: auto; object-fit: cover;">
+                </div>
+                <div class="col p-3">
                         <div class="card-body">
                         <h4 style = "color:#808080;">{{ note.title }}</h4>
                         <p style = "color:#808080"><strong>Course Name:</strong> {{ note.course_name }}</p>
+                        {% if note.professor %}
+                        <p style = "color:#808080"><strong>Professor:</strong> {{ note.professor }}</p>
+                        {% else %}
+                            <p style = "color:#808080"><strong>Professor:</strong> N/A </p>
+                        {% endif %}
                         <p style = "color:#808080"><strong>Status: </strong>{% if note.is_borrowed %} Unavailable (Checked Out) {% else %} Available {% endif %}</p>
                         <div class="star-rating">
                         
@@ -40,9 +47,6 @@
                             <strong style="color:#808080">Rating: <span style="font-weight:normal; color:#808080">N/A</span></strong>
                         {% endif %}
                         </div>
-                        <br>
-                        <br>
-                        <a href="{% url 'notes_app:anonymous_view_note' note.id %}" class="btn btn-secondary">Details</a>
                         </div>
                     </div>
                 </div>
