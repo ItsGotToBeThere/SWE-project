@@ -56,7 +56,7 @@ def manage_borrowed(request):
     in_progress_requests = RequestNote.objects.filter(fulfilled_at__isnull=True, return_date__gt=timezone.now(), borrowed=False)
     active_borrows = RequestNote.objects.filter(return_date__gt=timezone.now(), borrowed=True, fulfilled_at__lt=timezone.now())
     past_requests = RequestNote.objects.filter(fulfilled_at__isnull=False, fulfilled_at__lt=timezone.now()).exclude(return_date__gt=timezone.now(), borrowed = True)
-    RequestNote.objects.update(is_viewed=True)
+    RequestNote.objects.update(librarian_viewed_notification=True)
     return render(request, "notes_app/navbar_librarian/manage_borrowed.html", {"in_progress_requests": in_progress_requests, "active_borrows": active_borrows, "past_requests":past_requests})
 
 @method_decorator(librarian_required, name='dispatch')
@@ -146,6 +146,7 @@ def borrowed_notes(request):
     in_progress_requests = RequestNote.objects.filter(requester=request.user, fulfilled_at__isnull=True, return_date__gt=timezone.now(), borrowed=False)
     active_borrows = RequestNote.objects.filter(requester=request.user, return_date__gt=timezone.now(), borrowed=True, fulfilled_at__lt=timezone.now())
     past_requests = RequestNote.objects.filter(requester=request.user, fulfilled_at__isnull=False, fulfilled_at__lt=timezone.now()).exclude(return_date__gt=timezone.now(), borrowed = True)
+    RequestNote.objects.filter(requester=request.user).update(requester_viewed_notification=True)
     return render(request, "notes_app/navbar_patron/borrowed_notes.html", {"in_progress_requests": in_progress_requests, "active_borrows": active_borrows, "past_requests":past_requests})
 
 #DISPLAYING AVAILABLE COLLECTIONS / NOTES VIEWS PATRON 
@@ -554,8 +555,12 @@ def create_collection(request):
 
 #OTHER VIEWS
 def index(request):
-    notification_count = RequestNote.objects.filter(is_viewed=False).count()
-    return render(request, "notes_app/home.html", {'notification_count':notification_count})
+    librarian_notification_count = RequestNote.objects.filter(librarian_viewed_notification=False).count()
+    if request.user.is_authenticated:
+        patron_notification_count = RequestNote.objects.filter(requester_viewed_notification=False, fulfilled_at__lt=timezone.now(), requester = request.user).count()
+    else:
+        patron_notification_count = -1
+    return render(request, "notes_app/home.html", {'librarian_notification_count':librarian_notification_count, 'patron_notification_count': patron_notification_count})
 
 def profile(request):
     notes = []

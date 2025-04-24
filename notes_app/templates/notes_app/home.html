@@ -19,9 +19,9 @@
     {% if user.groups.all|length > 0 %}
         {% for group in user.groups.all %}
             {% if group.name == "Librarians" %}
-                {% include 'notes_app/navbars/librarian_navbar.html' with notification_count=notification_count%}
+                {% include 'notes_app/navbars/librarian_navbar.html' with librarian_notification_count=librarian_notification_count%}
             {% elif group.name == "Patrons" %}
-                {% include 'notes_app/navbars/patron_navbar.html' %}
+                {% include 'notes_app/navbars/patron_navbar.html' with patron_notification_count=patron_notification_count %}
             {% endif %}
         {% endfor %}
     {% else %}

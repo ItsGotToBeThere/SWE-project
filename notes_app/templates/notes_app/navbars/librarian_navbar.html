@@ -33,9 +33,9 @@
             <li class="dropdown-item">
                 <a class="position-relative" href="{% url 'notes_app:manage_borrowed' %}">
                   Manage Borrowed Notes
-                  {% if notification_count > 0 %}
+                  {% if librarian_notification_count > 0 %}
                     <span class="position-absolute badge rounded-pill bg-danger ms-1 ml-100">
-                      {{ notification_count }}
+                      {{ librarian_notification_count }}
                     </span>
                   {% endif %}
                 </a>
