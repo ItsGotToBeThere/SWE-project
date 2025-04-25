@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container mt-4">
+        {% include 'notes_app/messages.html' %}
+        <h1>{{collection.title}}</h1>
+        <p><strong>Creator: </strong>{{collection.created_by.email}}</p>
+        <p><strong>Description: </strong>{{collection.description}}</p>
+        <p><strong>Visibility: </strong>{{collection.visibility}}</p>
+        {% if collection.visibility == 'private' %}
+            <p><strong>User(s) With Acccess To Private Collection: </strong>
+            {% for user in private_collection_patrons %}
+                <p> {{ user.email }} [Patron] </p>
+            {% endfor %}
+            {% for user in librarians %}
+                <p> {{ user.email }} [Librarian] </p>
+            {% endfor %}
+        {% endif %}
+        <p>
+            <p><strong>Notes In Collection:</strong></p> 
+            {% for note in collection_notes %}
+                <li>
+                    {{ note.title }}
+                    {% if not note.is_borrowed %}
+                            <a href="{% url 'notes_app:request_note' note.id %}" class="btn btn-secondary">Request</a>
+                    {% endif %}
+                </li>
+                <br>
+            {% endfor %}
+        </p>
+        {% for group in user.groups.all %}
+            {% if group.name == "Librarians" or user.id == collection.created_by.id %}
+                <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit</a>
+                <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <br>
+{% endblock %}

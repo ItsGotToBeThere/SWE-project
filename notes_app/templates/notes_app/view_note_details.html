@@ -36,9 +36,7 @@
             <p><strong>Collection(s) Note Is In: </strong></p> 
             <ul style = "list-style-type:none; padding-left:0;">
                 {% for object in note_collections %}
-                    <a href="{% url 'notes_app:view_full_collection' object.collection.id %}" target="_blank">
-                        <li><u style = "color:var(--text-color)">{{ object.collection.title }}</u></li>
-                    </a>
+                    {{ object.collection.title }}
                 {% endfor %}
             </ul>
         </p>

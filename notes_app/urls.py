@@ -42,6 +42,7 @@ urlpatterns = [
     path("create-collection/", views.create_collection, name="create_collection"),
     path("view-collections/", views.view_collections, name="view_collections"),
     path("view_full_collection/<int:collection_id>/", views.view_full_collection, name="view_full_collection"),
+    path("patron_view_collection/<int:collection_id>/", views.patron_view_collection, name="patron_view_collection"),
     path("edit_collection/<int:collection_id>/", views.edit_collection, name="edit_collection"),
     path("delete_collection/<int:collection_id>/", views.delete_collection, name="delete_collection"),
     path("manage-borrowed/", views.manage_borrowed, name="manage_borrowed"),

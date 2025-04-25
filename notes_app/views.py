@@ -295,6 +295,26 @@ def view_full_collection(request, collection_id):
         collection_notes.append(item.note)
     return render(request, "notes_app/view_full_collection.html", context={'collection': collection, 'private_collection_patrons': private_collection_patrons, 'librarians': librarians, 'collection_notes': collection_notes})
 
+def patron_view_collection(request, collection_id):
+    collection = get_object_or_404(Collection, pk=collection_id) 
+    
+    private_collection_patrons = []
+    objects = PrivateCollectionPatron.objects.filter(collection_id=collection_id)
+    for object in objects:
+        private_collection_patrons.append(object.patron)
+    
+    #all librarians have access to all private collections
+    librarians = []
+    for user in User.objects.all():
+        if Group.objects.get(name="Librarians") in user.groups.all():
+            librarians.append(user)
+
+    collection_notes = []
+    collection_items = CollectionItem.objects.filter(collection_id=collection_id)
+    for item in collection_items:
+        collection_notes.append(item.note)
+    return render(request, "notes_app/navbar_patron/patron_view_collection.html", context={'collection': collection, 'private_collection_patrons': private_collection_patrons, 'librarians': librarians, 'collection_notes': collection_notes})
+
 #EDITING / MODIFICATION RELATED VIEWS LIBRARIAN + PATRON
 @login_required
 def create_patron_collection(request):
@@ -393,6 +413,7 @@ def edit_collection(request, collection_id):
                 if collection.visibility == 'private':
                     note.visibility = 'private'
                     note.save()
+                CollectionItem.objects.filter(note=note).delete() #remove note from all public collections
                 collection_item = CollectionItem(note=note, collection=collection)
                 collection_item.save()
 
