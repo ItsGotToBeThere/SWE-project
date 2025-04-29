@@ -343,22 +343,20 @@ def create_patron_collection(request):
 
 def review_note(request, note_id):
     note = get_object_or_404(Note, pk=note_id)
-    review, created = NoteReview.objects.get_or_create(note=note, patron=request.user)
+
+    try: review = NoteReview.objects.get(note=note,patron=request.user)
+    except NoteReview.DoesNotExist: review = None
 
     if request.method == 'POST':
         form = NoteReviewForm(request.POST, instance = review)
         if form.is_valid():
-            if created:
-                noteReview=form.save(commit=False)
-                noteReview.note = note
-                noteReview.patron = request.user
-                noteReview.save()
-            else:
-                review.rating = form.cleaned_data['rating']
-                review.comment = form.cleaned_data['comment']
-                review.save()
+            noteReview=form.save(commit=False)
+            noteReview.note = note
+            noteReview.patron = request.user
+            noteReview.save()
 
             messages.success(request, "Note reviewed successfully!")
+            return redirect('notes_app:borrowed_notes')
     else:
         form = NoteReviewForm(instance = review)
     return render(request, 'notes_app/navbar_patron/review_notes.html',{'form':form,'note': note})
