@@ -4,11 +4,11 @@
 
 {% block content %}
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+        <a class="h5 mt-1 nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
            aria-expanded="false">
             Notes
         </a>
-        <ul class="h5 mt-1 dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
             <li class="dropdown-item"><a href="{% url 'notes_app:add_notes' %}">Add New Notes</a></li>
             <li class="dropdown-item"><a href="{% url 'notes_app:view_notes' %}">View Notes</a></li>
         </ul>
