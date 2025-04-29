@@ -160,6 +160,12 @@ class Profile(models.Model):
         else:
             return self.user.username
 
+    def get_google_name(self):
+        if not self.preferred_named:
+            if self.user.first_name and self.user.first_name:
+                return self.user.first_name + " " + self.user.last_name
+        return self.get_preferred_name()
+
 class CollectionAccessRequest(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending"),
