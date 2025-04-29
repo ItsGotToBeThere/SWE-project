@@ -67,7 +67,7 @@
 }
 
 .typewriter p:nth-child(6){
-  --text-length: 55ch;
+  --text-length: 36ch;
   --text-time: 1s;
 
   margin-left:5%;

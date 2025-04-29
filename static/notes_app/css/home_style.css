@@ -3,9 +3,7 @@
     https://css-tricks.com/snippets/css/typewriter-effect/
 */
 
-.section1{
-  height:100%;
-}
+
 
 .typewriter{
   margin-top:10vh;
@@ -69,7 +67,7 @@
 }
 
 .typewriter p:nth-child(6){
-  --text-length: 55ch;
+  --text-length: 30ch;
   --text-time: 1s;
 
   margin-left:5%;
