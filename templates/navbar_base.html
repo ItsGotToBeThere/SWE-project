@@ -21,7 +21,7 @@
                         <span class = "slider"></span>
                     </label>
                  </li>
-                {% if user.is_authenticated   %}
+                {% if user.is_authenticated and not user.is_superuser %}
                  <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">
