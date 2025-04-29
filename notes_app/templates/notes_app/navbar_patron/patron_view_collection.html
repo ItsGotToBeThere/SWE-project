@@ -27,12 +27,6 @@
                 <br>
             {% endfor %}
         </p>
-        {% for group in user.groups.all %}
-            {% if group.name == "Librarians" or user.id == collection.created_by.id %}
-                <a href="{% url 'notes_app:edit_collection' collection.id %}" class="btn btn-secondary">Edit</a>
-                <a href="{% url 'notes_app:delete_collection' collection.id %}" class="btn btn-secondary">Delete</a>
-            {% endif %}
-        {% endfor %}
     </div>
     <br>
 {% endblock %}

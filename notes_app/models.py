@@ -131,7 +131,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     banner = models.ImageField(storage=S3Boto3Storage(), null = True, blank = True, upload_to='banners/', default = None)
     profile_picture = models.ImageField(storage=S3Boto3Storage(), null = True, blank = True, upload_to='profile-pictures/', default=None)
-    preferred_named = models.CharField(max_length = 40,blank=True)
+    preferred_name = models.CharField(max_length = 40,blank=True)
     preferred_pronouns = models.CharField(max_length = 17,choices = PRONOUN_CHOICES, blank=True)
     bio = models.TextField(blank=True)
     date_joined = models.DateTimeField(blank=True, auto_now_add=True)
@@ -155,13 +155,13 @@ class Profile(models.Model):
             return "Patron"
 
     def get_preferred_name(self):
-        if self.preferred_named:
-            return self.preferred_named
+        if self.preferred_name:
+            return self.preferred_name
         else:
             return self.user.username
 
     def get_google_name(self):
-        if not self.preferred_named:
+        if not self.preferred_name:
             if self.user.first_name and self.user.first_name:
                 return self.user.first_name + " " + self.user.last_name
         return self.get_preferred_name()

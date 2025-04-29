@@ -9,7 +9,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <div class="card-body">
-                    <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
+                    <p style = "color:#808080"><strong>Requested Note:</strong> {{ request_note.note.title }}</p>
                     <p style = "color:#808080"><strong>Return Date: </strong> {{ request_note.return_date }}</p>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <div class="card-body">
-                    <p style = "color:#808080"><strong>Requested Note: </strong><u><a href="{% url 'notes_app:view_note_details' request_note.note.id %}">{{ request_note.note.title }}</a></u></p>
+                    <p style = "color:#808080"><strong>Requested Note:</strong> {{ request_note.note.title }}</p>
                     <p style = "color:#808080"><strong>Return Date: </strong> {{ request_note.return_date }}</p>
                     {% if request_note.borrowed %}
                         <p style = "color:#808080"><strong>Librarian Action: </strong> Approved Request </p>

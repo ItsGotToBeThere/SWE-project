@@ -359,7 +359,6 @@ def review_note(request, note_id):
                 review.save()
 
             messages.success(request, "Note reviewed successfully!")
-            return redirect("notes_app:available_notes")
     else:
         form = NoteReviewForm(instance = review)
     return render(request, 'notes_app/navbar_patron/review_notes.html',{'form':form,'note': note})
@@ -471,9 +470,7 @@ def delete_note(request, note_id):
         boto3.client('s3').delete_object(Bucket='notes-sharing-app', Key=str(file.file))
     note.delete()
 
-    collections = Collection.objects.all()
-    notes = Note.objects.all()
-    return render(request, "notes_app/navbar_librarian/view_notes.html", {"notes": notes, "collections": collections})
+    return redirect(next_url)
 
 
 def edit_note(request, note_id):

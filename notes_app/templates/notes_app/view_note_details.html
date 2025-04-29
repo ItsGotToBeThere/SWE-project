@@ -40,10 +40,6 @@
                 {% endfor %}
             </ul>
         </p>
-        {% if user_type == 'Librarian' %}
-            <a href="{% url 'notes_app:edit_note' note.id %}" class="btn btn-secondary">Edit</a>
-            <a href="{% url 'notes_app:delete_note' note.id %}" class="btn btn-secondary">Delete</a>
-        {% endif %}
     </div>
     <br>
 {% endblock %}
