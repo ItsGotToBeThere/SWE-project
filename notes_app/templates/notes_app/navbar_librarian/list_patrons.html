@@ -1,12 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
+    {% include 'notes_app/messages.html' %}
     <h2>List of Patrons</h2>
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
     <table class="table table-striped">
         <thead>
             <tr>

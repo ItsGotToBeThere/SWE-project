@@ -177,9 +177,14 @@ from django.db.models import Q
 @login_required
 def patron_view_collections(request):
     collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
-    notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
-    collections = filter_collections_and_notes(notes_filter.qs, collections_filter.qs)
-
+    
+    if not any(request.GET.get(key, "").strip() != "" for key in NotesFilter().filters.keys()): #check if no note filter input
+        notes_filter = Note.objects.all()
+        collections = collections_filter.qs
+    else:
+        notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
+        collections = filter_collections_and_notes(notes_filter.qs, collections_filter.qs)
+        
     # Collections the patron created (they can edit/delete these)
     user_collections = collections.filter(created_by=request.user, visibility="public")
 
@@ -201,6 +206,8 @@ def patron_view_collections(request):
     requested_ids = existing_requests.values_list("collection_id", flat=True)
     denied_ids = existing_requests.filter(status="denied").values_list("collection_id", flat=True)
     pending_ids = existing_requests.filter(status="pending").values_list("collection_id", flat=True)
+
+    notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
 
     return render(request, "notes_app/navbar_patron/view_collections.html", {
         "collections_filter": collections_filter,
@@ -254,8 +261,13 @@ def view_notes(request):
 
 def view_collections(request):
     collections_filter = CollectionsFilter(request.GET, queryset=Collection.objects.all())
+    if not any(request.GET.get(key, "").strip() != "" for key in NotesFilter().filters.keys()): #check if no note filter input
+        notes_filter = Note.objects.all()
+        collections = collections_filter.qs
+    else:
+        notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
+        collections = filter_collections_and_notes(notes_filter.qs, collections_filter.qs)
     notes_filter = NotesFilter(request.GET, queryset=Note.objects.all())
-    collections = filter_collections_and_notes(notes_filter.qs, collections_filter.qs)
     return render(request, "notes_app/navbar_librarian/view_collections.html", {"collections": collections, "collections_filter": collections_filter, "notes_filter": notes_filter})
 
 
