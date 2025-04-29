@@ -28,12 +28,19 @@ from django.utils import timezone
 def request_note(request, note_id):
     if request.method == 'POST':
         form = RequestNoteForm(request.POST)
-        if form.is_valid():
-            note_request = form.save(commit=False)
-            note_request.requester = request.user  
-            note_request.note = get_object_or_404(Note, id=note_id)
-            note_request.save()
-            messages.success(request, "Request successfully created!")
+        if form.is_valid(): 
+            user_note_requests = RequestNote.objects.filter(requester=request.user,note=(get_object_or_404(Note, id=note_id)))
+            in_progress_requests = user_note_requests.filter(fulfilled_at__isnull=True, return_date__gt=timezone.now(),borrowed=False)
+            active_borrows = user_note_requests.filter(borrowed=True,return_date__gt=timezone.now(), fulfilled_at__lt=timezone.now())
+
+            if not in_progress_requests.exists() and not active_borrows.exists(): #no active requests have been made for this specific note by this user
+                note_request = form.save(commit=False)
+                note_request.requester = request.user  
+                note_request.note = get_object_or_404(Note, id=note_id)
+                note_request.save()
+                messages.success(request, "Request successfully created!")
+            else:
+                messages.error(request, "Request failed, you already have an active request for this note!")
         else:
             messages.error(request, "Request failed, please choose a valid date!")
     form = RequestNoteForm()
